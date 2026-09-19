@@ -16,10 +16,10 @@ for app in ['learner','author']:
     html=index.read_text()
     if app=='learner':
         site_url='https://adichannnnnhere64.github.io/'+(base+'/' if base else '')
-        metadata=(f'<meta name="description" content="Search Java Enterprise and Jakarta EE questions and take free practice quizzes.">'
+        metadata=(f'<meta name="description" content="Search 3,200 Java, OOP, and Jakarta EE questions and take free practice quizzes.">'
                   f'<link rel="canonical" href="{site_url}">'
-                  f'<meta property="og:title" content="Tutorialz · Jakarta EE quizzes">'
-                  f'<meta property="og:description" content="Search 1,400 Java Enterprise and Jakarta EE practice questions.">'
+                  f'<meta property="og:title" content="Tutorialz · Java and Jakarta EE quizzes">'
+                  f'<meta property="og:description" content="Search 3,200 Java, OOP, and Jakarta EE practice questions.">'
                   f'<meta property="og:url" content="{site_url}">')
     else:
         metadata='<meta name="robots" content="noindex">'

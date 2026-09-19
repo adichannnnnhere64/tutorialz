@@ -8,6 +8,7 @@ from __future__ import annotations
 import hashlib
 import json
 from pathlib import Path
+from java_content import generate as generate_java_courses
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "content" / "enterprise"
@@ -226,6 +227,7 @@ for tier, variants, difficulty in [("basic", 1, "easy"), ("medium", 3, "medium")
     digest = write_json(path, course)
     entries.append({key: course[key] for key in ("id", "title", "description", "subject", "difficulty")} |
                    {"path": path.name, "sha256": digest})
+entries.extend(generate_java_courses(OUT, write_json))
 write_json(OUT / "catalog.json", {"schema_version": 1, "collection_id": "tutorialz-jakarta-ee",
                                   "courses": entries})
-print("Generated 100 basic, 300 medium, and 1000 advanced questions")
+print("Generated 1,300 easy, 900 medium, and 1,000 advanced questions")

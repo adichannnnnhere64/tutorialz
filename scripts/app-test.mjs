@@ -8,6 +8,11 @@ try{
  await page.getByLabel('Search questions and topics').fill('optimistic locking');
  await page.getByRole('heading',{name:'Question results'}).waitFor();
  assert(await page.getByRole('button',{name:'Practice this question'}).count()>0);
+ for(const topic of ['Type inference with var','Covariant return']){
+  await page.getByLabel('Search questions and topics').fill(topic);
+  await page.getByRole('heading',{name:'Question results'}).waitFor();
+  assert(await page.getByRole('button',{name:'Practice this question'}).count()>0,`No result for ${topic}`);
+ }
  await page.getByLabel('Search questions and topics').fill('');
  await page.screenshot({path:'/tmp/tutorialz-library.png',fullPage:true});
  await page.getByRole('button',{name:'Start practicing'}).click();

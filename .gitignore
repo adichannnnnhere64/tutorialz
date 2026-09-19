@@ -1,6 +1,7 @@
 /target/
 /dist/
 /node_modules/
+__pycache__/
 /tools/
 /public/java-pack/*.wasm
 /public/java-pack/*.bin

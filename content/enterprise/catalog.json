@@ -28,6 +28,24 @@
       "difficulty": "hard",
       "path": "advanced.json",
       "sha256": "f8f5aab14c81f9ccd11c810e9b3f7e260f6b248a8f2d96947eaf9aa22c1c969e"
+    },
+    {
+      "id": "beginner-java",
+      "title": "Java fundamentals — Beginner",
+      "description": "1200 original Java practice questions across 60 curated concepts.",
+      "subject": "Java fundamentals",
+      "difficulty": "easy",
+      "path": "beginner-java.json",
+      "sha256": "aceadc4b701fba244da1df9f68351934602858c28bd7c99e4dde8427f053a60f"
+    },
+    {
+      "id": "oop-medium",
+      "title": "Object-oriented Java — Medium",
+      "description": "600 original Java practice questions across 60 curated concepts.",
+      "subject": "Java OOP",
+      "difficulty": "medium",
+      "path": "oop-medium.json",
+      "sha256": "f9d98fef342d06a7eaf64e4959d720deaa691e38318416f150a29b775918c78e"
     }
   ]
 }
