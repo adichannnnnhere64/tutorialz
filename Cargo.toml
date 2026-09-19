@@ -1,0 +1,16 @@
+[workspace]
+members = ["crates/core", "crates/ui", "apps/learner", "apps/author"]
+resolver = "2"
+
+[workspace.dependencies]
+dioxus = { version = "=0.7.10", default-features = false, features = ["macro", "html", "signals", "hooks", "launch", "document", "asset"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tutorialz-core = { path = "crates/core" }
+tutorialz-ui = { path = "crates/ui" }
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+strip = true

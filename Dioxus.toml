@@ -1,0 +1,13 @@
+[application]
+name = "Tutorialz"
+default_platform = "web"
+[web.app]
+title = "Tutorialz · Small steps, stronger skills"
+[bundle]
+identifier = "dev.tutorialz.learner"
+publisher = "Tutorialz"
+
+[android]
+min_sdk = 29
+target_sdk = 35
+compile_sdk = 35

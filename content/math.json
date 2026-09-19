@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "id": "math",
+  "title": "Everyday algebra",
+  "description": "Strengthen arithmetic and solve simple equations.",
+  "subject": "Math",
+  "difficulty": "easy",
+  "lessons": [
+    {
+      "id": "math-lesson",
+      "title": "Start here",
+      "markdown": "# Keep both sides balanced\n\nApply the same operation to both sides of an equation.\n\nFor `3x + 2 = 14`, subtract 2 and divide by 3.",
+      "test_ids": [
+        "math-test"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "id": "math-test",
+      "title": "Everyday algebra practice",
+      "description": "A short original practice set with immediate explanations.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "math-square",
+          "revision": 1,
+          "prompt": "What is 7 \u00d7 8?",
+          "difficulty": "easy",
+          "explanation": "Seven groups of eight make 56.",
+          "type": "choice",
+          "options": [
+            "48",
+            "54",
+            "56",
+            "64"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false
+        },
+        {
+          "id": "math-equation",
+          "revision": 1,
+          "prompt": "Solve 3x + 2 = 14.",
+          "difficulty": "easy",
+          "explanation": "Subtract 2, then divide by 3: x = 4.",
+          "type": "blanks",
+          "blanks": [
+            {
+              "label": "x",
+              "accepted": [
+                "4",
+                "4.0"
+              ],
+              "case_sensitive": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

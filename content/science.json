@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "id": "science",
+  "title": "Cells and molecules",
+  "description": "Review a few building blocks of biology and chemistry.",
+  "subject": "Science",
+  "difficulty": "easy",
+  "lessons": [
+    {
+      "id": "science-lesson",
+      "title": "Start here",
+      "markdown": "# From molecules to cells\n\nWater is **H\u2082O**: two hydrogen atoms and one oxygen atom.\n\nHuman cells have specialized structures. The nucleus stores most genetic information.",
+      "test_ids": [
+        "science-test"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "id": "science-test",
+      "title": "Cells and molecules practice",
+      "description": "A short original practice set with immediate explanations.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "science-cell",
+          "revision": 1,
+          "prompt": "Which structure contains most of a human cell\u2019s genetic material?",
+          "difficulty": "easy",
+          "explanation": "The nucleus holds most DNA in human cells. Mitochondria also contain a small amount.",
+          "type": "choice",
+          "options": [
+            "Cell membrane",
+            "Nucleus",
+            "Ribosome",
+            "Cytoplasm"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false
+        },
+        {
+          "id": "science-water",
+          "revision": 1,
+          "prompt": "What is the chemical formula for water?",
+          "difficulty": "easy",
+          "explanation": "Water contains two hydrogen atoms and one oxygen atom.",
+          "type": "blanks",
+          "blanks": [
+            {
+              "label": "Formula",
+              "accepted": [
+                "H2O",
+                "H\u2082O"
+              ],
+              "case_sensitive": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

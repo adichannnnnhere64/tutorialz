@@ -1,0 +1,9 @@
+/target/
+/dist/
+/node_modules/
+/tools/
+/public/java-pack/*.wasm
+/public/java-pack/*.bin
+/public/java-pack/*.js
+*.apk
+*.aab

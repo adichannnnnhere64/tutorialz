@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "id": "java",
+  "title": "Java foundations",
+  "description": "Build confidence with types, methods, and small programs.",
+  "subject": "Programming / Java",
+  "difficulty": "easy",
+  "lessons": [
+    {
+      "id": "java-lesson",
+      "title": "Start here",
+      "markdown": "# Think in small steps\n\nJava programs group behavior into classes and methods. Start with types, then expressions, then control flow.\n\n```java\nint count = 3;\nboolean ready = true;\nSystem.out.println(count + 2);\n```\n\nA method can take inputs and return a result. Practice one concept at a time. The offline runner supports a subset of Java libraries.",
+      "test_ids": [
+        "java-test"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "id": "java-test",
+      "title": "Java foundations practice",
+      "description": "A short original practice set with immediate explanations.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "java-types",
+          "revision": 1,
+          "prompt": "Which type stores a true/false value?",
+          "difficulty": "easy",
+          "explanation": "`boolean` has exactly two values: `true` and `false`.",
+          "type": "choice",
+          "options": [
+            "int",
+            "boolean",
+            "String",
+            "double"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false
+        },
+        {
+          "id": "java-modifiers",
+          "revision": 1,
+          "prompt": "Select both access modifiers.",
+          "difficulty": "easy",
+          "explanation": "`public` and `private` control access. `static` controls ownership; `final` prevents reassignment or extension.",
+          "type": "choice",
+          "options": [
+            "public",
+            "static",
+            "private",
+            "final"
+          ],
+          "correct": [
+            0,
+            2
+          ],
+          "multiple": true
+        },
+        {
+          "id": "java-blank",
+          "revision": 1,
+          "prompt": "Complete the declaration: ___ count = 3;",
+          "difficulty": "easy",
+          "explanation": "`int` stores a 32-bit signed integer.",
+          "type": "blanks",
+          "blanks": [
+            {
+              "label": "Type",
+              "accepted": [
+                "int"
+              ],
+              "case_sensitive": true
+            }
+          ]
+        },
+        {
+          "id": "java-sum",
+          "revision": 1,
+          "prompt": "Write a complete `Main` program that reads two integers and prints their sum.",
+          "difficulty": "easy",
+          "explanation": "Read both values, add them, then print the sum.",
+          "type": "java",
+          "style": "program",
+          "starter": "public class Main {\n    public static void main(String[] args) {\n        // Read two integers and print their sum.\n    }\n}",
+          "template": "",
+          "reference": "public class Main { public static void main(String[] args) { java.util.Scanner s = new java.util.Scanner(System.in); System.out.println(s.nextInt() + s.nextInt()); } }",
+          "cases": [
+            {
+              "name": "Positive numbers",
+              "stdin": "2 3\n",
+              "expected": "5\n"
+            },
+            {
+              "name": "Negative number",
+              "stdin": "-4 7\n",
+              "expected": "3\n"
+            }
+          ]
+        },
+        {
+          "id": "java-method",
+          "revision": 1,
+          "prompt": "Complete `square(int n)` by writing its method body.",
+          "difficulty": "easy",
+          "explanation": "Multiplying an integer by itself gives its square.",
+          "type": "java",
+          "style": "snippet",
+          "starter": "return n;",
+          "template": "public class Main {\n    public static int square(int n) {\n        {{answer}}\n    }\n}",
+          "reference": "return n * n;",
+          "cases": [
+            {
+              "name": "Positive",
+              "stdin": "",
+              "expected": "25",
+              "harness": "System.out.print(Main.square(5));"
+            },
+            {
+              "name": "Negative",
+              "stdin": "",
+              "expected": "9",
+              "harness": "System.out.print(Main.square(-3));"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

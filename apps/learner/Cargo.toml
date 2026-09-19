@@ -1,0 +1,14 @@
+[package]
+name = "tutorialz-learner"
+version = "0.1.0"
+edition = "2021"
+[features]
+default = ["web"]
+web = ["dioxus/web", "tutorialz-ui/web"]
+mobile = ["dioxus/mobile", "tutorialz-ui/mobile"]
+[dependencies]
+dioxus.workspace = true
+serde_json.workspace = true
+tutorialz-core.workspace = true
+tutorialz-ui.workspace = true
+serde.workspace = true

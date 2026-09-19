@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "collection_id": "tutorialz-samples",
+  "courses": [
+    {
+      "id": "java",
+      "title": "Java foundations",
+      "description": "Build confidence with types, methods, and small programs.",
+      "subject": "Programming / Java",
+      "difficulty": "easy",
+      "path": "java.json",
+      "sha256": "f2a329cead6d77164547f6d2843d40dc38373b2027f94f96d88f0a2ebba5bdcb"
+    },
+    {
+      "id": "math",
+      "title": "Everyday algebra",
+      "description": "Strengthen arithmetic and solve simple equations.",
+      "subject": "Math",
+      "difficulty": "easy",
+      "path": "math.json",
+      "sha256": "fffa379dcaa823915235f09db23bba29279dcb3101558f17671aeb9d20f2534a"
+    },
+    {
+      "id": "science",
+      "title": "Cells and molecules",
+      "description": "Review a few building blocks of biology and chemistry.",
+      "subject": "Science",
+      "difficulty": "easy",
+      "path": "science.json",
+      "sha256": "09fc15b6ec80682fefc0c5051657598347a45256990e86f5052d17d9266c40d2"
+    }
+  ]
+}
