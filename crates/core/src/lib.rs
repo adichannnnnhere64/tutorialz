@@ -51,6 +51,10 @@ pub struct Question {
     pub prompt: String,
     pub difficulty: String,
     pub explanation: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub topic: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub second_topic: Option<String>,
     #[serde(flatten)]
     pub kind: QuestionKind,
 }
@@ -407,6 +411,18 @@ pub fn duplicate_prompts(courses: &[Course]) -> Vec<String> {
 pub fn sample_courses() -> Vec<Course> {
     serde_json::from_str(include_str!("../../../content/samples.json"))
         .expect("validated embedded samples")
+}
+
+/// The bundled collection gives web and Android the same offline question bank.
+pub fn enterprise_courses() -> Vec<Course> {
+    [
+        include_str!("../../../content/enterprise/basic.json"),
+        include_str!("../../../content/enterprise/medium.json"),
+        include_str!("../../../content/enterprise/advanced.json"),
+    ]
+    .iter()
+    .map(|json| serde_json::from_str(json).expect("bundled enterprise course must be valid"))
+    .collect()
 }
 #[cfg(test)]
 mod tests {

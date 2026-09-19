@@ -27,18 +27,26 @@ jobs:
           tool: dioxus-cli@0.7.10
       - run: node scripts/download-java-pack.mjs
       - run: python3 scripts/build-web.py
+        env:
+          SITE_BASE_PATH: tutorialz
       - run: npx playwright install --with-deps chromium
       - name: Browser checks
         shell: bash
         run: |
           python3 -m http.server 8765 > /tmp/runtime-server.log 2>&1 &
-          python3 -m http.server 8766 --directory dist > /tmp/app-server.log 2>&1 &
+          mkdir -p /tmp/tutorialz-site/tutorialz
+          cp -a dist/. /tmp/tutorialz-site/tutorialz/
+          python3 -m http.server 8766 --directory /tmp/tutorialz-site > /tmp/app-server.log 2>&1 &
           export CHROME_BIN="$(node --input-type=module -e 'import {chromium} from "playwright"; console.log(chromium.executablePath())')"
           node scripts/browser-test.mjs
-          node scripts/app-test.mjs
+          APP_URL=http://127.0.0.1:8766/tutorialz/ node scripts/app-test.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: tutorialz-web
+          path: dist
+      - uses: actions/upload-pages-artifact@v4
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        with:
           path: dist
   android:
     runs-on: ubuntu-latest
@@ -62,3 +70,16 @@ jobs:
         with:
           name: tutorialz-android
           path: target/dx/**/*.apk
+  deploy:
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    needs: web
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/deploy-pages@v4
+        id: deployment

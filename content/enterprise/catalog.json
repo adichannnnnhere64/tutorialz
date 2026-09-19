@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "collection_id": "tutorialz-jakarta-ee",
+  "courses": [
+    {
+      "id": "ee-basic",
+      "title": "Java Enterprise and Jakarta EE — Basic",
+      "description": "100 original questions grounded in official Jakarta EE specifications.",
+      "subject": "Java Enterprise / Jakarta EE",
+      "difficulty": "easy",
+      "path": "basic.json",
+      "sha256": "2d1a36e54a3b9f62cb9e7e0265276dcb4d6166470499cf96efebe5b9258732c8"
+    },
+    {
+      "id": "ee-medium",
+      "title": "Java Enterprise and Jakarta EE — Medium",
+      "description": "300 original questions grounded in official Jakarta EE specifications.",
+      "subject": "Java Enterprise / Jakarta EE",
+      "difficulty": "medium",
+      "path": "medium.json",
+      "sha256": "442d40bb0e9deded327cf2169ac3245131e187780faff488a60c84852db22a23"
+    },
+    {
+      "id": "ee-advanced",
+      "title": "Java Enterprise and Jakarta EE — Advanced",
+      "description": "1000 original questions grounded in official Jakarta EE specifications.",
+      "subject": "Java Enterprise / Jakarta EE",
+      "difficulty": "hard",
+      "path": "advanced.json",
+      "sha256": "f8f5aab14c81f9ccd11c810e9b3f7e260f6b248a8f2d96947eaf9aa22c1c969e"
+    }
+  ]
+}

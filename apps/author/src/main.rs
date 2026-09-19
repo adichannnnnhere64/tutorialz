@@ -671,6 +671,8 @@ fn TestEditor(index: usize) -> Element {
                                 prompt: "Your question?".into(),
                                 difficulty: "easy".into(),
                                 explanation: "Explain why the answer is correct.".into(),
+                                topic: None,
+                                second_topic: None,
                                 kind: QuestionKind::Choice {
                                     options: vec!["Option A".into(), "Option B".into()],
                                     correct: vec![0],

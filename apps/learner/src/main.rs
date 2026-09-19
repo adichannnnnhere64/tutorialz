@@ -14,15 +14,23 @@ struct State {
     courses: Vec<Course>,
     progress: Progress,
     pack_url: String,
+    #[serde(default)]
+    last_synced: Option<String>,
 }
 impl Default for State {
     fn default() -> Self {
         Self {
-            catalog_url: option_env!("TUTORIALZ_CATALOG_URL").unwrap_or("").into(),
-            catalog: None,
-            courses: sample_courses(),
-            progress: Progress::new("tutorialz-samples"),
+            catalog_url: option_env!("TUTORIALZ_CATALOG_URL")
+                .unwrap_or("https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json")
+                .into(),
+            catalog: Some(
+                serde_json::from_str(include_str!("../../../content/enterprise/catalog.json"))
+                    .expect("bundled enterprise catalog must be valid"),
+            ),
+            courses: enterprise_courses(),
+            progress: Progress::new("tutorialz-jakarta-ee"),
             pack_url: option_env!("TUTORIALZ_JAVA_PACK_URL").unwrap_or("").into(),
+            last_synced: None,
         }
     }
 }
@@ -42,6 +50,70 @@ struct AppContext {
     message: Signal<String>,
     busy: Signal<bool>,
     pack: Signal<bool>,
+    syncing: Signal<bool>,
+    sync_status: Signal<String>,
+}
+
+async fn sync_catalog(
+    mut cx: AppContext,
+    url: String,
+    allow_switch: bool,
+) -> Result<String, String> {
+    let original = (cx.state)();
+    let raw = call("catalog", json!(url)).await?;
+    let catalog: Catalog = serde_json::from_str(raw.as_str().ok_or("Invalid catalog response")?)
+        .map_err(|e| e.to_string())?;
+    validate_catalog(&catalog)?;
+    if !allow_switch && catalog.collection_id != original.progress.collection_id {
+        return Err(
+            "This catalog is a different collection. Confirm the switch in Settings.".into(),
+        );
+    }
+    let mut courses = Vec::with_capacity(catalog.courses.len());
+    let mut updated = 0;
+    for entry in &catalog.courses {
+        let unchanged = original
+            .catalog
+            .as_ref()
+            .and_then(|old| old.courses.iter().find(|c| c.id == entry.id))
+            .is_some_and(|old| old.sha256.eq_ignore_ascii_case(&entry.sha256));
+        if unchanged {
+            if let Some(course) = original.courses.iter().find(|c| c.id == entry.id) {
+                courses.push(course.clone());
+                continue;
+            }
+        }
+        let raw = call("course", json!({ "url": url, "entry": entry })).await?;
+        let course: Course = serde_json::from_str(raw.as_str().ok_or("Invalid course response")?)
+            .map_err(|e| e.to_string())?;
+        if course.id != entry.id {
+            return Err("Course ID mismatch".into());
+        }
+        courses.push(course);
+        updated += 1;
+    }
+    validate_courses(&courses)?;
+    let synced_at = call("nowIso", Value::Null)
+        .await?
+        .as_str()
+        .unwrap_or("")
+        .to_string();
+    let mut current = cx.state.write();
+    if current.catalog_url != original.catalog_url
+        || current.progress.collection_id != original.progress.collection_id
+    {
+        return Err("The catalog changed during sync; please retry.".into());
+    }
+    if catalog.collection_id != current.progress.collection_id {
+        current.progress = Progress::new(&catalog.collection_id);
+    }
+    current.catalog_url = url;
+    current.catalog = Some(catalog);
+    current.courses = courses;
+    current.last_synced = Some(synced_at);
+    Ok(format!(
+        "Questions are up to date. {updated} course files downloaded."
+    ))
 }
 #[component]
 fn App() -> Element {
@@ -51,12 +123,16 @@ fn App() -> Element {
     let busy = use_signal(|| false);
     let mut ready = use_signal(|| false);
     let pack = use_signal(|| false);
+    let syncing = use_signal(|| false);
+    let sync_status = use_signal(String::new);
     let cx = AppContext {
         state,
         page,
         message,
         busy,
         pack,
+        syncing,
+        sync_status,
     };
     use_context_provider(|| cx);
     use_future(move || async move {
@@ -93,6 +169,19 @@ fn App() -> Element {
                     .set(call("packStatus", Value::Null).await.ok() == Some(json!(true)));
                 let _ = call("registerOffline", Value::Null).await;
                 ready.set(true);
+                // Saved questions are ready before the network request starts.
+                spawn(async move {
+                    let url = cx.state.read().catalog_url.clone();
+                    if url.is_empty() {
+                        return;
+                    }
+                    cx.syncing.set(true);
+                    cx.sync_status.set("Checking for question updates…".into());
+                    let result = sync_catalog(cx, url, false).await;
+                    cx.sync_status
+                        .set(result.unwrap_or_else(|e| format!("Using cached questions: {e}")));
+                    cx.syncing.set(false);
+                });
             }
             Err(e) => message.set(e),
         }
@@ -222,6 +311,37 @@ fn Library() -> Element {
         .iter()
         .filter(|q| s.progress.latest(q).is_some_and(|a| a.correct))
         .count();
+    let terms: Vec<String> = search()
+        .split_whitespace()
+        .map(|s| s.to_lowercase())
+        .collect();
+    let hits: Vec<(String, String, Question)> = if terms.is_empty() {
+        Vec::new()
+    } else {
+        s.courses
+            .iter()
+            .filter(|c| subject() == "all" || subject() == c.subject)
+            .flat_map(|c| {
+                c.tests
+                    .iter()
+                    .flat_map(move |t| t.questions.iter().map(move |q| (c, t, q)))
+            })
+            .filter(|(_, _, q)| level() == "all" || level() == q.difficulty)
+            .filter(|(c, t, q)| {
+                let haystack = format!(
+                    "{} {} {} {} {}",
+                    c.title,
+                    t.title,
+                    q.prompt,
+                    q.topic.as_deref().unwrap_or(""),
+                    q.second_topic.as_deref().unwrap_or("")
+                )
+                .to_lowercase();
+                terms.iter().all(|word| haystack.contains(word))
+            })
+            .map(|(c, t, q)| (c.title.clone(), t.title.clone(), q.clone()))
+            .collect()
+    };
     rsx! {
         section { class: "hero",
             div {
@@ -269,10 +389,10 @@ fn Library() -> Element {
         }
         div { class: "filters",
             input {
-                placeholder: "Search courses…",
+                placeholder: "Search courses, topics, and questions…",
                 value: search(),
                 oninput: move |e| search.set(e.value()),
-                aria_label: "Search courses",
+                aria_label: "Search questions and topics",
             }
             select {
                 aria_label: "Subject",
@@ -297,6 +417,68 @@ fn Library() -> Element {
                 })
             {
                 CourseCard { course: c.clone() }
+            }
+        }
+        if !terms.is_empty() {
+            div { class: "section-head",
+                h2 { "Question results" }
+                span { class: "muted small", "{hits.len()} matching questions" }
+            }
+            if !hits.is_empty() {
+                button {
+                    class: "primary",
+                    disabled: s.progress.active.is_some(),
+                    onclick: {
+                        let questions: Vec<_> = hits.iter().take(10).map(|(_, _, q)| q.clone()).collect();
+                        move |_| {
+                            let questions = questions.clone();
+                            spawn(async move {
+                                cx.state.write().progress.active = Some(Session {
+                                    id: uid().await, questions,
+                                    answers: BTreeMap::new(), drafts: BTreeMap::new(), position: 0,
+                                });
+                                cx.page.set(Page::Session);
+                            });
+                        }
+                    },
+                    "Quiz matching questions"
+                }
+                if s.progress.active.is_some() {
+                    p { class: "small muted", "Finish your current session before starting a search quiz." }
+                }
+            }
+            div { class: "stack",
+                for (course_title, test_title, q) in hits.iter().take(40) {
+                    div { class: "panel row", key: "{q.id}",
+                        div {
+                            p { class: "small muted", "{course_title} · {test_title} · {q.difficulty}" }
+                            strong { "{q.prompt}" }
+                            if let Some(topic) = &q.topic {
+                                p { class: "small muted", "Topic: {topic}" }
+                            }
+                        }
+                        button {
+                            disabled: s.progress.active.is_some(),
+                            onclick: {
+                                let question = q.clone();
+                                move |_| {
+                                    let question = question.clone();
+                                    spawn(async move {
+                                        cx.state.write().progress.active = Some(Session {
+                                            id: uid().await, questions: vec![question],
+                                            answers: BTreeMap::new(), drafts: BTreeMap::new(), position: 0,
+                                        });
+                                        cx.page.set(Page::Session);
+                                    });
+                                }
+                            },
+                            "Practice this question"
+                        }
+                    }
+                }
+            }
+            if hits.len() > 40 {
+                p { class: "small muted", "Showing the first 40 matches. Narrow your search to see more." }
             }
         }
         if let Some(catalog) = s.catalog {
@@ -999,102 +1181,50 @@ fn Settings() -> Element {
                 }
                 button {
                     class: "primary",
-                    disabled: (cx.busy)(),
-                    onclick: move |_| confirm.set(true),
-                    "Refresh catalog"
+                    disabled: (cx.busy)() || (cx.syncing)(),
+                    onclick: move |_| {
+                        spawn(async move {
+                            cx.syncing.set(true);
+                            cx.sync_status.set("Checking for question updates…".into());
+                            let result = sync_catalog(cx, url(), false).await;
+                            match result {
+                                Ok(status) => cx.sync_status.set(status),
+                                Err(e) if e.contains("different collection") => {
+                                    confirm.set(true);
+                                    cx.sync_status.set(e);
+                                }
+                                Err(e) => cx.sync_status.set(format!("Using cached questions: {e}")),
+                            }
+                            cx.syncing.set(false);
+                        });
+                    },
+                    "Sync questions now"
+                }
+                if let Some(last) = cx.state.read().last_synced.as_ref() {
+                    p { class: "small muted", "Last successful sync: {last}" }
+                }
+                if !(cx.sync_status)().is_empty() {
+                    p { role: "status", "{(cx.sync_status)()}" }
                 }
                 if confirm() {
                     div { class: "notice",
-                        "Refresh this catalog? If its collection ID differs, this device’s current course library and progress will be replaced."
+                        "This is a different collection. Switching will replace the current library and progress. Export a backup first if you need it."
                         button {
                             onclick: move |_| {
                                 confirm.set(false);
                                 spawn(async move {
-                                    cx.busy.set(true);
-                                    let result = async {
-                                        let raw = call("catalog", json!(url())).await?;
-                                        let catalog: Catalog = serde_json::from_str(
-                                                raw.as_str().ok_or("Invalid catalog response")?,
-                                            )
-                                            .map_err(|e| e.to_string())?;
-                                        validate_catalog(&catalog)?;
-                                        let mut s = cx.state.write();
-                                        if catalog.collection_id != s.progress.collection_id {
-                                            s.progress = Progress::new(&catalog.collection_id);
-                                            s.courses.clear();
-                                        }
-                                        s.catalog_url = url();
-                                        s.catalog = Some(catalog);
-                                        Ok::<_, String>(())
-                                    }
-                                        .await;
-                                    cx.message
-                                        .set(
-                                            result
-                                                .err()
-                                                .unwrap_or_else(|| {
-                                                    "Catalog refreshed. Download courses from your library."
-                                                        .into()
-                                                }),
-                                        );
-                                    cx.busy.set(false);
+                                    cx.syncing.set(true);
+                                    cx.sync_status.set("Switching collection…".into());
+                                    let result = sync_catalog(cx, url(), true).await;
+                                    cx.sync_status.set(result.unwrap_or_else(|e| format!("Using cached questions: {e}")));
+                                    cx.syncing.set(false);
                                 });
                             },
-                            "Refresh now"
+                            "Switch and sync"
                         }
                         button { onclick: move | _
                                     | confirm.set(false), "Cancel" }
                     }
-                }
-                button {
-                    disabled: (cx.busy)(),
-                    onclick: move |_| {
-                        spawn(async move {
-                            cx.busy.set(true);
-                            let state = (cx.state)();
-                            let result = async {
-                                let catalog = state.catalog.ok_or("Connect a catalog first.")?;
-                                let mut courses = state.courses.clone();
-                                for entry in catalog
-                                    .courses
-                                    .iter()
-                                    .filter(|e| courses.iter().any(|c| c.id == e.id))
-                                    .cloned()
-                                    .collect::<Vec<_>>()
-                                {
-                                    let raw = call(
-                                            "course",
-                                            json!({ "url" : state.catalog_url, "entry" : entry }),
-                                        )
-                                        .await?;
-                                    let course: Course = serde_json::from_str(
-                                            raw.as_str().ok_or("Invalid response")?,
-                                        )
-                                        .map_err(|e| e.to_string())?;
-                                    if course.id != entry.id {
-                                        return Err("Course ID mismatch".into());
-                                    }
-                                    courses.retain(|c| c.id != course.id);
-                                    courses.push(course);
-                                }
-                                validate_courses(&courses)?;
-                                cx.state.write().courses = courses;
-                                Ok::<_, String>(())
-                            }
-                                .await;
-                            cx.message
-                                .set(
-                                    result
-                                        .err()
-                                        .unwrap_or_else(|| {
-                                            "Downloaded courses updated. Active sessions keep their original questions."
-                                                .into()
-                                        }),
-                                );
-                            cx.busy.set(false);
-                        });
-                    },
-                    "Update downloaded courses"
                 }
             }
             section { class: "panel",

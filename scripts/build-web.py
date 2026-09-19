@@ -12,6 +12,18 @@ for app in ['learner','author']:
     dest=root/'dist'/('author' if app=='author' else '')
     dest.mkdir(parents=True,exist_ok=True)
     shutil.copytree(source,dest,dirs_exist_ok=True)
+    index=dest/'index.html'
+    html=index.read_text()
+    if app=='learner':
+        site_url='https://adichannnnnhere64.github.io/'+(base+'/' if base else '')
+        metadata=(f'<meta name="description" content="Search Java Enterprise and Jakarta EE questions and take free practice quizzes.">'
+                  f'<link rel="canonical" href="{site_url}">'
+                  f'<meta property="og:title" content="Tutorialz · Jakarta EE quizzes">'
+                  f'<meta property="og:description" content="Search 1,400 Java Enterprise and Jakarta EE practice questions.">'
+                  f'<meta property="og:url" content="{site_url}">')
+    else:
+        metadata='<meta name="robots" content="noindex">'
+    index.write_text(html.replace('</head>',metadata+'</head>',1))
     # An exact build manifest avoids caching partial shells or stale assets.
     files=[p for p in source.rglob('*') if p.is_file()]
     names=['./'+str(p.relative_to(source)) for p in files]
@@ -24,4 +36,7 @@ for app in ['learner','author']:
 shutil.copytree(root/'public/java-pack',root/'dist/java-pack',dirs_exist_ok=True)
 shutil.copytree(root/'content',root/'dist/content',dirs_exist_ok=True)
 (root/'dist/.nojekyll').write_text('')
+site_url='https://adichannnnnhere64.github.io/'+(base+'/' if base else '')
+(root/'dist/sitemap.xml').write_text(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>{site_url}</loc></url></urlset>\n')
+(root/'dist/robots.txt').write_text(f'User-agent: *\nAllow: /\nSitemap: {site_url}sitemap.xml\n')
 print('Serve dist/ using an HTTP server; do not open index.html as a file.')

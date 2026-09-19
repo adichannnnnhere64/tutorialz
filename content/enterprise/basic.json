@@ -1,0 +1,2091 @@
+{
+  "schema_version": 1,
+  "id": "ee-basic",
+  "title": "Java Enterprise and Jakarta EE — Basic",
+  "description": "100 original questions grounded in official Jakarta EE specifications.",
+  "subject": "Java Enterprise / Jakarta EE",
+  "difficulty": "easy",
+  "lessons": [],
+  "tests": [
+    {
+      "id": "ee-basic-platform-test",
+      "title": "Platform practice",
+      "description": "Basic Jakarta EE platform questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-001-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of Jakarta EE profiles?",
+          "difficulty": "easy",
+          "explanation": "Jakarta ee profiles select a defined subset of platform APIs. When a deployment depends on an API absent from its target profile, declare a compatible profile or deploy to a runtime that supplies that API. ",
+          "type": "choice",
+          "options": [
+            "select a defined subset of platform APIs",
+            "route matching HTTP requests to a servlet",
+            "chooses a representation using media types",
+            "define instance lifetime and contextual identity"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "Jakarta EE profiles"
+        },
+        {
+          "id": "ee-basic-002-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of the jakarta namespace?",
+          "difficulty": "easy",
+          "explanation": "The jakarta namespace identifies current Jakarta APIs after the javax transition. When legacy imports fail after a Jakarta EE migration, migrate imports and dependencies together to matching Jakarta artifacts. ",
+          "type": "choice",
+          "options": [
+            "allow safe retry of a defined operation",
+            "select a replacement bean for a deployment",
+            "bind persistence state to one transaction",
+            "identifies current Jakarta APIs after the javax transition"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "the jakarta namespace"
+        },
+        {
+          "id": "ee-basic-003-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of portable deployment?",
+          "difficulty": "easy",
+          "explanation": "Portable deployment relies on specification contracts across compatible products. When application code depends on one vendor's extension, isolate vendor extensions and test against the declared profile. ",
+          "type": "choice",
+          "options": [
+            "reverses completed steps across independent services",
+            "replaces credentials without exposing them in code",
+            "relies on specification contracts across compatible products",
+            "load an association with its parent"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "portable deployment"
+        },
+        {
+          "id": "ee-basic-004-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of application server services?",
+          "difficulty": "easy",
+          "explanation": "Application server services provide managed lifecycle, security, and transactions. When a manually created object has no container services, obtain the component through the container. ",
+          "type": "choice",
+          "options": [
+            "encapsulate reusable domain checks",
+            "provide managed lifecycle, security, and transactions",
+            "establishes a caller identity",
+            "marks successful message processing"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "application server services"
+        },
+        {
+          "id": "ee-basic-005-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of WAR packaging?",
+          "difficulty": "easy",
+          "explanation": "War packaging packages web components and resources for deployment. When a web artifact is missing runtime classes or descriptors, inspect WAR layout and dependency scope. ",
+          "type": "choice",
+          "options": [
+            "packages web components and resources for deployment",
+            "sets a lifetime for stale work",
+            "reports field failures consistently",
+            "route matching HTTP requests to a servlet"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "WAR packaging"
+        },
+        {
+          "id": "ee-basic-006-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of EAR packaging?",
+          "difficulty": "easy",
+          "explanation": "Ear packaging groups enterprise modules with shared deployment metadata. When module class loading differs from local development, define explicit module dependencies and test the assembled EAR. ",
+          "type": "choice",
+          "options": [
+            "run timed jobs using managed scheduling",
+            "distinguish safe reads from state-changing requests",
+            "allow safe retry of a defined operation",
+            "groups enterprise modules with shared deployment metadata"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "EAR packaging"
+        },
+        {
+          "id": "ee-basic-007-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of configuration by environment?",
+          "difficulty": "easy",
+          "explanation": "Configuration by environment separates deploy-specific values from application logic. When production credentials are embedded in source, inject configuration from the deployment environment. ",
+          "type": "choice",
+          "options": [
+            "ties an instance to the injection target's lifecycle",
+            "load an association with its parent",
+            "separates deploy-specific values from application logic",
+            "binds path, query, and header values to Java types"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "configuration by environment"
+        },
+        {
+          "id": "ee-basic-008-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of resource injection?",
+          "difficulty": "easy",
+          "explanation": "Resource injection resolves container-managed resources. When a lookup works locally but fails on the target server, verify the resource name and target server binding. ",
+          "type": "choice",
+          "options": [
+            "establishes a caller identity",
+            "resolves container-managed resources",
+            "serializes beans held in passivating scopes",
+            "commits all work or rolls it back"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "resource injection"
+        },
+        {
+          "id": "ee-basic-009-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of application lifecycle callbacks?",
+          "difficulty": "easy",
+          "explanation": "Application lifecycle callbacks run at managed construction and destruction boundaries. When cleanup never runs for manually instantiated components, move lifecycle logic to a container-managed component. ",
+          "type": "choice",
+          "options": [
+            "run at managed construction and destruction boundaries",
+            "publishes an event reliably with a database change",
+            "protects data in transit",
+            "sets a lifetime for stale work"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "application lifecycle callbacks"
+        },
+        {
+          "id": "ee-basic-010-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of specification compatibility?",
+          "difficulty": "easy",
+          "explanation": "Specification compatibility defines portable behavior, not identical vendor internals. When a vendor-specific tuning knob changes across servers, separate portable behavior from measured vendor tuning. ",
+          "type": "choice",
+          "options": [
+            "isolates repeatedly failing messages",
+            "checks relationships between fields",
+            "run timed jobs using managed scheduling",
+            "defines portable behavior, not identical vendor internals"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/11/",
+          "topic": "specification compatibility"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-servlet-test",
+      "title": "Servlet practice",
+      "description": "Basic Jakarta EE servlet questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-011-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of servlet mappings?",
+          "difficulty": "easy",
+          "explanation": "Servlet mappings route matching HTTP requests to a servlet. When the endpoint returns 404 although the application deploys, check the context path and mapping pattern. ",
+          "type": "choice",
+          "options": [
+            "identifies current Jakarta APIs after the javax transition",
+            "binds path, query, and header values to Java types",
+            "route matching HTTP requests to a servlet",
+            "run background work under container control"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "servlet mappings"
+        },
+        {
+          "id": "ee-basic-012-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of filter chains?",
+          "difficulty": "easy",
+          "explanation": "Filter chains process matching requests before and after a target. When authentication logic is skipped for one URL pattern, verify filter mappings and chain order. ",
+          "type": "choice",
+          "options": [
+            "serializes beans held in passivating scopes",
+            "process matching requests before and after a target",
+            "resolves container-managed resources",
+            "limits the result set returned per request"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "filter chains"
+        },
+        {
+          "id": "ee-basic-013-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of request scope?",
+          "difficulty": "easy",
+          "explanation": "Request scope holds data for one HTTP request. When user-specific values leak between requests, store request-specific state on the request rather than servlet fields. ",
+          "type": "choice",
+          "options": [
+            "holds data for one HTTP request",
+            "expose objects through CDI injection",
+            "repeat a query per parent object",
+            "publishes an event reliably with a database change"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "request scope"
+        },
+        {
+          "id": "ee-basic-014-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of session scope?",
+          "difficulty": "easy",
+          "explanation": "Session scope associates state with a browser session. When users lose state when sessions expire or nodes change, define session lifetime and replication strategy explicitly. ",
+          "type": "choice",
+          "options": [
+            "determines how a called method joins a transaction",
+            "passes caller identity into managed calls",
+            "isolates repeatedly failing messages",
+            "associates state with a browser session"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "session scope"
+        },
+        {
+          "id": "ee-basic-015-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of application scope?",
+          "difficulty": "easy",
+          "explanation": "Application scope shares attributes within a web application. When a shared mutable attribute races under load, protect shared state or use an appropriate managed store. ",
+          "type": "choice",
+          "options": [
+            "limits producers when consumers lag",
+            "run background work under container control",
+            "shares attributes within a web application",
+            "changes session identity after login"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "application scope"
+        },
+        {
+          "id": "ee-basic-016-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of async servlet processing?",
+          "difficulty": "easy",
+          "explanation": "Async servlet processing releases request threads while work continues. When long requests exhaust the servlet worker pool, use supported asynchronous processing with a bounded executor. ",
+          "type": "choice",
+          "options": [
+            "resolves container-managed resources",
+            "releases request threads while work continues",
+            "checks parameters and return values",
+            "balances concurrency against database capacity"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "async servlet processing"
+        },
+        {
+          "id": "ee-basic-017-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of HTTP method semantics?",
+          "difficulty": "easy",
+          "explanation": "Http method semantics distinguish safe reads from state-changing requests. When a crawler triggers a state change through GET, use an appropriate mutating HTTP method and CSRF protection. ",
+          "type": "choice",
+          "options": [
+            "distinguish safe reads from state-changing requests",
+            "relies on specification contracts across compatible products",
+            "turns application exceptions into HTTP responses",
+            "expose objects through CDI injection"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "HTTP method semantics"
+        },
+        {
+          "id": "ee-basic-018-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of response commitment?",
+          "difficulty": "easy",
+          "explanation": "Response commitment prevents changing headers after the response is sent. When an error handler cannot set its status code, set status and headers before writing or flushing the body. ",
+          "type": "choice",
+          "options": [
+            "use validators such as ETag for cache and concurrency",
+            "maps an entity key to database identity",
+            "determines how a called method joins a transaction",
+            "prevents changing headers after the response is sent"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "response commitment"
+        },
+        {
+          "id": "ee-basic-019-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of multipart handling?",
+          "difficulty": "easy",
+          "explanation": "Multipart handling parses uploaded form parts. When large uploads consume excessive memory, set multipart limits and stream or spool parts safely. ",
+          "type": "choice",
+          "options": [
+            "controls which concurrent changes a transaction sees",
+            "changes session identity after login",
+            "parses uploaded form parts",
+            "detects conflicting updates with a version"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "multipart handling"
+        },
+        {
+          "id": "ee-basic-020-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of forward and redirect?",
+          "difficulty": "easy",
+          "explanation": "Forward and redirect either transfers control inside the server or asks the client to navigate. When a redirect unexpectedly loses request attributes, use a forward for same-request state or persist state explicitly. ",
+          "type": "choice",
+          "options": [
+            "checks parameters and return values",
+            "either transfers control inside the server or asks the client to navigate",
+            "limits access to only necessary operations",
+            "depends on destination and consumer topology"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/",
+          "topic": "forward and redirect"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-rest-test",
+      "title": "Rest practice",
+      "description": "Basic Jakarta EE rest questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-021-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of resource paths?",
+          "difficulty": "easy",
+          "explanation": "Resource paths map URI paths to resource methods. When two methods conflict for the same request, make path and HTTP method matching unambiguous. ",
+          "type": "choice",
+          "options": [
+            "map URI paths to resource methods",
+            "declare field and property invariants",
+            "carries selected context into tasks",
+            "relies on specification contracts across compatible products"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "resource paths"
+        },
+        {
+          "id": "ee-basic-022-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of content negotiation?",
+          "difficulty": "easy",
+          "explanation": "Content negotiation chooses a representation using media types. When clients receive 406 or 415 on valid-looking requests, align Accept and Content-Type with produces and consumes declarations. ",
+          "type": "choice",
+          "options": [
+            "isolate slow dependency workloads",
+            "run at managed construction and destruction boundaries",
+            "either transfers control inside the server or asks the client to navigate",
+            "chooses a representation using media types"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "content negotiation"
+        },
+        {
+          "id": "ee-basic-023-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of parameter conversion?",
+          "difficulty": "easy",
+          "explanation": "Parameter conversion binds path, query, and header values to Java types. When malformed input reaches business logic unexpectedly, validate converted parameters and map client errors consistently. ",
+          "type": "choice",
+          "options": [
+            "apply cross-cutting behavior around invocations",
+            "detects conflicting updates with a version",
+            "binds path, query, and header values to Java types",
+            "shares attributes within a web application"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "parameter conversion"
+        },
+        {
+          "id": "ee-basic-024-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of exception mapping?",
+          "difficulty": "easy",
+          "explanation": "Exception mapping turns application exceptions into HTTP responses. When internal stack traces reach API clients, register an exception mapper that returns safe error bodies. ",
+          "type": "choice",
+          "options": [
+            "limits access to only necessary operations",
+            "turns application exceptions into HTTP responses",
+            "tracks managed entities and changes",
+            "determine which failures mark a transaction for rollback"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "exception mapping"
+        },
+        {
+          "id": "ee-basic-025-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of request filters?",
+          "difficulty": "easy",
+          "explanation": "Request filters inspect or modify inbound REST requests. When authorization applies to some endpoints but not others, bind the filter at the intended global or name scope. ",
+          "type": "choice",
+          "options": [
+            "inspect or modify inbound REST requests",
+            "return connections after transactional work",
+            "record sensitive operations with actor context",
+            "declare field and property invariants"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "request filters"
+        },
+        {
+          "id": "ee-basic-026-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of response filters?",
+          "difficulty": "easy",
+          "explanation": "Response filters modify outbound REST responses. When correlation headers disappear on error responses, apply response filters across normal and mapped error paths. ",
+          "type": "choice",
+          "options": [
+            "may redeliver a message after failure",
+            "renders user-facing validation messages",
+            "isolate slow dependency workloads",
+            "modify outbound REST responses"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "response filters"
+        },
+        {
+          "id": "ee-basic-027-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of REST client timeouts?",
+          "difficulty": "easy",
+          "explanation": "Rest client timeouts bound remote call duration. When a dependency outage exhausts request threads, set connect and read timeouts and use a bounded retry policy. ",
+          "type": "choice",
+          "options": [
+            "provide managed lifecycle, security, and transactions",
+            "shares attributes within a web application",
+            "bound remote call duration",
+            "prevent runaway memory use"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "REST client timeouts"
+        },
+        {
+          "id": "ee-basic-028-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of idempotent updates?",
+          "difficulty": "easy",
+          "explanation": "Idempotent updates allow safe retry of a defined operation. When retries create duplicate resources, use stable resource identifiers or idempotency keys. ",
+          "type": "choice",
+          "options": [
+            "tracks managed entities and changes",
+            "allow safe retry of a defined operation",
+            "defines portable behavior, not identical vendor internals",
+            "resolves a bean by type and qualifiers"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "idempotent updates"
+        },
+        {
+          "id": "ee-basic-029-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of pagination?",
+          "difficulty": "easy",
+          "explanation": "Pagination limits the result set returned per request. When a list endpoint becomes slow as the table grows, use bounded pages and stable ordering or cursors. ",
+          "type": "choice",
+          "options": [
+            "limits the result set returned per request",
+            "wrap business interfaces selectively",
+            "locks database rows during a transaction",
+            "return connections after transactional work"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "pagination"
+        },
+        {
+          "id": "ee-basic-030-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of conditional requests?",
+          "difficulty": "easy",
+          "explanation": "Conditional requests use validators such as ETag for cache and concurrency. When clients overwrite unseen changes, require a matching conditional update validator. ",
+          "type": "choice",
+          "options": [
+            "bounds a transaction's running time",
+            "prevents unwanted browser-authenticated writes",
+            "may redeliver a message after failure",
+            "use validators such as ETag for cache and concurrency"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/restful-ws/4.0/",
+          "topic": "conditional requests"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-cdi-test",
+      "title": "Cdi practice",
+      "description": "Basic Jakarta EE cdi questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-031-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of type-safe injection?",
+          "difficulty": "easy",
+          "explanation": "Type-safe injection resolves a bean by type and qualifiers. When deployment fails with an ambiguous dependency, add a qualifier or narrow the available beans. ",
+          "type": "choice",
+          "options": [
+            "apply different constraints in different workflows",
+            "prevent runaway memory use",
+            "resolves a bean by type and qualifiers",
+            "deliver a message to one consumer in a competing group"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "type-safe injection"
+        },
+        {
+          "id": "ee-basic-032-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of qualifiers?",
+          "difficulty": "easy",
+          "explanation": "Qualifiers distinguish beans of the same type. When the wrong implementation is selected, annotate the injection point and implementation with the same qualifier. ",
+          "type": "choice",
+          "options": [
+            "defines portable behavior, not identical vendor internals",
+            "distinguish beans of the same type",
+            "protect invariants even outside the application",
+            "bound latency while handling transient failures"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "qualifiers"
+        },
+        {
+          "id": "ee-basic-033-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of bean scopes?",
+          "difficulty": "easy",
+          "explanation": "Bean scopes define instance lifetime and contextual identity. When request state appears in another user's session, choose the scope that matches the state lifetime. ",
+          "type": "choice",
+          "options": [
+            "define instance lifetime and contextual identity",
+            "packages web components and resources for deployment",
+            "releases request threads while work continues",
+            "bound remote call duration"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "bean scopes"
+        },
+        {
+          "id": "ee-basic-034-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of dependent scope?",
+          "difficulty": "easy",
+          "explanation": "Dependent scope ties an instance to the injection target's lifecycle. When a dependent object is retained longer than expected, review the owning bean lifecycle and destruction. ",
+          "type": "choice",
+          "options": [
+            "chooses a representation using media types",
+            "synchronizes pending changes with the database",
+            "bounds a transaction's running time",
+            "ties an instance to the injection target's lifecycle"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "dependent scope"
+        },
+        {
+          "id": "ee-basic-035-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of producer methods?",
+          "difficulty": "easy",
+          "explanation": "Producer methods expose objects through CDI injection. When a third-party object cannot be injected directly, provide a producer with appropriate scope and disposal. ",
+          "type": "choice",
+          "options": [
+            "verify rollback and commit behavior",
+            "deliver a message to one consumer in a competing group",
+            "expose objects through CDI injection",
+            "bind values separately from query syntax"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "producer methods"
+        },
+        {
+          "id": "ee-basic-036-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of interceptors?",
+          "difficulty": "easy",
+          "explanation": "Interceptors apply cross-cutting behavior around invocations. When an annotated method bypasses auditing through self-invocation, call through the managed proxy or move behavior to another bean. ",
+          "type": "choice",
+          "options": [
+            "protect invariants even outside the application",
+            "apply cross-cutting behavior around invocations",
+            "treats untrusted text as data in HTML",
+            "process messages under container management"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "interceptors"
+        },
+        {
+          "id": "ee-basic-037-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of decorators?",
+          "difficulty": "easy",
+          "explanation": "Decorators wrap business interfaces selectively. When a decorator is never invoked, verify the decorated type and decorator enablement. ",
+          "type": "choice",
+          "options": [
+            "wrap business interfaces selectively",
+            "checks nested objects marked for validation",
+            "stops work no longer needed",
+            "packages web components and resources for deployment"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "decorators"
+        },
+        {
+          "id": "ee-basic-038-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of events?",
+          "difficulty": "easy",
+          "explanation": "Events decouple observers from event producers. When an observer runs at an unexpected transaction phase, select the intended synchronous or transactional observer phase. ",
+          "type": "choice",
+          "options": [
+            "lets in-flight work finish before termination",
+            "route matching HTTP requests to a servlet",
+            "chooses a representation using media types",
+            "decouple observers from event producers"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "events"
+        },
+        {
+          "id": "ee-basic-039-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of alternatives?",
+          "difficulty": "easy",
+          "explanation": "Alternatives select a replacement bean for a deployment. When a test implementation runs in production, limit alternative selection to the intended deployment. ",
+          "type": "choice",
+          "options": [
+            "allow safe retry of a defined operation",
+            "bind values separately from query syntax",
+            "select a replacement bean for a deployment",
+            "distinguish safe reads from state-changing requests"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "alternatives"
+        },
+        {
+          "id": "ee-basic-040-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of passivation?",
+          "difficulty": "easy",
+          "explanation": "Passivation serializes beans held in passivating scopes. When session restoration fails for a nonserializable dependency, make the bean passivation capable or use another scope. ",
+          "type": "choice",
+          "options": [
+            "treats untrusted text as data in HTML",
+            "serializes beans held in passivating scopes",
+            "defer loading an association",
+            "coordinates multiple XA resources"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/cdi/4.1/",
+          "topic": "passivation"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-persistence-test",
+      "title": "Persistence practice",
+      "description": "Basic Jakarta EE persistence questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-041-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of entity identity?",
+          "difficulty": "easy",
+          "explanation": "Entity identity maps an entity key to database identity. When two rows collapse into one managed object, verify the primary key mapping and equality contract. ",
+          "type": "choice",
+          "options": [
+            "maps an entity key to database identity",
+            "restricts methods or URLs by role",
+            "fan out messages to subscribers",
+            "checks nested objects marked for validation"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "entity identity"
+        },
+        {
+          "id": "ee-basic-042-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of persistence context?",
+          "difficulty": "easy",
+          "explanation": "Persistence context tracks managed entities and changes. When edits to a detached entity are not saved, merge the detached state or reload a managed entity. ",
+          "type": "choice",
+          "options": [
+            "correlates asynchronous responses with requests",
+            "reject invalid input before expensive work",
+            "lets in-flight work finish before termination",
+            "tracks managed entities and changes"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "persistence context"
+        },
+        {
+          "id": "ee-basic-043-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of flush?",
+          "difficulty": "easy",
+          "explanation": "Flush synchronizes pending changes with the database. When a constraint error appears only at commit, flush at a controlled point when early validation is needed. ",
+          "type": "choice",
+          "options": [
+            "groups enterprise modules with shared deployment metadata",
+            "distinguish safe reads from state-changing requests",
+            "synchronizes pending changes with the database",
+            "protects data shared across requests"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "flush"
+        },
+        {
+          "id": "ee-basic-044-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of lazy relationships?",
+          "difficulty": "easy",
+          "explanation": "Lazy relationships defer loading an association. When rendering accesses a relation after the context closes, fetch needed data within the transaction or use a projection. ",
+          "type": "choice",
+          "options": [
+            "ties an instance to the injection target's lifecycle",
+            "defer loading an association",
+            "process matching requests before and after a target",
+            "binds path, query, and header values to Java types"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "lazy relationships"
+        },
+        {
+          "id": "ee-basic-045-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of eager relationships?",
+          "difficulty": "easy",
+          "explanation": "Eager relationships load an association with its parent. When one endpoint loads a large unwanted graph, prefer targeted fetch plans for that use case. ",
+          "type": "choice",
+          "options": [
+            "load an association with its parent",
+            "limits the result set returned per request",
+            "serializes beans held in passivating scopes",
+            "restricts methods or URLs by role"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "eager relationships"
+        },
+        {
+          "id": "ee-basic-046-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of N plus one queries?",
+          "difficulty": "easy",
+          "explanation": "N plus one queries repeat a query per parent object. When one page request issues hundreds of selects, use a join fetch, entity graph, or batch fetch after measuring. ",
+          "type": "choice",
+          "options": [
+            "reverses completed steps across independent services",
+            "replaces credentials without exposing them in code",
+            "correlates asynchronous responses with requests",
+            "repeat a query per parent object"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "N plus one queries"
+        },
+        {
+          "id": "ee-basic-047-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of optimistic locking?",
+          "difficulty": "easy",
+          "explanation": "Optimistic locking detects conflicting updates with a version. When concurrent edits silently overwrite each other, add a version field and handle conflict retries at the use-case boundary. ",
+          "type": "choice",
+          "options": [
+            "encapsulate reusable domain checks",
+            "protects data shared across requests",
+            "detects conflicting updates with a version",
+            "marks successful message processing"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "optimistic locking"
+        },
+        {
+          "id": "ee-basic-048-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of pessimistic locking?",
+          "difficulty": "easy",
+          "explanation": "Pessimistic locking locks database rows during a transaction. When a hot row stalls unrelated requests, keep lock duration short and review contention. ",
+          "type": "choice",
+          "options": [
+            "process matching requests before and after a target",
+            "locks database rows during a transaction",
+            "reports field failures consistently",
+            "select a defined subset of platform APIs"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "pessimistic locking"
+        },
+        {
+          "id": "ee-basic-049-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of JPQL parameters?",
+          "difficulty": "easy",
+          "explanation": "Jpql parameters bind values separately from query syntax. When user input changes query structure, use typed parameters rather than string concatenation. ",
+          "type": "choice",
+          "options": [
+            "bind values separately from query syntax",
+            "separates deploy-specific values from application logic",
+            "prevents changing headers after the response is sent",
+            "limits the result set returned per request"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "JPQL parameters"
+        },
+        {
+          "id": "ee-basic-050-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of transaction-scoped entity managers?",
+          "difficulty": "easy",
+          "explanation": "Transaction-scoped entity managers bind persistence state to one transaction. When an entity manager is shared across threads, obtain a context per transaction and avoid sharing it across threads. ",
+          "type": "choice",
+          "options": [
+            "turns application exceptions into HTTP responses",
+            "expose objects through CDI injection",
+            "reverses completed steps across independent services",
+            "bind persistence state to one transaction"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/persistence/3.2/",
+          "topic": "transaction-scoped entity managers"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-transactions-test",
+      "title": "Transactions practice",
+      "description": "Basic Jakarta EE transactions questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-051-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of atomic commit?",
+          "difficulty": "easy",
+          "explanation": "Atomic commit commits all work or rolls it back. When an order is saved while its payment record is missing, put both database changes in one transaction where possible. ",
+          "type": "choice",
+          "options": [
+            "establishes a caller identity",
+            "marks successful message processing",
+            "commits all work or rolls it back",
+            "maps an entity key to database identity"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "atomic commit"
+        },
+        {
+          "id": "ee-basic-052-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of transaction propagation?",
+          "difficulty": "easy",
+          "explanation": "Transaction propagation determines how a called method joins a transaction. When a nested call commits independently of its caller, choose the transaction attribute that matches the boundary. ",
+          "type": "choice",
+          "options": [
+            "reports field failures consistently",
+            "determines how a called method joins a transaction",
+            "protects data in transit",
+            "sets a lifetime for stale work"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "transaction propagation"
+        },
+        {
+          "id": "ee-basic-053-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of rollback rules?",
+          "difficulty": "easy",
+          "explanation": "Rollback rules determine which failures mark a transaction for rollback. When a checked business exception commits partial work, configure rollback behavior for that exception. ",
+          "type": "choice",
+          "options": [
+            "determine which failures mark a transaction for rollback",
+            "checks relationships between fields",
+            "run timed jobs using managed scheduling",
+            "separates deploy-specific values from application logic"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "rollback rules"
+        },
+        {
+          "id": "ee-basic-054-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of transaction timeout?",
+          "difficulty": "easy",
+          "explanation": "Transaction timeout bounds a transaction's running time. When locks remain held during a slow remote call, move remote work outside the database transaction and set a timeout. ",
+          "type": "choice",
+          "options": [
+            "identifies current Jakarta APIs after the javax transition",
+            "holds data for one HTTP request",
+            "turns application exceptions into HTTP responses",
+            "bounds a transaction's running time"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "transaction timeout"
+        },
+        {
+          "id": "ee-basic-055-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of two-phase commit?",
+          "difficulty": "easy",
+          "explanation": "Two-phase commit coordinates multiple XA resources. When a distributed transaction blocks during a coordinator outage, minimize XA participants and plan recovery of in-doubt branches. ",
+          "type": "choice",
+          "options": [
+            "use validators such as ETag for cache and concurrency",
+            "maps an entity key to database identity",
+            "coordinates multiple XA resources",
+            "parses uploaded form parts"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "two-phase commit"
+        },
+        {
+          "id": "ee-basic-056-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of saga compensation?",
+          "difficulty": "easy",
+          "explanation": "Saga compensation reverses completed steps across independent services. When a multi-service workflow partly completes, record steps and implement idempotent compensating actions. ",
+          "type": "choice",
+          "options": [
+            "protects data in transit",
+            "reverses completed steps across independent services",
+            "apply cross-cutting behavior around invocations",
+            "detects conflicting updates with a version"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "saga compensation"
+        },
+        {
+          "id": "ee-basic-057-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of outbox pattern?",
+          "difficulty": "easy",
+          "explanation": "Outbox pattern publishes an event reliably with a database change. When the database commits but the event is lost, write an outbox record in the same transaction and publish asynchronously. ",
+          "type": "choice",
+          "options": [
+            "publishes an event reliably with a database change",
+            "passes caller identity into managed calls",
+            "isolates repeatedly failing messages",
+            "checks relationships between fields"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "outbox pattern"
+        },
+        {
+          "id": "ee-basic-058-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of read isolation?",
+          "difficulty": "easy",
+          "explanation": "Read isolation controls which concurrent changes a transaction sees. When a read-modify-write flow sees inconsistent data, choose isolation or locking based on the invariant and measured contention. ",
+          "type": "choice",
+          "options": [
+            "limits producers when consumers lag",
+            "run background work under container control",
+            "identifies current Jakarta APIs after the javax transition",
+            "controls which concurrent changes a transaction sees"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "read isolation"
+        },
+        {
+          "id": "ee-basic-059-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of connection pool boundaries?",
+          "difficulty": "easy",
+          "explanation": "Connection pool boundaries return connections after transactional work. When the pool empties under traffic, close acquired resources and shorten transactions. ",
+          "type": "choice",
+          "options": [
+            "resolves container-managed resources",
+            "parses uploaded form parts",
+            "return connections after transactional work",
+            "balances concurrency against database capacity"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "connection pool boundaries"
+        },
+        {
+          "id": "ee-basic-060-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of transactional tests?",
+          "difficulty": "easy",
+          "explanation": "Transactional tests verify rollback and commit behavior. When tests pass although rollback semantics are broken, assert persisted state after success and failure paths. ",
+          "type": "choice",
+          "options": [
+            "apply cross-cutting behavior around invocations",
+            "verify rollback and commit behavior",
+            "associates state with a browser session",
+            "inspect or modify inbound REST requests"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/transactions/2.0/",
+          "topic": "transactional tests"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-security-test",
+      "title": "Security practice",
+      "description": "Basic Jakarta EE security questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-061-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of declarative authorization?",
+          "difficulty": "easy",
+          "explanation": "Declarative authorization restricts methods or URLs by role. When an endpoint is reachable without the required role, apply role constraints and test the effective security mapping. ",
+          "type": "choice",
+          "options": [
+            "restricts methods or URLs by role",
+            "resolves a bean by type and qualifiers",
+            "tracks managed entities and changes",
+            "determine which failures mark a transaction for rollback"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "declarative authorization"
+        },
+        {
+          "id": "ee-basic-062-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of authentication mechanism?",
+          "difficulty": "easy",
+          "explanation": "Authentication mechanism establishes a caller identity. When an API accepts unauthenticated requests, configure a supported authentication mechanism and protect routes. ",
+          "type": "choice",
+          "options": [
+            "locks database rows during a transaction",
+            "return connections after transactional work",
+            "limits producers when consumers lag",
+            "establishes a caller identity"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "authentication mechanism"
+        },
+        {
+          "id": "ee-basic-063-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of principal propagation?",
+          "difficulty": "easy",
+          "explanation": "Principal propagation passes caller identity into managed calls. When background work runs without the expected identity, propagate security context through managed facilities. ",
+          "type": "choice",
+          "options": [
+            "checks parameters and return values",
+            "balances concurrency against database capacity",
+            "passes caller identity into managed calls",
+            "depends on destination and consumer topology"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "principal propagation"
+        },
+        {
+          "id": "ee-basic-064-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of least privilege?",
+          "difficulty": "easy",
+          "explanation": "Least privilege limits access to only necessary operations. When a service account can alter unrelated tables, narrow roles and database grants to required actions. ",
+          "type": "choice",
+          "options": [
+            "associates state with a browser session",
+            "limits access to only necessary operations",
+            "carries selected context into tasks",
+            "relies on specification contracts across compatible products"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "least privilege"
+        },
+        {
+          "id": "ee-basic-065-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of CSRF protection?",
+          "difficulty": "easy",
+          "explanation": "Csrf protection prevents unwanted browser-authenticated writes. When a third-party page can submit an authenticated form, validate an anti-CSRF token for state-changing browser requests. ",
+          "type": "choice",
+          "options": [
+            "prevents unwanted browser-authenticated writes",
+            "run at managed construction and destruction boundaries",
+            "either transfers control inside the server or asks the client to navigate",
+            "resolves a bean by type and qualifiers"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "CSRF protection"
+        },
+        {
+          "id": "ee-basic-066-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of output encoding?",
+          "difficulty": "easy",
+          "explanation": "Output encoding treats untrusted text as data in HTML. When a stored comment executes script in a browser, encode output for its HTML context and avoid unsafe insertion. ",
+          "type": "choice",
+          "options": [
+            "modify outbound REST responses",
+            "wrap business interfaces selectively",
+            "locks database rows during a transaction",
+            "treats untrusted text as data in HTML"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "output encoding"
+        },
+        {
+          "id": "ee-basic-067-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of secret rotation?",
+          "difficulty": "easy",
+          "explanation": "Secret rotation replaces credentials without exposing them in code. When credential replacement requires a code rebuild, load secrets from managed configuration and rehearse rotation. ",
+          "type": "choice",
+          "options": [
+            "bounds a transaction's running time",
+            "depends on destination and consumer topology",
+            "replaces credentials without exposing them in code",
+            "synchronizes pending changes with the database"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "secret rotation"
+        },
+        {
+          "id": "ee-basic-068-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of transport security?",
+          "difficulty": "easy",
+          "explanation": "Transport security protects data in transit. When credentials cross the network in clear text, require TLS and enforce secure transport settings. ",
+          "type": "choice",
+          "options": [
+            "carries selected context into tasks",
+            "protects data in transit",
+            "verify rollback and commit behavior",
+            "declare field and property invariants"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "transport security"
+        },
+        {
+          "id": "ee-basic-069-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of session fixation defense?",
+          "difficulty": "easy",
+          "explanation": "Session fixation defense changes session identity after login. When an attacker-chosen session survives authentication, rotate the session identifier on successful login. ",
+          "type": "choice",
+          "options": [
+            "changes session identity after login",
+            "renders user-facing validation messages",
+            "isolate slow dependency workloads",
+            "run at managed construction and destruction boundaries"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "session fixation defense"
+        },
+        {
+          "id": "ee-basic-070-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of audit trails?",
+          "difficulty": "easy",
+          "explanation": "Audit trails record sensitive operations with actor context. When an incident cannot be traced to a principal, log actor, action, outcome, and correlation ID without secrets. ",
+          "type": "choice",
+          "options": [
+            "provide managed lifecycle, security, and transactions",
+            "shares attributes within a web application",
+            "modify outbound REST responses",
+            "record sensitive operations with actor context"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/security/4.0/",
+          "topic": "audit trails"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-messaging-test",
+      "title": "Messaging practice",
+      "description": "Basic Jakarta EE messaging questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-071-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of queues?",
+          "difficulty": "easy",
+          "explanation": "Queues deliver a message to one consumer in a competing group. When each worker processes the same job unexpectedly, send work to a queue and check consumer configuration. ",
+          "type": "choice",
+          "options": [
+            "distinguish beans of the same type",
+            "synchronizes pending changes with the database",
+            "deliver a message to one consumer in a competing group",
+            "map URI paths to resource methods"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "queues"
+        },
+        {
+          "id": "ee-basic-072-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of topics?",
+          "difficulty": "easy",
+          "explanation": "Topics fan out messages to subscribers. When an expected subscriber misses an event, verify subscription durability and activation timing. ",
+          "type": "choice",
+          "options": [
+            "verify rollback and commit behavior",
+            "fan out messages to subscribers",
+            "decouple observers from event producers",
+            "bind values separately from query syntax"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "topics"
+        },
+        {
+          "id": "ee-basic-073-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of acknowledgment?",
+          "difficulty": "easy",
+          "explanation": "Acknowledgment marks successful message processing. When messages are replayed after a crash, make handling idempotent and acknowledge only after durable work. ",
+          "type": "choice",
+          "options": [
+            "marks successful message processing",
+            "coordinates multiple XA resources",
+            "treats untrusted text as data in HTML",
+            "renders user-facing validation messages"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "acknowledgment"
+        },
+        {
+          "id": "ee-basic-074-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of dead-letter handling?",
+          "difficulty": "easy",
+          "explanation": "Dead-letter handling isolates repeatedly failing messages. When one poison message blocks progress, set redelivery limits and route failures to a dead-letter destination. ",
+          "type": "choice",
+          "options": [
+            "apply different constraints in different workflows",
+            "prevent runaway memory use",
+            "provide managed lifecycle, security, and transactions",
+            "isolates repeatedly failing messages"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "dead-letter handling"
+        },
+        {
+          "id": "ee-basic-075-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of message ordering?",
+          "difficulty": "easy",
+          "explanation": "Message ordering depends on destination and consumer topology. When events for one aggregate arrive out of order, partition by aggregate key and handle sequence checks. ",
+          "type": "choice",
+          "options": [
+            "defines portable behavior, not identical vendor internals",
+            "map URI paths to resource methods",
+            "depends on destination and consumer topology",
+            "bound latency while handling transient failures"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "message ordering"
+        },
+        {
+          "id": "ee-basic-076-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of at-least-once delivery?",
+          "difficulty": "easy",
+          "explanation": "At-least-once delivery may redeliver a message after failure. When a retry charges a customer twice, deduplicate by a stable message or business operation ID. ",
+          "type": "choice",
+          "options": [
+            "decouple observers from event producers",
+            "may redeliver a message after failure",
+            "releases request threads while work continues",
+            "bound remote call duration"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "at-least-once delivery"
+        },
+        {
+          "id": "ee-basic-077-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of message-driven beans?",
+          "difficulty": "easy",
+          "explanation": "Message-driven beans process messages under container management. When a listener fails to receive messages after deployment, verify destination activation configuration and transaction settings. ",
+          "type": "choice",
+          "options": [
+            "process messages under container management",
+            "define instance lifetime and contextual identity",
+            "defer loading an association",
+            "coordinates multiple XA resources"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "message-driven beans"
+        },
+        {
+          "id": "ee-basic-078-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of request-reply messaging?",
+          "difficulty": "easy",
+          "explanation": "Request-reply messaging correlates asynchronous responses with requests. When responses attach to the wrong pending request, use a unique correlation ID and expiry. ",
+          "type": "choice",
+          "options": [
+            "bind persistence state to one transaction",
+            "restricts methods or URLs by role",
+            "apply different constraints in different workflows",
+            "correlates asynchronous responses with requests"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "request-reply messaging"
+        },
+        {
+          "id": "ee-basic-079-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of message expiration?",
+          "difficulty": "easy",
+          "explanation": "Message expiration sets a lifetime for stale work. When obsolete tasks execute hours later, set time-to-live and handle expiration explicitly. ",
+          "type": "choice",
+          "options": [
+            "protect invariants even outside the application",
+            "bound latency while handling transient failures",
+            "sets a lifetime for stale work",
+            "replaces credentials without exposing them in code"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "message expiration"
+        },
+        {
+          "id": "ee-basic-080-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of backpressure?",
+          "difficulty": "easy",
+          "explanation": "Backpressure limits producers when consumers lag. When queue depth grows without bound, measure lag and cap or throttle production. ",
+          "type": "choice",
+          "options": [
+            "releases request threads while work continues",
+            "limits producers when consumers lag",
+            "stops work no longer needed",
+            "packages web components and resources for deployment"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/",
+          "topic": "backpressure"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-validation-test",
+      "title": "Validation practice",
+      "description": "Basic Jakarta EE validation questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-081-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of Bean Validation constraints?",
+          "difficulty": "easy",
+          "explanation": "Bean validation constraints declare field and property invariants. When invalid input is persisted, validate at the boundary and handle constraint violations. ",
+          "type": "choice",
+          "options": [
+            "declare field and property invariants",
+            "route matching HTTP requests to a servlet",
+            "chooses a representation using media types",
+            "define instance lifetime and contextual identity"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "Bean Validation constraints"
+        },
+        {
+          "id": "ee-basic-082-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of validation groups?",
+          "difficulty": "easy",
+          "explanation": "Validation groups apply different constraints in different workflows. When update-only rules reject a create request, select the correct group for each operation. ",
+          "type": "choice",
+          "options": [
+            "allow safe retry of a defined operation",
+            "select a replacement bean for a deployment",
+            "bind persistence state to one transaction",
+            "apply different constraints in different workflows"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "validation groups"
+        },
+        {
+          "id": "ee-basic-083-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of cascaded validation?",
+          "difficulty": "easy",
+          "explanation": "Cascaded validation checks nested objects marked for validation. When invalid nested values pass the outer check, mark the association for cascaded validation. ",
+          "type": "choice",
+          "options": [
+            "reverses completed steps across independent services",
+            "replaces credentials without exposing them in code",
+            "checks nested objects marked for validation",
+            "load an association with its parent"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "cascaded validation"
+        },
+        {
+          "id": "ee-basic-084-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of custom constraints?",
+          "difficulty": "easy",
+          "explanation": "Custom constraints encapsulate reusable domain checks. When the same rule diverges across endpoints, implement one constraint validator with clear semantics. ",
+          "type": "choice",
+          "options": [
+            "stops work no longer needed",
+            "encapsulate reusable domain checks",
+            "establishes a caller identity",
+            "marks successful message processing"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "custom constraints"
+        },
+        {
+          "id": "ee-basic-085-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of cross-field validation?",
+          "difficulty": "easy",
+          "explanation": "Cross-field validation checks relationships between fields. When each field passes but the combined request is invalid, use a class-level constraint or domain validation method. ",
+          "type": "choice",
+          "options": [
+            "checks relationships between fields",
+            "sets a lifetime for stale work",
+            "lets in-flight work finish before termination",
+            "route matching HTTP requests to a servlet"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "cross-field validation"
+        },
+        {
+          "id": "ee-basic-086-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of method validation?",
+          "difficulty": "easy",
+          "explanation": "Method validation checks parameters and return values. When a service accepts invalid arguments outside HTTP, enable validation at the service boundary. ",
+          "type": "choice",
+          "options": [
+            "groups enterprise modules with shared deployment metadata",
+            "distinguish safe reads from state-changing requests",
+            "allow safe retry of a defined operation",
+            "checks parameters and return values"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "method validation"
+        },
+        {
+          "id": "ee-basic-087-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of constraint message interpolation?",
+          "difficulty": "easy",
+          "explanation": "Constraint message interpolation renders user-facing validation messages. When raw template keys appear in API errors, configure message bundles and safe API error mapping. ",
+          "type": "choice",
+          "options": [
+            "ties an instance to the injection target's lifecycle",
+            "load an association with its parent",
+            "renders user-facing validation messages",
+            "binds path, query, and header values to Java types"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "constraint message interpolation"
+        },
+        {
+          "id": "ee-basic-088-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of database constraints?",
+          "difficulty": "easy",
+          "explanation": "Database constraints protect invariants even outside the application. When concurrent requests bypass an application-only uniqueness check, enforce uniqueness in the database and map conflicts. ",
+          "type": "choice",
+          "options": [
+            "establishes a caller identity",
+            "protect invariants even outside the application",
+            "serializes beans held in passivating scopes",
+            "commits all work or rolls it back"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "database constraints"
+        },
+        {
+          "id": "ee-basic-089-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of validation boundaries?",
+          "difficulty": "easy",
+          "explanation": "Validation boundaries reject invalid input before expensive work. When bad payloads reach downstream services, validate at ingress and recheck critical domain invariants. ",
+          "type": "choice",
+          "options": [
+            "reject invalid input before expensive work",
+            "publishes an event reliably with a database change",
+            "protects data in transit",
+            "sets a lifetime for stale work"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "validation boundaries"
+        },
+        {
+          "id": "ee-basic-090-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of validation error format?",
+          "difficulty": "easy",
+          "explanation": "Validation error format reports field failures consistently. When clients cannot identify the rejected field, return a stable structured field-error response. ",
+          "type": "choice",
+          "options": [
+            "isolates repeatedly failing messages",
+            "protects data shared across requests",
+            "groups enterprise modules with shared deployment metadata",
+            "reports field failures consistently"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/bean-validation/3.1/",
+          "topic": "validation error format"
+        }
+      ]
+    },
+    {
+      "id": "ee-basic-concurrency-test",
+      "title": "Concurrency practice",
+      "description": "Basic Jakarta EE concurrency questions.",
+      "difficulty": "easy",
+      "questions": [
+        {
+          "id": "ee-basic-091-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of managed executors?",
+          "difficulty": "easy",
+          "explanation": "Managed executors run background work under container control. When ad hoc threads lose application context, submit work through a managed executor. ",
+          "type": "choice",
+          "options": [
+            "process matching requests before and after a target",
+            "binds path, query, and header values to Java types",
+            "run background work under container control",
+            "select a defined subset of platform APIs"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "managed executors"
+        },
+        {
+          "id": "ee-basic-092-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of context propagation?",
+          "difficulty": "easy",
+          "explanation": "Context propagation carries selected context into tasks. When async work loses identity or naming context, configure the managed context propagated to the task. ",
+          "type": "choice",
+          "options": [
+            "serializes beans held in passivating scopes",
+            "carries selected context into tasks",
+            "prevents changing headers after the response is sent",
+            "limits the result set returned per request"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "context propagation"
+        },
+        {
+          "id": "ee-basic-093-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of bounded task queues?",
+          "difficulty": "easy",
+          "explanation": "Bounded task queues prevent runaway memory use. When a traffic spike creates millions of pending tasks, bound queue capacity and define rejection behavior. ",
+          "type": "choice",
+          "options": [
+            "prevent runaway memory use",
+            "expose objects through CDI injection",
+            "repeat a query per parent object",
+            "publishes an event reliably with a database change"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "bounded task queues"
+        },
+        {
+          "id": "ee-basic-094-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of structured cancellation?",
+          "difficulty": "easy",
+          "explanation": "Structured cancellation stops work no longer needed. When timed-out requests leave expensive tasks running, propagate cancellation and enforce task timeouts. ",
+          "type": "choice",
+          "options": [
+            "determines how a called method joins a transaction",
+            "passes caller identity into managed calls",
+            "isolates repeatedly failing messages",
+            "stops work no longer needed"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "structured cancellation"
+        },
+        {
+          "id": "ee-basic-095-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of thread-safe bean state?",
+          "difficulty": "easy",
+          "explanation": "Thread-safe bean state protects data shared across requests. When a singleton counter produces inconsistent values, use atomic operations or externalize mutable state. ",
+          "type": "choice",
+          "options": [
+            "limits producers when consumers lag",
+            "select a defined subset of platform APIs",
+            "protects data shared across requests",
+            "changes session identity after login"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "thread-safe bean state"
+        },
+        {
+          "id": "ee-basic-096-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of scheduled tasks?",
+          "difficulty": "easy",
+          "explanation": "Scheduled tasks run timed jobs using managed scheduling. When the same job fires on every cluster node, coordinate cluster ownership or make the job idempotent. ",
+          "type": "choice",
+          "options": [
+            "prevents changing headers after the response is sent",
+            "run timed jobs using managed scheduling",
+            "checks parameters and return values",
+            "separates deploy-specific values from application logic"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "scheduled tasks"
+        },
+        {
+          "id": "ee-basic-097-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of connection pool sizing?",
+          "difficulty": "easy",
+          "explanation": "Connection pool sizing balances concurrency against database capacity. When more worker threads increase database wait time, size the pool from measured throughput and database limits. ",
+          "type": "choice",
+          "options": [
+            "balances concurrency against database capacity",
+            "holds data for one HTTP request",
+            "turns application exceptions into HTTP responses",
+            "expose objects through CDI injection"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "connection pool sizing"
+        },
+        {
+          "id": "ee-basic-098-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of bulkheads?",
+          "difficulty": "easy",
+          "explanation": "Bulkheads isolate slow dependency workloads. When one remote dependency consumes every worker, use separate bounded pools or semaphores per dependency. ",
+          "type": "choice",
+          "options": [
+            "use validators such as ETag for cache and concurrency",
+            "maps an entity key to database identity",
+            "determines how a called method joins a transaction",
+            "isolate slow dependency workloads"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "bulkheads"
+        },
+        {
+          "id": "ee-basic-099-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of timeouts and retries?",
+          "difficulty": "easy",
+          "explanation": "Timeouts and retries bound latency while handling transient failures. When retries amplify an outage, set budgets, jitter, and retry only safe operations. ",
+          "type": "choice",
+          "options": [
+            "controls which concurrent changes a transaction sees",
+            "changes session identity after login",
+            "bound latency while handling transient failures",
+            "detects conflicting updates with a version"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "timeouts and retries"
+        },
+        {
+          "id": "ee-basic-100-01",
+          "revision": 1,
+          "prompt": "In Jakarta EE, what is the main purpose of graceful shutdown?",
+          "difficulty": "easy",
+          "explanation": "Graceful shutdown lets in-flight work finish before termination. When deployments interrupt active requests and messages, stop intake and drain work within a bounded deadline. ",
+          "type": "choice",
+          "options": [
+            "checks parameters and return values",
+            "lets in-flight work finish before termination",
+            "limits access to only necessary operations",
+            "depends on destination and consumer topology"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/concurrency/3.1/",
+          "topic": "graceful shutdown"
+        }
+      ]
+    }
+  ]
+}
