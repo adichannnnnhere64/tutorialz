@@ -210,18 +210,25 @@ pub fn AnswerFields(
             rsx! {
                 div { class: "choices",
                     for (i, label) in options.iter().enumerate() {
-                        label { class: if selected.contains(&i) { "choice selected" } else { "choice" },
+                        label { key: "{question.id}-{i}", class: if selected.contains(&i) { "choice selected" } else { "choice" },
                             input {
                                 r#type: if multiple { "checkbox" } else { "radio" },
-                                name: "answer",
+                                name: "answer-{question.id}",
                                 checked: selected.contains(&i),
                                 disabled,
+                                onclick: move |_| {
+                                    if !multiple {
+                                        onchange.call(Answer::Choice(vec![i]));
+                                    }
+                                },
                                 onchange: {
                                     let selected = selected.clone();
                                     move |_| {
-                                        let mut values = if multiple { selected.clone() } else { vec![] };
-                                        if values.contains(&i) { values.retain(|x| *x != i) } else { values.push(i) }
-                                        onchange.call(Answer::Choice(values));
+                                        if multiple {
+                                            let mut values = selected.clone();
+                                            if values.contains(&i) { values.retain(|x| *x != i) } else { values.push(i) }
+                                            onchange.call(Answer::Choice(values));
+                                        }
                                     }
                                 },
                             }

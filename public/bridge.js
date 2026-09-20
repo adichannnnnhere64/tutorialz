@@ -14,6 +14,7 @@
   configure(config){this.config=config;return true;},
   async load(key){return storage(key);}, async save({key,value}){const pending=saveQueue.catch(()=>{}).then(()=>storage(key,value,true));saveQueue=pending;await pending;return true;},
   now(){return Date.now();}, nowIso(){return new Date().toISOString();}, uid(){return crypto.randomUUID();},pick,
+  async nextTurn(){await new Promise(resolve=>setTimeout(resolve,180));return true;},
   download({name,text}){download(name,text);return true;},
   async bundle({collection_id,courses}){const files={},entries=[];for(const c of courses){const text=JSON.stringify(c,null,2)+'\n',path=c.id+'.json';files[path]=text;entries.push({id:c.id,title:c.title,description:c.description,subject:c.subject,difficulty:c.difficulty,path,sha256:await digest(new TextEncoder().encode(text))});}files['catalog.json']=JSON.stringify({schema_version:1,collection_id,courses:entries},null,2)+'\n';download('tutorialz-content.zip',zip(files),'application/zip');return true;},
   async catalog(url){const parsed=new URL(url);if(parsed.protocol!=='https:'&&parsed.hostname!=='localhost'&&parsed.hostname!=='127.0.0.1')throw Error('Use an HTTPS catalog URL.');return new TextDecoder().decode(await fetchBytes(url));},

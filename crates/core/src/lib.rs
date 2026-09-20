@@ -121,6 +121,8 @@ pub struct Session {
     pub answers: BTreeMap<String, Attempt>,
     #[serde(default)]
     pub drafts: BTreeMap<String, Answer>,
+    #[serde(default)]
+    pub fast_mode: bool,
     pub position: usize,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
@@ -490,6 +492,7 @@ mod tests {
             questions: q.clone(),
             answers: BTreeMap::new(),
             drafts: BTreeMap::new(),
+            fast_mode: false,
             position: 0,
         });
         let mut b = Progress::new("sample");
@@ -499,6 +502,7 @@ mod tests {
             questions: q,
             answers: BTreeMap::new(),
             drafts: BTreeMap::new(),
+            fast_mode: false,
             position: 0,
         });
         a.merge(b.clone()).unwrap();
@@ -515,9 +519,25 @@ mod tests {
             questions: questions(),
             answers: BTreeMap::new(),
             drafts: BTreeMap::new(),
+            fast_mode: false,
             position: usize::MAX,
         });
         assert!(a.validate().is_err());
+    }
+    #[test]
+    fn saved_sessions_without_fast_mode_remain_standard_sessions() {
+        let session = Session {
+            id: "older".into(),
+            questions: questions(),
+            answers: BTreeMap::new(),
+            drafts: BTreeMap::new(),
+            fast_mode: false,
+            position: 0,
+        };
+        let mut saved = serde_json::to_value(session).unwrap();
+        saved.as_object_mut().unwrap().remove("fast_mode");
+        let restored: Session = serde_json::from_value(saved).unwrap();
+        assert!(!restored.fast_mode);
     }
     #[test]
     fn exact_choice_set_and_blank_normalization() {

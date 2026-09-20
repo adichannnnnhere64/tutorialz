@@ -210,7 +210,10 @@ fn App() -> Element {
                 Nav { label: "✓  Practice", target: Page::Practice }
                 Nav {
                     label: "◷  Session & results",
-                    target: if state.read().progress.active.is_some() { Page::Session } else { Page::Results },
+                    target: match state.read().progress.active.as_ref() {
+                        Some(session) if !session.fast_mode || session.answers.is_empty() => Page::Session,
+                        _ => Page::Results,
+                    },
                 }
                 Nav { label: "⚙  Settings & backups", target: Page::Settings }
                 div { class: "bottom",
@@ -435,7 +438,7 @@ fn Library() -> Element {
                             spawn(async move {
                                 cx.state.write().progress.active = Some(Session {
                                     id: uid().await, questions,
-                                    answers: BTreeMap::new(), drafts: BTreeMap::new(), position: 0,
+                                    answers: BTreeMap::new(), drafts: BTreeMap::new(), fast_mode: false, position: 0,
                                 });
                                 cx.page.set(Page::Session);
                             });
@@ -466,7 +469,7 @@ fn Library() -> Element {
                                     spawn(async move {
                                         cx.state.write().progress.active = Some(Session {
                                             id: uid().await, questions: vec![question],
-                                            answers: BTreeMap::new(), drafts: BTreeMap::new(), position: 0,
+                                            answers: BTreeMap::new(), drafts: BTreeMap::new(), fast_mode: false, position: 0,
                                         });
                                         cx.page.set(Page::Session);
                                     });
@@ -613,63 +616,73 @@ fn CourseView(id: String) -> Element {
                 p { class: "intro", "{c.description}" }
             }
         }
-        div { class: "split",
+        div { class: "course-layout",
             div { class: "panel",
                 h3 { "Your learning path" }
-                p { class: "small muted", "Follow the order or jump right in." }
-                for (i, l) in c.lessons.iter().enumerate() {
-                    button {
-                        class: "lesson-button",
-                        onclick: move |
-                                _ | selected.set(i),
-                        if cx.state.read().progress.lessons.contains(&l.id) {
-                            "✓ "
-                        } else {
-                            "○ "
+                p { class: "small muted",
+                    if c.lessons.is_empty() {
+                        "Choose a practice test to build a session."
+                    } else {
+                        "Follow the order or jump right in."
+                    }
+                }
+                if !c.lessons.is_empty() {
+                    div { class: "lesson-list",
+                        for (i, l) in c.lessons.iter().enumerate() {
+                            button {
+                                class: "lesson-button",
+                                onclick: move |
+                                        _ | selected.set(i),
+                                if cx.state.read().progress.lessons.contains(&l.id) {
+                                    "✓ "
+                                } else {
+                                    "○ "
+                                }
+                                "{i+1}. {l.title}"
+                            }
                         }
-                        "{i+1}. {l.title}"
                     }
                 }
                 hr {}
                 h3 { "Practice tests" }
-                for t in &c.tests {
-                    div { class: "results-row",
-                        strong { "{t.title}" }
-                        p { class: "small muted", "{t.description}" }
-                        span { class: "badge",
-                            {
-                                let p = &cx.state.read().progress;
-                                let n = t.questions.iter().filter(|q| p.latest(q).is_some()).count();
-                                if n == 0 {
-                                    "Not started"
-                                } else if n == t.questions.len() {
-                                    "Completed"
-                                } else {
-                                    "In progress"
+                div { class: "practice-test-list",
+                    for t in &c.tests {
+                        div { class: "practice-test",
+                            strong { "{t.title}" }
+                            p { class: "small muted", "{t.description}" }
+                            span { class: "badge",
+                                {
+                                    let p = &cx.state.read().progress;
+                                    let n = t.questions.iter().filter(|q| p.latest(q).is_some()).count();
+                                    if n == 0 {
+                                        "Not started"
+                                    } else if n == t.questions.len() {
+                                        "Completed"
+                                    } else {
+                                        "In progress"
+                                    }
                                 }
+                            }
+                            button {
+                                class: "primary",
+                                onclick: move |_| cx.page.set(Page::Practice),
+                                "Build a practice session"
                             }
                         }
                     }
+                }
+            }
+            if let Some(l) = lesson {
+                div { class: "panel",
+                    h2 { "{l.title}" }
+                    Markdown { text: l
+                                .markdown }
                     button {
                         class: "primary",
-                        onclick: move |_| cx.page.set(Page::Practice),
-                        "Build a practice session"
-                    }
-                }
-                div { class: "panel",
-                    if let Some(l) = lesson {
-                        h2 { "{l.title}" }
-                        Markdown { text: l
-                                    .markdown }
-                        button {
-                            class: "primary",
-                            onclick: move |_| {
-                                cx.state.write().progress.lessons.insert(l.id.clone());
-                            },
-                            "Mark lesson complete ✓"
-                        }
-                    } else {
-                        p { "This course has no lessons yet. Try its practice questions." }
+                        onclick: move |_| {
+                            cx.state.write().progress.lessons.insert(l.id.clone());
+                        },
+                        "Mark lesson complete ✓"
                     }
                 }
             }
@@ -684,6 +697,7 @@ fn Practice() -> Element {
     let mut subject = use_signal(|| "all".to_string());
     let mut pool = use_signal(|| "unseen".to_string());
     let mut count = use_signal(|| "5".to_string());
+    let mut fast_mode = use_signal(|| false);
     let s = (cx.state)();
     let subjects: BTreeSet<_> = s.courses.iter().map(|c| c.subject.clone()).collect();
     let mode = match pool().as_str() {
@@ -709,16 +723,24 @@ fn Practice() -> Element {
             _ => true,
         })
         .count();
+    let fast_results_ready = s
+        .progress
+        .active
+        .as_ref()
+        .is_some_and(|session| session.fast_mode && !session.answers.is_empty());
     rsx! {
         div { class: "eyebrow", "A LITTLE CHALLENGE GOES A LONG WAY" }
         h1 { "Make it your practice." }
         p { class: "intro",
-            "Pick your tests and set a comfortable pace. Each session has unique questions, with explanations as you go."
+            "Pick your tests and set a comfortable pace. Each session has unique questions, with explanations to review."
         }
         if s.progress.active.is_some() {
             div { class: "notice",
                 "You have a saved session. Finish or end it before starting another."
-                button { onclick: move |_| cx.page.set(Page::Session), "Resume session" }
+                button {
+                    onclick: move |_| cx.page.set(if fast_results_ready { Page::Results } else { Page::Session }),
+                    if fast_results_ready { "View results" } else { "Resume session" }
+                }
             }
         }
         div { class: "split",
@@ -764,6 +786,17 @@ fn Practice() -> Element {
                         oninput: move |e| count.set(e.value()),
                     }
                 }
+                label { class: "test-check",
+                    input {
+                        r#type: "checkbox",
+                        checked: fast_mode(),
+                        onchange: move |_| fast_mode.set(!fast_mode()),
+                    }
+                    div {
+                        strong { "Fast mode" }
+                        span { "Single-choice answers move to the next question immediately. Review results after finishing." }
+                    }
+                }
                 p { class: "small muted", "{available} eligible questions" }
                 button {
                     class: "primary",
@@ -781,6 +814,7 @@ fn Practice() -> Element {
                                         questions: qs,
                                         answers: BTreeMap::new(),
                                         drafts: BTreeMap::new(),
+                                        fast_mode: fast_mode(),
                                         position: 0,
                                     };
                                     cx.state.write().progress.active = Some(session);
@@ -839,6 +873,9 @@ fn SessionView() -> Element {
             }
         };
     };
+    if session.fast_mode && !session.answers.is_empty() {
+        return rsx! { Results {} };
+    }
     let q = session.questions[session.position].clone();
     rsx! {
         QuestionView {
@@ -853,16 +890,36 @@ fn SessionView() -> Element {
 #[component]
 fn QuestionView(question: Question, index: usize, total: usize) -> Element {
     let mut cx = use_context::<AppContext>();
-    let mut answer = use_signal(|| {
-        cx.state
-            .read()
-            .progress
-            .active
-            .as_ref()
-            .and_then(|s| s.drafts.get(&question.id))
-            .cloned()
-            .unwrap_or_else(|| initial_answer(&question))
-    });
+    let fast_mode = cx
+        .state
+        .read()
+        .progress
+        .active
+        .as_ref()
+        .is_some_and(|s| s.fast_mode);
+    let auto_advance = matches!(
+        question.kind,
+        QuestionKind::Choice {
+            multiple: false,
+            ..
+        }
+    );
+    let answer = cx
+        .state
+        .read()
+        .progress
+        .active
+        .as_ref()
+        .and_then(|s| s.drafts.get(&question.id))
+        .cloned()
+        .unwrap_or_else(|| initial_answer(&question));
+    let has_fast_answer = cx
+        .state
+        .read()
+        .progress
+        .active
+        .as_ref()
+        .is_some_and(|s| s.drafts.contains_key(&question.id));
     let mut execution = use_signal(String::new);
     let mut submitting = use_signal(|| false);
     let mut end_confirm = use_signal(|| false);
@@ -879,7 +936,18 @@ fn QuestionView(question: Question, index: usize, total: usize) -> Element {
         let q = question.clone();
         move |skip: bool| {
             let q = q.clone();
-            let a = if skip { Answer::Skipped } else { answer() };
+            let a = if skip {
+                Answer::Skipped
+            } else {
+                cx.state
+                    .read()
+                    .progress
+                    .active
+                    .as_ref()
+                    .and_then(|s| s.drafts.get(&q.id))
+                    .cloned()
+                    .unwrap_or_else(|| initial_answer(&q))
+            };
             spawn(async move {
                 cx.busy.set(true);
                 submitting.set(true);
@@ -909,6 +977,7 @@ fn QuestionView(question: Question, index: usize, total: usize) -> Element {
                         s.progress.attempts.push(attempt.clone());
                         if let Some(session) = &mut s.progress.active {
                             session.answers.insert(q.id.clone(), attempt);
+                            session.drafts.remove(&q.id);
                         }
                     }
                     Err(e) => cx.message.set(e),
@@ -935,12 +1004,71 @@ fn QuestionView(question: Question, index: usize, total: usize) -> Element {
                 AnswerFields {
                     question: question
                             .clone(),
-                    answer: submitted.as_ref().map(| a | a.answer.clone())
-                            .unwrap_or_else(|| answer()),
-                    disabled: submitted.is_some() || submitting(),
-                    onchange: {let id=question.id.clone(); move |a:Answer| {answer.set(a.clone()); if let Some(s)=&mut cx.state.write().progress.active{s.drafts.insert(id.clone(),a);}}},
+                    answer: submitted.as_ref().map(|attempt| {
+                        if matches!(question.kind, QuestionKind::Choice { .. }) {
+                            initial_answer(&question)
+                        } else {
+                            attempt.answer.clone()
+                        }
+                    }).unwrap_or_else(|| answer.clone()),
+                    disabled: submitted.is_some() || submitting() || (cx.busy)(),
+                    onchange: {let id=question.id.clone(); move |a:Answer| {
+                        if let Some(s)=&mut cx.state.write().progress.active {
+                            s.drafts.insert(id.clone(),a);
+                        }
+                        if fast_mode && auto_advance && index + 1 < total {
+                            spawn(async move {
+                                let _ = call("nextTurn", Value::Null).await;
+                                if let Some(s)=&mut cx.state.write().progress.active {
+                                    if s.position == index { s.position += 1; }
+                                }
+                            });
+                        }
+                    }},
                 }
-                if let Some(a) = submitted {
+                if fast_mode {
+                    p { class: "small muted",
+                        if auto_advance {
+                            "Choose an answer to move on, or use Next to skip."
+                        } else {
+                            "Choose your answers, then use Next to continue."
+                        }
+                    }
+                    div { class: "actions",
+                        if index + 1 < total {
+                            button {
+                                class: "primary",
+                                disabled: (cx.busy)(),
+                                onclick: move |_| {
+                                    if let Some(s) = &mut cx.state.write().progress.active {
+                                        s.position += 1;
+                                    }
+                                },
+                                "Next question →"
+                            }
+                        } else {
+                            button {
+                                class: "primary",
+                                disabled: (cx.busy)() || !has_fast_answer,
+                                onclick: move |_| {
+                                    cx.busy.set(true);
+                                    spawn(async move { finish_fast_session(cx).await; });
+                                },
+                                if (cx.busy)() { "Finishing…" } else { "Finish exam →" }
+                            }
+                            if !has_fast_answer {
+                                button {
+                                    disabled: (cx.busy)(),
+                                    onclick: move |_| {
+                                        cx.busy.set(true);
+                                        spawn(async move { finish_fast_session(cx).await; });
+                                    },
+                                    "Skip & finish"
+                                }
+                            }
+                        }
+                    }
+                } else if let Some(a) = submitted {
                     div { class: if a.correct { "feedback" } else { "feedback incorrect" },
                         strong {
                             if a.answer == Answer::Skipped {
@@ -1019,15 +1147,27 @@ fn QuestionView(question: Question, index: usize, total: usize) -> Element {
                 }
             }
             div { class: "actions",
+                if index > 0 {
+                    button {
+                        class: "quiet",
+                        disabled: submitting() || (cx.busy)(),
+                        onclick: move |_| {
+                            if let Some(s) = &mut cx.state.write().progress.active {
+                                s.position -= 1;
+                            }
+                        },
+                        "← Previous question"
+                    }
+                }
                 button {
                     class: "quiet",
-                    disabled: submitting(),
+                    disabled: submitting() || (cx.busy)(),
                     onclick: move |_| cx.page.set(Page::Library),
                     "Save & leave"
                 }
                 button {
                     class: "quiet",
-                    disabled: submitting(),
+                    disabled: submitting() || (cx.busy)(),
                     onclick: move |_| end_confirm.set(true),
                     "End session"
                 }
@@ -1035,12 +1175,79 @@ fn QuestionView(question: Question, index: usize, total: usize) -> Element {
             if end_confirm() {
                 div { class: "notice",
                     "End this session and review your results? Unanswered questions remain available for future practice."
-                    button { onclick: move |_| cx.page.set(Page::Results), "End & review" }
+                    button { onclick: move |_| {
+                        if fast_mode {
+                            cx.busy.set(true);
+                            spawn(async move { finish_fast_session(cx).await; });
+                        } else {
+                            cx.page.set(Page::Results);
+                        }
+                    }, "End & review" }
                     button { onclick: move |_| end_confirm.set(false), "Keep practicing" }
                 }
             }
         }
     }
+}
+async fn finish_fast_session(mut cx: AppContext) {
+    let Some(session) = cx.state.read().progress.active.clone() else {
+        cx.busy.set(false);
+        return;
+    };
+    if !session.fast_mode || !session.answers.is_empty() {
+        cx.busy.set(false);
+        return;
+    }
+    let mut attempts = Vec::with_capacity(session.questions.len());
+    for question in &session.questions {
+        let answer = session
+            .drafts
+            .get(&question.id)
+            .cloned()
+            .unwrap_or(Answer::Skipped);
+        let result = if let Answer::Code(source) = &answer {
+            call("java", json!({ "question": question, "source": source }))
+                .await
+                .map(|result| result["passed"] == true)
+        } else {
+            grade(question, &answer)
+        };
+        let correct = match result {
+            Ok(correct) => correct,
+            Err(error) => {
+                cx.message.set(error);
+                cx.busy.set(false);
+                return;
+            }
+        };
+        attempts.push(Attempt {
+            id: uid().await,
+            question_id: question.id.clone(),
+            revision: question.revision,
+            answer,
+            correct,
+            timestamp: timestamp().await,
+        });
+    }
+    {
+        let mut state = cx.state.write();
+        if state
+            .progress
+            .active
+            .as_ref()
+            .is_some_and(|s| s.id == session.id)
+        {
+            state.progress.attempts.extend(attempts.iter().cloned());
+            if let Some(active) = &mut state.progress.active {
+                for attempt in attempts {
+                    active.answers.insert(attempt.question_id.clone(), attempt);
+                }
+                active.drafts.clear();
+            }
+        }
+    }
+    cx.busy.set(false);
+    cx.page.set(Page::Results);
 }
 #[component]
 fn Results() -> Element {
@@ -1135,6 +1342,7 @@ fn Results() -> Element {
                                 questions: retry,
                                 answers: BTreeMap::new(),
                                         drafts: BTreeMap::new(),
+                                fast_mode: session.fast_mode,
                                 position: 0,
                             });
                             cx.page.set(Page::Session);
