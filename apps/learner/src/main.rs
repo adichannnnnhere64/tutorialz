@@ -39,6 +39,7 @@ enum Page {
     Library,
     Course(String),
     Practice,
+    PracticeTest(String),
     Session,
     Results,
     Settings,
@@ -118,7 +119,7 @@ async fn sync_catalog(
 #[component]
 fn App() -> Element {
     let state = use_signal(State::default);
-    let page = use_signal(|| Page::Library);
+    let mut page = use_signal(|| Page::Library);
     let mut message = use_signal(String::new);
     let busy = use_signal(|| false);
     let mut ready = use_signal(|| false);
@@ -198,9 +199,35 @@ fn App() -> Element {
         });
     });
     let current = page();
+    let learn_active = matches!(&current, Page::Library | Page::Course(_));
+    let practice_active = matches!(&current, Page::Practice | Page::PracticeTest(_));
+    let activity_active = matches!(&current, Page::Session | Page::Results);
+    let settings_active = matches!(&current, Page::Settings);
+    let mobile_title = match &current {
+        Page::Library => "Learn",
+        Page::Course(_) => "Course",
+        Page::Practice | Page::PracticeTest(_) => "Practice",
+        Page::Session => "Session",
+        Page::Results => "Activity",
+        Page::Settings => "Settings",
+    };
+    let screen_class = match &current {
+        Page::Library => "screen-library",
+        Page::Course(_) => "screen-course",
+        Page::Practice | Page::PracticeTest(_) => "screen-practice",
+        Page::Session => "screen-session",
+        Page::Results => "screen-results",
+        Page::Settings => "screen-settings",
+    };
+    let shell_class = match (cfg!(target_os = "android"), &current) {
+        (true, Page::Session) => "shell learner-shell native-android in-session",
+        (true, _) => "shell learner-shell native-android",
+        (false, Page::Session) => "shell learner-shell in-session",
+        (false, _) => "shell learner-shell",
+    };
     rsx! {
         style { dangerous_inner_html: CSS }
-        div { class: "shell",
+        div { class: shell_class,
             aside { class: "sidebar",
                 div { class: "brand",
                     span { class: "brand-mark", "t" }
@@ -222,7 +249,22 @@ fn App() -> Element {
                     "Your progress stays with you."
                 }
             }
-            main { class: "main",
+            main { class: "main {screen_class}",
+                header { class: "mobile-header",
+                    div { class: "mobile-toolbar",
+                        if matches!(&current, Page::Course(_) | Page::Session) {
+                            button {
+                                class: "mobile-back",
+                                onclick: move |_| page.set(Page::Library),
+                                "‹  Learn"
+                            }
+                        } else {
+                            span { class: "mobile-wordmark", "tutorialz" }
+                        }
+                        span { class: "mobile-header-caption", "ON THIS DEVICE" }
+                    }
+                    h1 { class: "mobile-page-title", "{mobile_title}" }
+                }
                 div { class: "topline",
                     span { "YOUR PERSONAL LEARNING SPACE" }
                     span { class: "pill", "●  Offline-friendly" }
@@ -249,7 +291,10 @@ fn App() -> Element {
                             CourseView { id }
                         },
                         Page::Practice => rsx! {
-                            Practice {}
+                            Practice { preset: None }
+                        },
+                        Page::PracticeTest(id) => rsx! {
+                            Practice { preset: Some(id) }
                         },
                         Page::Session => rsx! {
                             SessionView {}
@@ -263,13 +308,44 @@ fn App() -> Element {
                     }
                 }
             }
+            nav { class: "mobile-tabbar", aria_label: "Learner navigation",
+                MobileTab {
+                    label: "Learn",
+                    icon: "M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z",
+                    target: Page::Library,
+                    active: learn_active,
+                }
+                MobileTab {
+                    label: "Practice",
+                    icon: "M12 3a9 9 0 1 0 9 9M12 3a9 9 0 0 1 9 9M8 12l2.5 2.5L16 9",
+                    target: Page::Practice,
+                    active: practice_active,
+                }
+                MobileTab {
+                    label: "Activity",
+                    icon: "M3 20h18M5 16l4-5 4 3 6-8M16 6h3v3",
+                    target: match state.read().progress.active.as_ref() {
+                        Some(session) if !session.fast_mode || session.answers.is_empty() => Page::Session,
+                        _ => Page::Results,
+                    },
+                    active: activity_active,
+                }
+                MobileTab {
+                    label: "Settings",
+                    icon: "M4 7h16M4 17h16M9 4v6M15 14v6",
+                    target: Page::Settings,
+                    active: settings_active,
+                }
+            }
         }
     }
 }
 #[component]
 fn Nav(label: String, target: Page) -> Element {
     let mut cx = use_context::<AppContext>();
-    let active = (cx.page)() == target;
+    let current = (cx.page)();
+    let active =
+        current == target || matches!((&target, &current), (Page::Practice, Page::PracticeTest(_)));
     rsx! {
         button {
             class: if active { "active" } else { "" },
@@ -280,6 +356,32 @@ fn Nav(label: String, target: Page) -> Element {
                 }
             },
             "{label}"
+        }
+    }
+}
+#[component]
+fn MobileTab(label: String, icon: String, target: Page, active: bool) -> Element {
+    let mut cx = use_context::<AppContext>();
+    rsx! {
+        button {
+            class: if active { "mobile-tab active" } else { "mobile-tab" },
+            aria_label: "{label}",
+            onclick: move |_| {
+                if !(cx.busy)() {
+                    cx.page.set(target.clone());
+                    cx.message.set(String::new());
+                }
+            },
+            svg {
+                view_box: "0 0 24 24",
+                fill: "none",
+                stroke: "currentColor",
+                stroke_width: "1.8",
+                stroke_linecap: "round",
+                stroke_linejoin: "round",
+                path { d: "{icon}" }
+            }
+            span { "{label}" }
         }
     }
 }
@@ -314,6 +416,7 @@ fn Library() -> Element {
         .iter()
         .filter(|q| s.progress.latest(q).is_some_and(|a| a.correct))
         .count();
+    let has_active_session = s.progress.active.is_some();
     let terms: Vec<String> = search()
         .split_whitespace()
         .map(|s| s.to_lowercase())
@@ -346,6 +449,17 @@ fn Library() -> Element {
             .collect()
     };
     rsx! {
+        section { class: "mobile-dashboard",
+            span { class: "mobile-dashboard-label", "TODAY'S MOMENTUM" }
+            strong { "A little progress adds up." }
+            p { "{answered} answered · {correct} correct on your latest tries" }
+            button {
+                class: "primary",
+                onclick: move |_| cx.page.set(if has_active_session { Page::Session } else { Page::Practice }),
+                if has_active_session { "Continue session" } else { "Start practice" }
+                span { "→" }
+            }
+        }
         section { class: "hero",
             div {
                 div { class: "eyebrow", "MAKE ROOM FOR SOMETHING NEW" }
@@ -386,7 +500,11 @@ fn Library() -> Element {
                 span { "on your latest attempts" }
             }
         }
-        div { class: "section-head",
+        div { class: "mobile-list-heading",
+            h2 { "Your courses" }
+            span { "{s.courses.len()} available" }
+        }
+        div { class: "section-head library-section-head",
             h2 { "Your next discovery" }
             span { class: "muted small", "Learn at your own pace" }
         }
@@ -567,6 +685,25 @@ fn CourseCard(course: Course) -> Element {
     };
     let id = course.id.clone();
     rsx! {
+        button {
+            class: "mobile-course-row",
+            aria_label: "Open {course.title}",
+            onclick: {
+                let id = id.clone();
+                move |_| cx.page.set(Page::Course(id.clone()))
+            },
+            span { class: "mobile-course-symbol",
+                if course.subject.contains("Java") { "{{ }}" } else { "✦" }
+            }
+            span { class: "mobile-course-content",
+                strong { "{course.title}" }
+                small { "{course.subject} · {answered} of {total} answered" }
+                span { class: "mobile-course-progress",
+                    span { style: "width:{pct}%" }
+                }
+            }
+            span { class: "mobile-chevron", "›" }
+        }
         article { class: "card",
             div { class: "row",
                 div { class: "icon",
@@ -617,7 +754,7 @@ fn CourseView(id: String) -> Element {
             }
         }
         div { class: "course-layout",
-            div { class: "panel",
+            div { class: if c.lessons.is_empty() { "panel course-path no-lessons" } else { "panel course-path" },
                 h3 { "Your learning path" }
                 p { class: "small muted",
                     if c.lessons.is_empty() {
@@ -647,6 +784,19 @@ fn CourseView(id: String) -> Element {
                 h3 { "Practice tests" }
                 div { class: "practice-test-list",
                     for t in &c.tests {
+                        button {
+                            class: "mobile-test-row",
+                            onclick: {
+                                let id = t.id.clone();
+                                move |_| cx.page.set(Page::PracticeTest(id.clone()))
+                            },
+                            span { class: "mobile-test-icon", "✓" }
+                            span { class: "mobile-test-content",
+                                strong { "{t.title}" }
+                                small { "{t.questions.len()} questions · {t.difficulty}" }
+                            }
+                            span { class: "mobile-chevron", "›" }
+                        }
                         div { class: "practice-test",
                             strong { "{t.title}" }
                             p { class: "small muted", "{t.description}" }
@@ -665,7 +815,10 @@ fn CourseView(id: String) -> Element {
                             }
                             button {
                                 class: "primary",
-                                onclick: move |_| cx.page.set(Page::Practice),
+                                onclick: {
+                                    let id = t.id.clone();
+                                    move |_| cx.page.set(Page::PracticeTest(id.clone()))
+                                },
                                 "Build a practice session"
                             }
                         }
@@ -690,9 +843,9 @@ fn CourseView(id: String) -> Element {
     }
 }
 #[component]
-fn Practice() -> Element {
+fn Practice(preset: Option<String>) -> Element {
     let mut cx = use_context::<AppContext>();
-    let mut selected = use_signal(BTreeSet::<String>::new);
+    let mut selected = use_signal(move || preset.into_iter().collect::<BTreeSet<String>>());
     let mut difficulty = use_signal(|| "all".to_string());
     let mut subject = use_signal(|| "all".to_string());
     let mut pool = use_signal(|| "unseen".to_string());
@@ -829,26 +982,65 @@ fn Practice() -> Element {
             }
             section { class: "panel",
                 h2 { "Choose your tests" }
-                for c in s.courses.iter().filter(|c| subject() == "all" || subject() == c.subject) {
-                    h3 { "{c.title}" }
-                    for t in &c.tests {
-                        label { class: "test-check",
-                            input {
-                                r#type: "checkbox",
-                                checked: selected.read().contains(&t.id),
-                                onchange: {
-                                    let id = t.id.clone();
-                                    move |_| {
-                                        let mut set = selected.write();
-                                        if !set.remove(&id) {
-                                            set.insert(id.clone());
+                p { class: "mobile-picker-help", "Select a course, then choose the tests you want to practice." }
+                div { class: "mobile-test-picker",
+                    for c in s.courses.iter().filter(|c| subject() == "all" || subject() == c.subject) {
+                        details { class: "mobile-test-group",
+                            summary {
+                                span {
+                                    strong { "{c.title}" }
+                                    small { "{c.tests.len()} tests" }
+                                }
+                                span { class: "mobile-chevron", "›" }
+                            }
+                            div { class: "mobile-test-options",
+                                for t in &c.tests {
+                                    label { class: "test-check",
+                                        input {
+                                            r#type: "checkbox",
+                                            checked: selected.read().contains(&t.id),
+                                            onchange: {
+                                                let id = t.id.clone();
+                                                move |_| {
+                                                    let mut set = selected.write();
+                                                    if !set.remove(&id) {
+                                                        set.insert(id.clone());
+                                                    }
+                                                }
+                                            },
+                                        }
+                                        div {
+                                            strong { "{t.title}" }
+                                            span { "{t.questions.len()} questions · {t.difficulty}" }
                                         }
                                     }
-                                },
+                                }
                             }
-                            div {
-                                strong { "{t.title}" }
-                                span { "{t.questions.len()} questions · {t.difficulty}" }
+                        }
+                    }
+                }
+                div { class: "desktop-test-picker",
+                    for c in s.courses.iter().filter(|c| subject() == "all" || subject() == c.subject) {
+                        h3 { "{c.title}" }
+                        for t in &c.tests {
+                            label { class: "test-check",
+                                input {
+                                    r#type: "checkbox",
+                                    checked: selected.read().contains(&t.id),
+                                    onchange: {
+                                        let id = t.id.clone();
+                                        move |_| {
+                                            let mut set = selected.write();
+                                            if !set.remove(&id) {
+                                                set.insert(id.clone());
+                                            }
+                                        }
+                                    },
+                                }
+                                div {
+                                    strong { "{t.title}" }
+                                    span { "{t.questions.len()} questions · {t.difficulty}" }
+                                }
                             }
                         }
                     }
@@ -1257,17 +1449,30 @@ fn Results() -> Element {
         return rsx! {
             h1 { "Your practice history" }
             p { class: "intro", "{s.progress.attempts.len()} recorded submissions on this device." }
-            div { class: "stack",
-                for a in s.progress.attempts.iter().rev().take(30) {
-                    div { class: "panel row",
-                        span { "{a.question_id}" }
-                        span { class: "badge",
-                            if a.answer == Answer::Skipped {
-                                "Skipped"
-                            } else if a.correct {
-                                "Correct"
-                            } else {
-                                "Incorrect"
+            if s.progress.attempts.is_empty() {
+                div { class: "panel activity-empty",
+                    span { class: "activity-empty-icon", "✓" }
+                    h2 { "Your first session starts here" }
+                    p { "Practice a few questions and your progress will appear here." }
+                    button {
+                        class: "primary",
+                        onclick: move |_| cx.page.set(Page::Practice),
+                        "Start practicing"
+                    }
+                }
+            } else {
+                div { class: "stack",
+                    for a in s.progress.attempts.iter().rev().take(30) {
+                        div { class: "panel row",
+                            span { "{a.question_id}" }
+                            span { class: "badge",
+                                if a.answer == Answer::Skipped {
+                                    "Skipped"
+                                } else if a.correct {
+                                    "Correct"
+                                } else {
+                                    "Incorrect"
+                                }
                             }
                         }
                     }

@@ -26,6 +26,8 @@ GitHub Actions deploys the public learner to [Tutorialz on GitHub Pages](https:/
 rustup target add aarch64-linux-android x86_64-linux-android
 dx build --android --package tutorialz-learner --no-default-features --features mobile --target aarch64-linux-android --release
 # For an x86_64 emulator, use --target x86_64-linux-android.
+python3 scripts/patch-android-ui.py release
+cd target/dx/tutorialz-learner/release/android/app && ./gradlew --no-daemon assembleRelease
 ```
 
 Android progress and course cache are JSON in app-private storage. Runtime binaries are stored in the WebView's IndexedDB. Progress export saves to Downloads/Tutorialz via MediaStore (Android 10+); import uses the system file chooser. Tagged `vX.Y.Z` commits publish a signed arm64 APK on [GitHub Releases](https://github.com/adichannnnnhere64/tutorialz/releases). The tag must match `apps/learner/Cargo.toml`'s version, and each release uses the same Android signing key. Play Store publication is not configured. Browser storage can be evicted or cleared, so export backups periodically.

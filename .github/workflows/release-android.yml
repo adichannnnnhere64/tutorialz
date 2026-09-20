@@ -32,6 +32,7 @@ jobs:
       - name: Set upgrade version and rebuild APK
         run: |
           python3 scripts/android-release.py "$GITHUB_REF_NAME" --patch-gradle
+          python3 scripts/patch-android-ui.py release
           cd target/dx/tutorialz-learner/release/android/app
           ./gradlew --no-daemon assembleRelease
       - name: Sign and verify APK

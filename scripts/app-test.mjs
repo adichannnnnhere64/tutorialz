@@ -16,7 +16,7 @@ try{
  await page.getByLabel('Search questions and topics').fill('');
  await page.screenshot({path:'/tmp/tutorialz-library.png',fullPage:true});
  await page.getByRole('button',{name:'Start practicing'}).click();
- await page.getByLabel('Platform practice').first().check();
+ await page.locator('.desktop-test-picker').getByLabel('Platform practice').first().check();
  await page.getByLabel('Number of questions').fill('2');await page.getByRole('button',{name:'Start session'}).click();
  await page.getByRole('button',{name:'Check answer'}).waitFor();
  await page.waitForFunction(async()=>{const s=await window.tutorialz.load('learner-state');return s&&JSON.parse(s).progress.active?.questions?.length===2;});
@@ -34,7 +34,7 @@ try{
  await page.getByRole('radio').nth(session.questions[1].correct[0]).check();
  await page.getByRole('button',{name:'Check answer'}).click();await page.getByRole('button',{name:'View results'}).click();await page.getByRole('heading',{name:'Every attempt counts.'}).waitFor();
  await page.getByRole('button',{name:'Finish session',exact:true}).click();
- await page.getByLabel('Platform practice').first().check();
+ await page.locator('.desktop-test-picker').getByLabel('Platform practice').first().check();
  await page.getByLabel('Number of questions').fill('2');await page.getByRole('checkbox',{name:/Fast mode/}).check();
  await page.getByRole('button',{name:'Start session'}).click();
  await page.waitForFunction(async()=>JSON.parse(await window.tutorialz.load('learner-state')).progress.active?.fast_mode===true);
@@ -69,6 +69,13 @@ try{
  const javaQuestion=sample[0].tests[0].questions.find(q=>q.type==='java');
  const javaResult=await page.evaluate(async q=>window.tutorialz.java({question:q,source:q.reference}),javaQuestion);assert(javaResult.passed);await context.setOffline(false);
  await page.setViewportSize({width:390,height:844});await page.screenshot({path:'/tmp/tutorialz-mobile.png',fullPage:true});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+ await page.goto(base);await page.getByRole('button',{name:/Open Java Enterprise and Jakarta EE/}).first().waitFor();
+ const mobileNav=page.getByRole('navigation',{name:'Learner navigation'});assert(await mobileNav.isVisible());
+ await page.getByRole('button',{name:/Open Java Enterprise and Jakarta EE/}).first().click();await page.locator('.mobile-test-row').first().click();
+ assert.equal(await page.locator('.mobile-test-picker input:checked').count(),1,'Course test should be selected in mobile practice');
+ await page.getByRole('button',{name:'Start session'}).click();await page.getByRole('button',{name:'Check answer'}).waitFor();
+ assert.equal(await mobileNav.isVisible(),false,'Session should use focused navigation');
+ assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  await page.goto(base+'author/');await page.getByRole('heading',{name:'Good questions start here.'}).waitFor();await page.getByRole('button',{name:'Tests',exact:true}).click();await page.getByRole('button',{name:'1. Which type stores a true/false value?',exact:true}).click();await page.getByRole('button',{name:'Preview question',exact:true}).click();
  await page.getByRole('button',{name:'Check preview answer'}).waitFor();
  await page.screenshot({path:'/tmp/tutorialz-author.png',fullPage:true});
