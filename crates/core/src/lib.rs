@@ -519,6 +519,7 @@ pub fn enterprise_courses() -> Vec<Course> {
         include_str!("../../../content/enterprise/advanced.json"),
         include_str!("../../../content/enterprise/beginner-java.json"),
         include_str!("../../../content/enterprise/oop-medium.json"),
+        include_str!("../../../content/enterprise/jakarta-competency-exam.json"),
     ]
     .iter()
     .map(|json| serde_json::from_str(json).expect("bundled enterprise course must be valid"))

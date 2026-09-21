@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "content_revision": 1,
+  "content_revision": 2,
   "collection_id": "tutorialz-jakarta-ee",
   "courses": [
     {
@@ -47,6 +47,15 @@
       "difficulty": "medium",
       "path": "oop-medium.json",
       "sha256": "64772b6285a8045642b1422e5b62a0c3beb50dcf3f99a871967495b1740b0079"
+    },
+    {
+      "id": "jakarta-competency-exam",
+      "title": "Jakarta Competency Exam",
+      "description": "50 original enterprise Java scenarios across ten topics and five knowledge areas. Independent competency practice; not affiliated with or validated by Accenture. Java 17 unless a question specifies Java 9 or 21; framework and Jakarta versions are stated where relevant.",
+      "subject": "Java Enterprise / Jakarta EE",
+      "difficulty": "hard",
+      "path": "jakarta-competency-exam.json",
+      "sha256": "ecd84a8ec2a6ed2b05216e072dae44eee26f9f17b897d2e1ad2f4e89d5824483"
     }
   ]
 }

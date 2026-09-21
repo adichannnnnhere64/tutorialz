@@ -1,5 +1,6 @@
 """Quality and content-integrity checks for the shipped question collection."""
 import copy
+from collections import Counter
 import hashlib
 import importlib.util
 import json
@@ -142,14 +143,58 @@ class QuestionBankTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             out = Path(temp)
             source = ROOT / "content/enterprise"
-            names = ["basic.json", "medium.json", "advanced.json", "beginner-java.json", "oop-medium.json", "catalog.json", "coverage.json"]
+            catalog = json.loads((source / "catalog.json").read_text())
+            names = [entry["path"] for entry in catalog["courses"]] + ["catalog.json", "coverage.json"]
             for name in names:
                 shutil.copyfile(source / name, out / name)
             generator.generate(out)
             first = {name: (out / name).read_bytes() for name in names}
+            for name in names:
+                self.assertEqual(first[name], (source / name).read_bytes(), name)
             generator.generate(out)
             for name in names:
                 self.assertEqual(first[name], (out / name).read_bytes(), name)
+
+    def test_jakarta_exam_blueprint(self):
+        exam = next(c for c in self.courses if c["id"] == "jakarta-competency-exam")
+        self.assertEqual(exam["title"], "Jakarta Competency Exam")
+        self.assertEqual(len(exam["tests"]), 1)
+        questions = exam["tests"][0]["questions"]
+        topics = {"Java Spring", "Hibernate", "Java - Servlets", "Java - JSP",
+                  "Core Java - General", "Java - OOPS", "Java Design Patterns",
+                  "Java - EJB", "Core Java - Java 9", "Java - JMS"}
+        areas = {"Basic, Development, Programming and Configuration Knowledge",
+                 "Design, Architecture, Framework and Business-Process Knowledge",
+                 "Solutioning, Deployment and Implementation Knowledge",
+                 "Tools, Assets, Functional and Domain Knowledge",
+                 "Latest Technology and Industry Trends"}
+        self.assertEqual(len(questions), 50)
+        self.assertEqual(Counter((q["topic"], q["second_topic"]) for q in questions),
+                         Counter({(topic, area): 1 for topic in topics for area in areas}))
+        for q in questions:
+            self.assertEqual(q["origin"], "ai")
+            self.assertIn(q["difficulty"], {"medium", "hard"})
+            self.assertIn(q["assessment"]["kind"], {"apply", "debug", "design", "trace"})
+
+    def test_jakarta_java_trace_answers(self):
+        exam = next(c for c in self.courses if c["id"] == "jakarta-competency-exam")
+        questions = exam["tests"][0]["questions"]
+        for suffix, release in [("suppressed-close-exception", "17"),
+                                ("java-nine-optional-stream", "9")]:
+            q = next(q for q in questions if q["id"] == f"jakarta-competency-{suffix}")
+            source = q["prompt"].split("```java\n")[1].split("```")[0]
+            if "class Main" not in source:
+                source = "class Main { public static void main(String[] args) {\n" + source + "\n} }"
+            with self.subTest(question=q["id"]), tempfile.TemporaryDirectory() as temp:
+                path = Path(temp) / "Main.java"
+                path.write_text(source)
+                compiled = subprocess.run(["javac", "--release", release, str(path)],
+                                          capture_output=True, text=True, timeout=30)
+                self.assertEqual(compiled.returncode, 0, compiled.stderr)
+                actual = subprocess.run(["java", "-cp", temp, "Main"],
+                                        capture_output=True, text=True, timeout=10)
+                self.assertEqual(actual.returncode, 0, actual.stderr)
+                self.assertEqual(q["options"][q["correct"][0]], f"`{actual.stdout}`")
 
     def test_catalog_rejects_modified_bytes(self):
         with tempfile.TemporaryDirectory() as temp:

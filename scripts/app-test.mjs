@@ -5,6 +5,36 @@ const base=process.env.APP_URL||'http://127.0.0.1:8766/';
 await page.route('https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json',route=>route.fulfill({path:'content/enterprise/catalog.json',contentType:'application/json'}));
 try{
  await page.goto(base);await page.getByRole('heading',{name:'Small steps. Stronger skills.'}).waitFor();
+ const examContext=await browser.newContext();
+ try{
+  const examPage=await examContext.newPage();
+  await examPage.route('https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json',route=>route.fulfill({path:'content/enterprise/catalog.json',contentType:'application/json'}));
+  await examPage.goto(base);
+  await examPage.getByRole('heading',{name:'Jakarta Competency Exam',exact:true}).waitFor();
+  await examPage.getByLabel('Search questions and topics').fill('Solutioning, Deployment and Implementation Knowledge');
+  await examPage.getByRole('heading',{name:'Question results'}).waitFor();
+  assert.equal(await examPage.getByRole('button',{name:'Practice this question'}).count(),10);
+  await examPage.getByLabel('Search questions and topics').fill('');
+  await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-library.png',fullPage:true});
+  await examPage.getByRole('button',{name:'Start practicing'}).click();
+  await examPage.locator('.desktop-test-picker').getByLabel('Jakarta Competency Exam',{exact:true}).check();
+  await examPage.getByLabel('Number of questions').fill('50');
+  await examPage.getByRole('button',{name:'Start session'}).click();
+  await examPage.getByRole('button',{name:'Check answer'}).waitFor();
+  await examPage.waitForFunction(async()=>JSON.parse(await window.tutorialz.load('learner-state')).progress.active?.questions.length===50);
+  const examState=JSON.parse(await examPage.evaluate(()=>window.tutorialz.load('learner-state')));
+  const examQuestions=examState.progress.active.questions;
+  assert.equal(new Set(examQuestions.map(q=>q.topic)).size,10);
+  assert.equal(new Set(examQuestions.map(q=>q.second_topic)).size,5);
+  assert(examQuestions.every(q=>q.id.startsWith('jakarta-competency-')));
+  await examPage.getByRole('radio').nth(examQuestions[0].correct[0]).check();
+  await examPage.getByRole('button',{name:'Check answer'}).click();
+  await examPage.getByText("That's correct",{exact:false}).waitFor();
+  await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-question.png',fullPage:true});
+  await examPage.setViewportSize({width:390,height:844});
+  assert.equal(await examPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
+  await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-mobile.png',fullPage:true});
+ }finally{await examContext.close();}
  await page.getByLabel('Search questions and topics').fill('optimistic locking');
  await page.getByRole('heading',{name:'Question results'}).waitFor();
  assert(await page.getByRole('button',{name:'Practice this question'}).count()>0);

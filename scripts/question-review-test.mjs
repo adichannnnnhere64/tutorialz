@@ -54,7 +54,7 @@ try {
   await page.evaluate(value => window.tutorialz.save({ key: 'learner-state', value: JSON.stringify(value) }), state);
   await page.reload();
   await page.getByRole('heading', { name: 'Small steps. Stronger skills.' }).waitFor();
-  await page.waitForFunction(async () => JSON.parse(await window.tutorialz.load('learner-state')).catalog.content_revision === 1);
+  await page.waitForFunction(async revision => JSON.parse(await window.tutorialz.load('learner-state')).catalog.content_revision === revision, catalog.content_revision);
   const upgraded = JSON.parse(await page.evaluate(() => window.tutorialz.load('learner-state')));
   assert.notEqual(upgraded.courses[0].tests[0].questions[0].prompt, 'Retired duplicate from the old bank');
   assert.deepEqual(upgraded.progress.attempts, attempts);

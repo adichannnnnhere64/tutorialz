@@ -1,5 +1,5 @@
 {
-  "questions": 350,
+  "questions": 400,
   "courses": [
     {
       "id": "ee-basic",
@@ -1199,6 +1199,213 @@
         ],
         "upcasting": [
           "java-oop-runtime-override-selection"
+        ]
+      }
+    },
+    {
+      "id": "jakarta-competency-exam",
+      "questions": 50,
+      "skills": {
+        "apply": 15,
+        "debug": 18,
+        "design": 14,
+        "trace": 3
+      },
+      "coverage": {
+        "ai-provider-adapters": [
+          "jakarta-competency-ai-adapter-policy-boundary"
+        ],
+        "association-owning-side": [
+          "jakarta-competency-owning-side-association"
+        ],
+        "async-filter-dispatch": [
+          "jakarta-competency-async-dispatch-filter"
+        ],
+        "binary-method-compatibility": [
+          "jakarta-competency-binary-method-descriptor"
+        ],
+        "builder-validation-boundary": [
+          "jakarta-competency-builder-domain-invariant"
+        ],
+        "bulk-dml": [
+          "jakarta-competency-bulk-update-managed-state"
+        ],
+        "connection-pool-boundaries": [
+          "jakarta-competency-requires-new-pool-starvation"
+        ],
+        "decimal-money": [
+          "jakarta-competency-money-decimal-contract"
+        ],
+        "decorator-order": [
+          "jakarta-competency-decorator-retry-metric-order"
+        ],
+        "deferred-constraints": [
+          "jakarta-competency-test-real-commit"
+        ],
+        "domain-policy-boundary": [
+          "jakarta-competency-ai-adapter-policy-boundary"
+        ],
+        "domain-port": [
+          "jakarta-competency-adapter-anti-corruption"
+        ],
+        "ejb-application-exceptions": [
+          "jakarta-competency-ejb-application-exception-rollback"
+        ],
+        "ejb-async-transactions": [
+          "jakarta-competency-ejb-async-transaction-context"
+        ],
+        "ejb-lite-mdb-capabilities": [
+          "jakarta-competency-ejb-lite-mdb-portability"
+        ],
+        "ejb-requires-new-audit": [
+          "jakarta-competency-ejb-independent-audit-commit"
+        ],
+        "ejb-singleton-locks": [
+          "jakarta-competency-ejb-singleton-read-lock"
+        ],
+        "equality-symmetry-inheritance": [
+          "jakarta-competency-equality-inheritance-symmetry"
+        ],
+        "executor-thread-starvation": [
+          "jakarta-competency-executor-nested-wait"
+        ],
+        "generic-interface-conflicting-parameterizations": [
+          "jakarta-competency-generic-interface-dual-role"
+        ],
+        "hibernate-identity-batching": [
+          "jakarta-competency-identity-insert-batching"
+        ],
+        "hibernate-statistics": [
+          "jakarta-competency-measure-query-growth"
+        ],
+        "jakarta-pages-four-migration": [
+          "jakarta-competency-pages-four-threadsafe-migration"
+        ],
+        "java-nine-optional-stream": [
+          "jakarta-competency-java-nine-optional-stream"
+        ],
+        "jdeps-internal-apis": [
+          "jakarta-competency-jdeps-internal-api-audit"
+        ],
+        "jdk-strong-encapsulation": [
+          "jakarta-competency-java-nine-to-seventeen-encapsulation"
+        ],
+        "jlink-service-binding": [
+          "jakarta-competency-jlink-bind-provider"
+        ],
+        "jms-atomic-consume-produce": [
+          "jakarta-competency-jms-atomic-consume-produce"
+        ],
+        "jms-client-acknowledge-scope": [
+          "jakarta-competency-jms-client-ack-session-scope"
+        ],
+        "jms-delivery-delay": [
+          "jakarta-competency-jms-delivery-delay-version"
+        ],
+        "jms-selector-types": [
+          "jakarta-competency-jms-selector-property-type"
+        ],
+        "jms-shared-durable-subscriptions": [
+          "jakarta-competency-jms-shared-durable-fanout"
+        ],
+        "jpms-qualified-opens": [
+          "jakarta-competency-java-nine-qualified-opens"
+        ],
+        "jpms-transitive-readability": [
+          "jakarta-competency-java-nine-transitive-api"
+        ],
+        "jsp-directive-include": [
+          "jakarta-competency-jsp-include-translation"
+        ],
+        "jsp-el-scope-resolution": [
+          "jakarta-competency-jsp-explicit-scope"
+        ],
+        "jsp-output-encoding": [
+          "jakarta-competency-jsp-text-output-escaping"
+        ],
+        "jsp-precompilation": [
+          "jakarta-competency-jsp-precompile-smoke-test"
+        ],
+        "n-plus-one-queries": [
+          "jakarta-competency-measure-query-growth"
+        ],
+        "native-image-reachability": [
+          "jakarta-competency-aot-runtime-bean-discovery"
+        ],
+        "overload-null-ambiguity": [
+          "jakarta-competency-null-unrelated-overloads"
+        ],
+        "persistence-context": [
+          "jakarta-competency-bulk-update-managed-state"
+        ],
+        "provider-adapter": [
+          "jakarta-competency-adapter-anti-corruption"
+        ],
+        "provider-portability": [
+          "jakarta-competency-record-embeddable-not-entity"
+        ],
+        "record-embeddables": [
+          "jakarta-competency-record-embeddable-not-entity"
+        ],
+        "retry-observability": [
+          "jakarta-competency-decorator-retry-metric-order"
+        ],
+        "rollback-only": [
+          "jakarta-competency-required-rollback-only"
+        ],
+        "rounding-policy": [
+          "jakarta-competency-money-decimal-contract"
+        ],
+        "sealed-exhaustive-switch": [
+          "jakarta-competency-sealed-exhaustive-domain"
+        ],
+        "servlet-instance-concurrency": [
+          "jakarta-competency-virtual-thread-servlet-state"
+        ],
+        "servlet-mapping-precedence": [
+          "jakarta-competency-servlet-mapping-precedence"
+        ],
+        "servlet-request-encoding": [
+          "jakarta-competency-test-request-encoding"
+        ],
+        "session-fixation": [
+          "jakarta-competency-rotate-session-after-login"
+        ],
+        "session-id-rotation": [
+          "jakarta-competency-rotate-session-after-login"
+        ],
+        "spring-aot": [
+          "jakarta-competency-aot-runtime-bean-discovery"
+        ],
+        "spring-primary": [
+          "jakarta-competency-qualifier-over-primary"
+        ],
+        "spring-qualifiers": [
+          "jakarta-competency-qualifier-over-primary"
+        ],
+        "spring-required": [
+          "jakarta-competency-required-rollback-only"
+        ],
+        "spring-requires-new": [
+          "jakarta-competency-requires-new-pool-starvation"
+        ],
+        "spring-test-transactions": [
+          "jakarta-competency-test-real-commit"
+        ],
+        "try-with-resources-suppression": [
+          "jakarta-competency-suppressed-close-exception"
+        ],
+        "virtual-thread-admission-control": [
+          "jakarta-competency-virtual-thread-downstream-limit"
+        ],
+        "virtual-threads": [
+          "jakarta-competency-virtual-thread-servlet-state"
+        ],
+        "visitor-change-axis": [
+          "jakarta-competency-visitor-change-axis"
+        ],
+        "war-verification": [
+          "jakarta-competency-jsp-precompile-smoke-test"
         ]
       }
     }
