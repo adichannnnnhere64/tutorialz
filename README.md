@@ -22,6 +22,8 @@ Open `http://localhost:8080/` and `/author/`. To install Java practice in either
 
 The Makefile wraps the common workflows:
 
+If Dioxus reports a wasm-bindgen version mismatch, run `make setup-tools` to install the CLI version from `Cargo.lock` into the ignored `tools/bin/` directory. The Makefile and web build prefer this directory over system packages. On Nix, ensure `wasm-ld` is available (from LLVM's `lld` package), or set `CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER` to its path.
+
 ```sh
 make serve                 # build and serve both apps at http://127.0.0.1:8080
 make serve-existing        # serve the current dist/ without rebuilding

@@ -5,11 +5,17 @@ BASE_PATH ?=
 AUTHOR_EXPORT ?=
 CONTENT_DIR ?= content/enterprise
 VERSION ?=
+export PATH := $(CURDIR)/tools/bin:$(PATH)
+# Nix Rust installations may provide wasm-ld separately from rustc.
+ifneq ($(shell command -v wasm-ld 2>/dev/null),)
+export CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_LINKER ?= $(shell command -v wasm-ld)
+endif
 
-.PHONY: help content regenerate-content check build serve serve-existing learner author import-author release release-build
+.PHONY: help setup-tools content regenerate-content check build serve serve-existing learner author import-author release release-build
 
 help:
 	@echo "Tutorialz commands:"
+	@echo "  make setup-tools                    Install the wasm-bindgen CLI matching Cargo.lock locally"
 	@echo "  make author                         Open the web authoring studio in development mode"
 	@echo "  make learner                        Open the learner in development mode"
 	@echo "  make serve [PORT=8080]              Build and serve learner + author locally"
@@ -19,6 +25,9 @@ help:
 	@echo "  make regenerate-content             Replace bundled questions from generator sources"
 	@echo "  make build [BASE_PATH=tutorialz]    Build both production web apps into dist/"
 	@echo "  make release [VERSION=0.4.0]        Check, build, commit, tag, and push a release"
+
+setup-tools:
+	$(PYTHON) scripts/setup-web-tools.py
 
 content:
 	$(PYTHON) scripts/question_bank.py

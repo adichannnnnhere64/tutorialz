@@ -5,6 +5,9 @@ root=pathlib.Path(__file__).resolve().parent.parent
 os.chdir(root)
 base=os.environ.get('SITE_BASE_PATH','').strip('/')
 dx=os.environ.get('DX','dx')
+os.environ['PATH']=str(root/'tools/bin')+os.pathsep+os.environ.get('PATH','')
+if not shutil.which(dx):
+    raise SystemExit('Dioxus CLI not found. Install dioxus-cli 0.7.10 or set DX=/path/to/dx.')
 catalog=json.loads((root/'content/enterprise/catalog.json').read_text())
 question_count=sum(len(test['questions']) for entry in catalog['courses']
                    for test in json.loads((root/'content/enterprise'/entry['path']).read_text())['tests'])
