@@ -26,7 +26,7 @@ The Makefile wraps the common workflows:
 make serve                 # build and serve both apps at http://127.0.0.1:8080
 make serve-existing        # serve the current dist/ without rebuilding
 make author                # run only the authoring studio with Dioxus
-make check                 # regenerate content and run required checks
+make check                 # validate content and run required checks
 make build                 # production build in dist/
 ```
 
@@ -57,7 +57,7 @@ The authoring studio is already included here. Run `make author` for its develop
 make import-author AUTHOR_EXPORT=/path/to/tutorialz-content.zip
 ```
 
-The importer verifies safe paths, catalog hashes, and course IDs before replacing catalog-listed JSON. Documentation and attribution notices remain in place. Set `CONTENT_DIR=content/another-collection` to target another collection.
+The importer verifies safe paths, catalog hashes, and course IDs before replacing catalog-listed JSON. Documentation and attribution notices remain in place. Set `CONTENT_DIR=content/another-collection` to target another collection. Normal builds preserve imported questions. `make regenerate-content` explicitly replaces the bundled collection from the Python generator sources; use it only when those sources contain the changes you want to ship.
 
 ZIP imports accept the uncompressed format produced by Tutorialz. Plain draft JSON also works. Authoring content is public, including answers and test cases; this is a personal practice tool rather than a secure examination service.
 

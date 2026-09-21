@@ -6,7 +6,7 @@ AUTHOR_EXPORT ?=
 CONTENT_DIR ?= content/enterprise
 VERSION ?=
 
-.PHONY: help content check build serve serve-existing learner author import-author release release-build
+.PHONY: help content regenerate-content check build serve serve-existing learner author import-author release release-build
 
 help:
 	@echo "Tutorialz commands:"
@@ -15,11 +15,15 @@ help:
 	@echo "  make serve [PORT=8080]              Build and serve learner + author locally"
 	@echo "  make serve-existing [PORT=8080]     Serve the existing dist/ without rebuilding"
 	@echo "  make import-author AUTHOR_EXPORT=... Install a studio ZIP into content/enterprise"
-	@echo "  make check                          Regenerate content and run required checks"
+	@echo "  make check                          Validate content and run required checks"
+	@echo "  make regenerate-content             Replace bundled questions from generator sources"
 	@echo "  make build [BASE_PATH=tutorialz]    Build both production web apps into dist/"
 	@echo "  make release [VERSION=0.4.0]        Check, build, commit, tag, and push a release"
 
 content:
+	$(PYTHON) scripts/question_bank.py
+
+regenerate-content:
 	$(PYTHON) scripts/enterprise-content.py
 	$(PYTHON) scripts/question_bank.py
 
@@ -55,6 +59,7 @@ import-author:
 	@test -n "$(AUTHOR_EXPORT)" || { echo "Usage: make import-author AUTHOR_EXPORT=/path/to/tutorialz-content.zip" >&2; exit 2; }
 	$(PYTHON) scripts/install-author-export.py "$(AUTHOR_EXPORT)" "$(CONTENT_DIR)"
 	cargo run -p tutorialz-core --locked -- "$(CONTENT_DIR)/catalog.json"
+	$(PYTHON) scripts/question_bank.py "$(CONTENT_DIR)/catalog.json" --report "$(CONTENT_DIR)/coverage.json"
 
 release-build: check build
 

@@ -15,7 +15,8 @@ VERSION_FILES = (ROOT / "apps/learner/Cargo.toml", ROOT / "apps/author/Cargo.tom
 def run(*command: str, capture: bool = False) -> str:
     result = subprocess.run(command, cwd=ROOT, check=True, text=True,
                             capture_output=capture)
-    return result.stdout.strip() if capture else ""
+    # Preserve leading status columns in git status --porcelain output.
+    return result.stdout.rstrip("\n") if capture else ""
 
 
 def current_version() -> str:
