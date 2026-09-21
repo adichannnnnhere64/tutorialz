@@ -17,7 +17,7 @@ try{
   await examPage.getByLabel('Search questions and topics').fill('');
   await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-library.png',fullPage:true});
   await examPage.getByRole('button',{name:'Start practicing'}).click();
-  await examPage.locator('.desktop-test-picker').getByLabel('Jakarta Competency Exam',{exact:true}).check();
+  await examPage.locator('.desktop-test-picker').getByLabel('Jakarta Competency Exam').check();
   await examPage.getByLabel('Number of questions').fill('50');
   await examPage.getByRole('button',{name:'Start session'}).click();
   await examPage.getByRole('button',{name:'Check answer'}).waitFor();
