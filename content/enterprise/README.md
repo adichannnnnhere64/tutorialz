@@ -1,6 +1,6 @@
 # Java and Jakarta EE question bank
 
-The collection contains **400 questions**: 164 easy, 205 medium, and 31 advanced. It includes the new **[Jakarta Competency Exam](JAKARTA_COMPETENCY_EXAM.md)** with 50 original scenarios. The original 350-question collection replaced a 3,200-question bank that counted repeated lead-ins, shuffled distractors, and arbitrary topic pairs as separate assessments.
+The collection contains **600 questions**: 164 easy, 305 medium, and 131 advanced. It includes the 50-question **[Jakarta Competency Exam](JAKARTA_COMPETENCY_EXAM.md)** and the 200-question **[Jakarta Dummy Exam](JAKARTA_DUMMY_EXAM.md)**. The original 350-question collection replaced a 3,200-question bank that counted repeated lead-ins, shuffled distractors, and arbitrary topic pairs as separate assessments.
 
 | Course | Before | Now | Assessment |
 | --- | ---: | ---: | --- |
@@ -10,6 +10,7 @@ The collection contains **400 questions**: 164 easy, 205 medium, and 31 advanced
 | Beginner Java | 1,200 | 64 | 59 practical repairs and five reviewed imports |
 | Java OOP | 600 | 66 | Code tracing, debugging, application, and design |
 | Jakarta Competency Exam | — | 50 | Enterprise decisions across ten topics and five knowledge areas |
+| Jakarta Dummy Exam | — | 200 | Spring, Hibernate, JMS, ActiveMQ Artemis, and Java 8/9 |
 
 The original 100 enterprise concepts and 120 Java/OOP concepts remain covered. Overlapping concepts may share a question: the floating-point default type and `f` suffix share a repair; substitutability and the Liskov contract share a design decision. New OOP coverage includes records, sealed classes, captured variables, mutable map keys, shallow copying, wildcard reads/writes, and constructor dispatch.
 

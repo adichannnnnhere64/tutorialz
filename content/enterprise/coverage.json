@@ -1,5 +1,5 @@
 {
-  "questions": 400,
+  "questions": 600,
   "courses": [
     {
       "id": "ee-basic",
@@ -1406,6 +1406,618 @@
         ],
         "war-verification": [
           "jakarta-competency-jsp-precompile-smoke-test"
+        ]
+      }
+    },
+    {
+      "id": "jakarta-dummy-exam",
+      "questions": 200,
+      "skills": {
+        "apply": 50,
+        "debug": 50,
+        "design": 50,
+        "recall": 50
+      },
+      "coverage": {
+        "dummy-address-queue-model-design": [
+          "jakarta-dummy-address-queue-model-design"
+        ],
+        "dummy-address-queue-model-diagnosis": [
+          "jakarta-dummy-address-queue-model-diagnosis"
+        ],
+        "dummy-address-queue-model-mechanism": [
+          "jakarta-dummy-address-queue-model-mechanism"
+        ],
+        "dummy-address-queue-model-verification": [
+          "jakarta-dummy-address-queue-model-verification"
+        ],
+        "dummy-anycast-routing-design": [
+          "jakarta-dummy-anycast-routing-design"
+        ],
+        "dummy-anycast-routing-diagnosis": [
+          "jakarta-dummy-anycast-routing-diagnosis"
+        ],
+        "dummy-anycast-routing-mechanism": [
+          "jakarta-dummy-anycast-routing-mechanism"
+        ],
+        "dummy-anycast-routing-verification": [
+          "jakarta-dummy-anycast-routing-verification"
+        ],
+        "dummy-aop-order-design": [
+          "jakarta-dummy-aop-order-design"
+        ],
+        "dummy-aop-order-diagnosis": [
+          "jakarta-dummy-aop-order-diagnosis"
+        ],
+        "dummy-aop-order-mechanism": [
+          "jakarta-dummy-aop-order-mechanism"
+        ],
+        "dummy-aop-order-verification": [
+          "jakarta-dummy-aop-order-verification"
+        ],
+        "dummy-async-proxy-design": [
+          "jakarta-dummy-async-proxy-design"
+        ],
+        "dummy-async-proxy-diagnosis": [
+          "jakarta-dummy-async-proxy-diagnosis"
+        ],
+        "dummy-async-proxy-mechanism": [
+          "jakarta-dummy-async-proxy-mechanism"
+        ],
+        "dummy-async-proxy-verification": [
+          "jakarta-dummy-async-proxy-verification"
+        ],
+        "dummy-batch-fetch-design": [
+          "jakarta-dummy-batch-fetch-design"
+        ],
+        "dummy-batch-fetch-diagnosis": [
+          "jakarta-dummy-batch-fetch-diagnosis"
+        ],
+        "dummy-batch-fetch-mechanism": [
+          "jakarta-dummy-batch-fetch-mechanism"
+        ],
+        "dummy-batch-fetch-verification": [
+          "jakarta-dummy-batch-fetch-verification"
+        ],
+        "dummy-cache-self-invocation-design": [
+          "jakarta-dummy-cache-self-invocation-design"
+        ],
+        "dummy-cache-self-invocation-diagnosis": [
+          "jakarta-dummy-cache-self-invocation-diagnosis"
+        ],
+        "dummy-cache-self-invocation-mechanism": [
+          "jakarta-dummy-cache-self-invocation-mechanism"
+        ],
+        "dummy-cache-self-invocation-verification": [
+          "jakarta-dummy-cache-self-invocation-verification"
+        ],
+        "dummy-client-ack-design": [
+          "jakarta-dummy-client-ack-design"
+        ],
+        "dummy-client-ack-diagnosis": [
+          "jakarta-dummy-client-ack-diagnosis"
+        ],
+        "dummy-client-ack-mechanism": [
+          "jakarta-dummy-client-ack-mechanism"
+        ],
+        "dummy-client-ack-verification": [
+          "jakarta-dummy-client-ack-verification"
+        ],
+        "dummy-completablefuture-exception-design": [
+          "jakarta-dummy-completablefuture-exception-design"
+        ],
+        "dummy-completablefuture-exception-diagnosis": [
+          "jakarta-dummy-completablefuture-exception-diagnosis"
+        ],
+        "dummy-completablefuture-exception-mechanism": [
+          "jakarta-dummy-completablefuture-exception-mechanism"
+        ],
+        "dummy-completablefuture-exception-verification": [
+          "jakarta-dummy-completablefuture-exception-verification"
+        ],
+        "dummy-configuration-properties-design": [
+          "jakarta-dummy-configuration-properties-design"
+        ],
+        "dummy-configuration-properties-diagnosis": [
+          "jakarta-dummy-configuration-properties-diagnosis"
+        ],
+        "dummy-configuration-properties-mechanism": [
+          "jakarta-dummy-configuration-properties-mechanism"
+        ],
+        "dummy-configuration-properties-verification": [
+          "jakarta-dummy-configuration-properties-verification"
+        ],
+        "dummy-consumer-window-design": [
+          "jakarta-dummy-consumer-window-design"
+        ],
+        "dummy-consumer-window-diagnosis": [
+          "jakarta-dummy-consumer-window-diagnosis"
+        ],
+        "dummy-consumer-window-mechanism": [
+          "jakarta-dummy-consumer-window-mechanism"
+        ],
+        "dummy-consumer-window-verification": [
+          "jakarta-dummy-consumer-window-verification"
+        ],
+        "dummy-dead-letter-address-design": [
+          "jakarta-dummy-dead-letter-address-design"
+        ],
+        "dummy-dead-letter-address-diagnosis": [
+          "jakarta-dummy-dead-letter-address-diagnosis"
+        ],
+        "dummy-dead-letter-address-mechanism": [
+          "jakarta-dummy-dead-letter-address-mechanism"
+        ],
+        "dummy-dead-letter-address-verification": [
+          "jakarta-dummy-dead-letter-address-verification"
+        ],
+        "dummy-delivery-delay-design": [
+          "jakarta-dummy-delivery-delay-design"
+        ],
+        "dummy-delivery-delay-diagnosis": [
+          "jakarta-dummy-delivery-delay-diagnosis"
+        ],
+        "dummy-delivery-delay-mechanism": [
+          "jakarta-dummy-delivery-delay-mechanism"
+        ],
+        "dummy-delivery-delay-verification": [
+          "jakarta-dummy-delivery-delay-verification"
+        ],
+        "dummy-detached-merge-design": [
+          "jakarta-dummy-detached-merge-design"
+        ],
+        "dummy-detached-merge-diagnosis": [
+          "jakarta-dummy-detached-merge-diagnosis"
+        ],
+        "dummy-detached-merge-mechanism": [
+          "jakarta-dummy-detached-merge-mechanism"
+        ],
+        "dummy-detached-merge-verification": [
+          "jakarta-dummy-detached-merge-verification"
+        ],
+        "dummy-dirty-checking-design": [
+          "jakarta-dummy-dirty-checking-design"
+        ],
+        "dummy-dirty-checking-diagnosis": [
+          "jakarta-dummy-dirty-checking-diagnosis"
+        ],
+        "dummy-dirty-checking-mechanism": [
+          "jakarta-dummy-dirty-checking-mechanism"
+        ],
+        "dummy-dirty-checking-verification": [
+          "jakarta-dummy-dirty-checking-verification"
+        ],
+        "dummy-durable-subscription-design": [
+          "jakarta-dummy-durable-subscription-design"
+        ],
+        "dummy-durable-subscription-diagnosis": [
+          "jakarta-dummy-durable-subscription-diagnosis"
+        ],
+        "dummy-durable-subscription-mechanism": [
+          "jakarta-dummy-durable-subscription-mechanism"
+        ],
+        "dummy-durable-subscription-verification": [
+          "jakarta-dummy-durable-subscription-verification"
+        ],
+        "dummy-expiry-address-design": [
+          "jakarta-dummy-expiry-address-design"
+        ],
+        "dummy-expiry-address-diagnosis": [
+          "jakarta-dummy-expiry-address-diagnosis"
+        ],
+        "dummy-expiry-address-mechanism": [
+          "jakarta-dummy-expiry-address-mechanism"
+        ],
+        "dummy-expiry-address-verification": [
+          "jakarta-dummy-expiry-address-verification"
+        ],
+        "dummy-flush-commit-design": [
+          "jakarta-dummy-flush-commit-design"
+        ],
+        "dummy-flush-commit-diagnosis": [
+          "jakarta-dummy-flush-commit-diagnosis"
+        ],
+        "dummy-flush-commit-mechanism": [
+          "jakarta-dummy-flush-commit-mechanism"
+        ],
+        "dummy-flush-commit-verification": [
+          "jakarta-dummy-flush-commit-verification"
+        ],
+        "dummy-ha-reconnect-design": [
+          "jakarta-dummy-ha-reconnect-design"
+        ],
+        "dummy-ha-reconnect-diagnosis": [
+          "jakarta-dummy-ha-reconnect-diagnosis"
+        ],
+        "dummy-ha-reconnect-mechanism": [
+          "jakarta-dummy-ha-reconnect-mechanism"
+        ],
+        "dummy-ha-reconnect-verification": [
+          "jakarta-dummy-ha-reconnect-verification"
+        ],
+        "dummy-java-time-immutability-design": [
+          "jakarta-dummy-java-time-immutability-design"
+        ],
+        "dummy-java-time-immutability-diagnosis": [
+          "jakarta-dummy-java-time-immutability-diagnosis"
+        ],
+        "dummy-java-time-immutability-mechanism": [
+          "jakarta-dummy-java-time-immutability-mechanism"
+        ],
+        "dummy-java-time-immutability-verification": [
+          "jakarta-dummy-java-time-immutability-verification"
+        ],
+        "dummy-join-fetch-query-design": [
+          "jakarta-dummy-join-fetch-query-design"
+        ],
+        "dummy-join-fetch-query-diagnosis": [
+          "jakarta-dummy-join-fetch-query-diagnosis"
+        ],
+        "dummy-join-fetch-query-mechanism": [
+          "jakarta-dummy-join-fetch-query-mechanism"
+        ],
+        "dummy-join-fetch-query-verification": [
+          "jakarta-dummy-join-fetch-query-verification"
+        ],
+        "dummy-large-message-design": [
+          "jakarta-dummy-large-message-design"
+        ],
+        "dummy-large-message-diagnosis": [
+          "jakarta-dummy-large-message-diagnosis"
+        ],
+        "dummy-large-message-mechanism": [
+          "jakarta-dummy-large-message-mechanism"
+        ],
+        "dummy-large-message-verification": [
+          "jakarta-dummy-large-message-verification"
+        ],
+        "dummy-lazy-initialization-design": [
+          "jakarta-dummy-lazy-initialization-design"
+        ],
+        "dummy-lazy-initialization-diagnosis": [
+          "jakarta-dummy-lazy-initialization-diagnosis"
+        ],
+        "dummy-lazy-initialization-mechanism": [
+          "jakarta-dummy-lazy-initialization-mechanism"
+        ],
+        "dummy-lazy-initialization-verification": [
+          "jakarta-dummy-lazy-initialization-verification"
+        ],
+        "dummy-list-factory-design": [
+          "jakarta-dummy-list-factory-design"
+        ],
+        "dummy-list-factory-diagnosis": [
+          "jakarta-dummy-list-factory-diagnosis"
+        ],
+        "dummy-list-factory-mechanism": [
+          "jakarta-dummy-list-factory-mechanism"
+        ],
+        "dummy-list-factory-verification": [
+          "jakarta-dummy-list-factory-verification"
+        ],
+        "dummy-message-selector-design": [
+          "jakarta-dummy-message-selector-design"
+        ],
+        "dummy-message-selector-diagnosis": [
+          "jakarta-dummy-message-selector-diagnosis"
+        ],
+        "dummy-message-selector-mechanism": [
+          "jakarta-dummy-message-selector-mechanism"
+        ],
+        "dummy-message-selector-verification": [
+          "jakarta-dummy-message-selector-verification"
+        ],
+        "dummy-module-exports-design": [
+          "jakarta-dummy-module-exports-design"
+        ],
+        "dummy-module-exports-diagnosis": [
+          "jakarta-dummy-module-exports-diagnosis"
+        ],
+        "dummy-module-exports-mechanism": [
+          "jakarta-dummy-module-exports-mechanism"
+        ],
+        "dummy-module-exports-verification": [
+          "jakarta-dummy-module-exports-verification"
+        ],
+        "dummy-module-opens-design": [
+          "jakarta-dummy-module-opens-design"
+        ],
+        "dummy-module-opens-diagnosis": [
+          "jakarta-dummy-module-opens-diagnosis"
+        ],
+        "dummy-module-opens-mechanism": [
+          "jakarta-dummy-module-opens-mechanism"
+        ],
+        "dummy-module-opens-verification": [
+          "jakarta-dummy-module-opens-verification"
+        ],
+        "dummy-module-requires-design": [
+          "jakarta-dummy-module-requires-design"
+        ],
+        "dummy-module-requires-diagnosis": [
+          "jakarta-dummy-module-requires-diagnosis"
+        ],
+        "dummy-module-requires-mechanism": [
+          "jakarta-dummy-module-requires-mechanism"
+        ],
+        "dummy-module-requires-verification": [
+          "jakarta-dummy-module-requires-verification"
+        ],
+        "dummy-multicast-routing-design": [
+          "jakarta-dummy-multicast-routing-design"
+        ],
+        "dummy-multicast-routing-diagnosis": [
+          "jakarta-dummy-multicast-routing-diagnosis"
+        ],
+        "dummy-multicast-routing-mechanism": [
+          "jakarta-dummy-multicast-routing-mechanism"
+        ],
+        "dummy-multicast-routing-verification": [
+          "jakarta-dummy-multicast-routing-verification"
+        ],
+        "dummy-optimistic-version-design": [
+          "jakarta-dummy-optimistic-version-design"
+        ],
+        "dummy-optimistic-version-diagnosis": [
+          "jakarta-dummy-optimistic-version-diagnosis"
+        ],
+        "dummy-optimistic-version-mechanism": [
+          "jakarta-dummy-optimistic-version-mechanism"
+        ],
+        "dummy-optimistic-version-verification": [
+          "jakarta-dummy-optimistic-version-verification"
+        ],
+        "dummy-optional-or-else-design": [
+          "jakarta-dummy-optional-or-else-design"
+        ],
+        "dummy-optional-or-else-diagnosis": [
+          "jakarta-dummy-optional-or-else-diagnosis"
+        ],
+        "dummy-optional-or-else-mechanism": [
+          "jakarta-dummy-optional-or-else-mechanism"
+        ],
+        "dummy-optional-or-else-verification": [
+          "jakarta-dummy-optional-or-else-verification"
+        ],
+        "dummy-optional-stream-design": [
+          "jakarta-dummy-optional-stream-design"
+        ],
+        "dummy-optional-stream-diagnosis": [
+          "jakarta-dummy-optional-stream-diagnosis"
+        ],
+        "dummy-optional-stream-mechanism": [
+          "jakarta-dummy-optional-stream-mechanism"
+        ],
+        "dummy-optional-stream-verification": [
+          "jakarta-dummy-optional-stream-verification"
+        ],
+        "dummy-persistence-context-identity-design": [
+          "jakarta-dummy-persistence-context-identity-design"
+        ],
+        "dummy-persistence-context-identity-diagnosis": [
+          "jakarta-dummy-persistence-context-identity-diagnosis"
+        ],
+        "dummy-persistence-context-identity-mechanism": [
+          "jakarta-dummy-persistence-context-identity-mechanism"
+        ],
+        "dummy-persistence-context-identity-verification": [
+          "jakarta-dummy-persistence-context-identity-verification"
+        ],
+        "dummy-primary-resolution-design": [
+          "jakarta-dummy-primary-resolution-design"
+        ],
+        "dummy-primary-resolution-diagnosis": [
+          "jakarta-dummy-primary-resolution-diagnosis"
+        ],
+        "dummy-primary-resolution-mechanism": [
+          "jakarta-dummy-primary-resolution-mechanism"
+        ],
+        "dummy-primary-resolution-verification": [
+          "jakarta-dummy-primary-resolution-verification"
+        ],
+        "dummy-proxy-self-invocation-design": [
+          "jakarta-dummy-proxy-self-invocation-design"
+        ],
+        "dummy-proxy-self-invocation-diagnosis": [
+          "jakarta-dummy-proxy-self-invocation-diagnosis"
+        ],
+        "dummy-proxy-self-invocation-mechanism": [
+          "jakarta-dummy-proxy-self-invocation-mechanism"
+        ],
+        "dummy-proxy-self-invocation-verification": [
+          "jakarta-dummy-proxy-self-invocation-verification"
+        ],
+        "dummy-qualifier-resolution-design": [
+          "jakarta-dummy-qualifier-resolution-design"
+        ],
+        "dummy-qualifier-resolution-diagnosis": [
+          "jakarta-dummy-qualifier-resolution-diagnosis"
+        ],
+        "dummy-qualifier-resolution-mechanism": [
+          "jakarta-dummy-qualifier-resolution-mechanism"
+        ],
+        "dummy-qualifier-resolution-verification": [
+          "jakarta-dummy-qualifier-resolution-verification"
+        ],
+        "dummy-query-cache-design": [
+          "jakarta-dummy-query-cache-design"
+        ],
+        "dummy-query-cache-diagnosis": [
+          "jakarta-dummy-query-cache-diagnosis"
+        ],
+        "dummy-query-cache-mechanism": [
+          "jakarta-dummy-query-cache-mechanism"
+        ],
+        "dummy-query-cache-verification": [
+          "jakarta-dummy-query-cache-verification"
+        ],
+        "dummy-queue-competing-consumers-design": [
+          "jakarta-dummy-queue-competing-consumers-design"
+        ],
+        "dummy-queue-competing-consumers-diagnosis": [
+          "jakarta-dummy-queue-competing-consumers-diagnosis"
+        ],
+        "dummy-queue-competing-consumers-mechanism": [
+          "jakarta-dummy-queue-competing-consumers-mechanism"
+        ],
+        "dummy-queue-competing-consumers-verification": [
+          "jakarta-dummy-queue-competing-consumers-verification"
+        ],
+        "dummy-redelivery-delay-design": [
+          "jakarta-dummy-redelivery-delay-design"
+        ],
+        "dummy-redelivery-delay-diagnosis": [
+          "jakarta-dummy-redelivery-delay-diagnosis"
+        ],
+        "dummy-redelivery-delay-mechanism": [
+          "jakarta-dummy-redelivery-delay-mechanism"
+        ],
+        "dummy-redelivery-delay-verification": [
+          "jakarta-dummy-redelivery-delay-verification"
+        ],
+        "dummy-redelivery-idempotency-design": [
+          "jakarta-dummy-redelivery-idempotency-design"
+        ],
+        "dummy-redelivery-idempotency-diagnosis": [
+          "jakarta-dummy-redelivery-idempotency-diagnosis"
+        ],
+        "dummy-redelivery-idempotency-mechanism": [
+          "jakarta-dummy-redelivery-idempotency-mechanism"
+        ],
+        "dummy-redelivery-idempotency-verification": [
+          "jakarta-dummy-redelivery-idempotency-verification"
+        ],
+        "dummy-request-reply-correlation-design": [
+          "jakarta-dummy-request-reply-correlation-design"
+        ],
+        "dummy-request-reply-correlation-diagnosis": [
+          "jakarta-dummy-request-reply-correlation-diagnosis"
+        ],
+        "dummy-request-reply-correlation-mechanism": [
+          "jakarta-dummy-request-reply-correlation-mechanism"
+        ],
+        "dummy-request-reply-correlation-verification": [
+          "jakarta-dummy-request-reply-correlation-verification"
+        ],
+        "dummy-required-propagation-design": [
+          "jakarta-dummy-required-propagation-design"
+        ],
+        "dummy-required-propagation-diagnosis": [
+          "jakarta-dummy-required-propagation-diagnosis"
+        ],
+        "dummy-required-propagation-mechanism": [
+          "jakarta-dummy-required-propagation-mechanism"
+        ],
+        "dummy-required-propagation-verification": [
+          "jakarta-dummy-required-propagation-verification"
+        ],
+        "dummy-requires-new-propagation-design": [
+          "jakarta-dummy-requires-new-propagation-design"
+        ],
+        "dummy-requires-new-propagation-diagnosis": [
+          "jakarta-dummy-requires-new-propagation-diagnosis"
+        ],
+        "dummy-requires-new-propagation-mechanism": [
+          "jakarta-dummy-requires-new-propagation-mechanism"
+        ],
+        "dummy-requires-new-propagation-verification": [
+          "jakarta-dummy-requires-new-propagation-verification"
+        ],
+        "dummy-scheduled-overlap-design": [
+          "jakarta-dummy-scheduled-overlap-design"
+        ],
+        "dummy-scheduled-overlap-diagnosis": [
+          "jakarta-dummy-scheduled-overlap-diagnosis"
+        ],
+        "dummy-scheduled-overlap-mechanism": [
+          "jakarta-dummy-scheduled-overlap-mechanism"
+        ],
+        "dummy-scheduled-overlap-verification": [
+          "jakarta-dummy-scheduled-overlap-verification"
+        ],
+        "dummy-second-level-cache-design": [
+          "jakarta-dummy-second-level-cache-design"
+        ],
+        "dummy-second-level-cache-diagnosis": [
+          "jakarta-dummy-second-level-cache-diagnosis"
+        ],
+        "dummy-second-level-cache-mechanism": [
+          "jakarta-dummy-second-level-cache-mechanism"
+        ],
+        "dummy-second-level-cache-verification": [
+          "jakarta-dummy-second-level-cache-verification"
+        ],
+        "dummy-security-role-design": [
+          "jakarta-dummy-security-role-design"
+        ],
+        "dummy-security-role-diagnosis": [
+          "jakarta-dummy-security-role-diagnosis"
+        ],
+        "dummy-security-role-mechanism": [
+          "jakarta-dummy-security-role-mechanism"
+        ],
+        "dummy-security-role-verification": [
+          "jakarta-dummy-security-role-verification"
+        ],
+        "dummy-stream-laziness-design": [
+          "jakarta-dummy-stream-laziness-design"
+        ],
+        "dummy-stream-laziness-diagnosis": [
+          "jakarta-dummy-stream-laziness-diagnosis"
+        ],
+        "dummy-stream-laziness-mechanism": [
+          "jakarta-dummy-stream-laziness-mechanism"
+        ],
+        "dummy-stream-laziness-verification": [
+          "jakarta-dummy-stream-laziness-verification"
+        ],
+        "dummy-stream-single-use-design": [
+          "jakarta-dummy-stream-single-use-design"
+        ],
+        "dummy-stream-single-use-diagnosis": [
+          "jakarta-dummy-stream-single-use-diagnosis"
+        ],
+        "dummy-stream-single-use-mechanism": [
+          "jakarta-dummy-stream-single-use-mechanism"
+        ],
+        "dummy-stream-single-use-verification": [
+          "jakarta-dummy-stream-single-use-verification"
+        ],
+        "dummy-topic-subscription-design": [
+          "jakarta-dummy-topic-subscription-design"
+        ],
+        "dummy-topic-subscription-diagnosis": [
+          "jakarta-dummy-topic-subscription-diagnosis"
+        ],
+        "dummy-topic-subscription-mechanism": [
+          "jakarta-dummy-topic-subscription-mechanism"
+        ],
+        "dummy-topic-subscription-verification": [
+          "jakarta-dummy-topic-subscription-verification"
+        ],
+        "dummy-transacted-session-design": [
+          "jakarta-dummy-transacted-session-design"
+        ],
+        "dummy-transacted-session-diagnosis": [
+          "jakarta-dummy-transacted-session-diagnosis"
+        ],
+        "dummy-transacted-session-mechanism": [
+          "jakarta-dummy-transacted-session-mechanism"
+        ],
+        "dummy-transacted-session-verification": [
+          "jakarta-dummy-transacted-session-verification"
+        ],
+        "dummy-ttl-expiration-design": [
+          "jakarta-dummy-ttl-expiration-design"
+        ],
+        "dummy-ttl-expiration-diagnosis": [
+          "jakarta-dummy-ttl-expiration-diagnosis"
+        ],
+        "dummy-ttl-expiration-mechanism": [
+          "jakarta-dummy-ttl-expiration-mechanism"
+        ],
+        "dummy-ttl-expiration-verification": [
+          "jakarta-dummy-ttl-expiration-verification"
         ]
       }
     }

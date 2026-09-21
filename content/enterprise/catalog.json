@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "content_revision": 2,
+  "content_revision": 3,
   "collection_id": "tutorialz-jakarta-ee",
   "courses": [
     {
@@ -56,6 +56,15 @@
       "difficulty": "hard",
       "path": "jakarta-competency-exam.json",
       "sha256": "ecd84a8ec2a6ed2b05216e072dae44eee26f9f17b897d2e1ad2f4e89d5824483"
+    },
+    {
+      "id": "jakarta-dummy-exam",
+      "title": "Jakarta Dummy Exam",
+      "description": "200 original single-answer scenarios covering Spring, Hibernate, Jakarta Messaging, ActiveMQ Artemis, and Java 8/9 features. Java 8 and Java 9 questions state their applicable release; ActiveMQ questions target Artemis concepts.",
+      "subject": "Java Enterprise / Jakarta EE",
+      "difficulty": "hard",
+      "path": "jakarta-dummy-exam.json",
+      "sha256": "3d0a1e7123c9dc569305cebbf3c1f03eac59228eac3221f17c6f2b81fbbb4330"
     }
   ]
 }

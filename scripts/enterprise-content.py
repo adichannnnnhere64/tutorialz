@@ -12,6 +12,7 @@ from pathlib import Path
 from java_content import courses as java_courses
 from advanced_content import course as advanced_course
 from jakarta_competency_content import course as competency_course
+from jakarta_dummy_content import course as dummy_course
 from question_bank import assessment, audit, choice, preserve_revisions, slug
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -173,7 +174,7 @@ def courses() -> list[dict]:
                        "description": f"100 distinct {'concept checks' if tier == 'basic' else 'failure diagnoses'} across ten enterprise subject areas.",
                        "subject": "Java Enterprise / Jakarta EE", "difficulty": difficulty,
                        "lessons": [], "tests": tests})
-    return [*result, advanced_course(SOURCES), *java_courses(), competency_course()]
+    return [*result, advanced_course(SOURCES), *java_courses(), competency_course(), dummy_course()]
 
 
 def write_json(path: Path, value: object) -> str:
@@ -196,7 +197,7 @@ def generate(out: Path = OUT) -> None:
         digest = write_json(path, course)
         entries.append({key: course[key] for key in ("id", "title", "description", "subject", "difficulty")} |
                        {"path": path.name, "sha256": digest})
-    write_json(out / "catalog.json", {"schema_version": 1, "content_revision": 2,
+    write_json(out / "catalog.json", {"schema_version": 1, "content_revision": 3,
                                     "collection_id": "tutorialz-jakarta-ee", "courses": entries})
     write_json(out / "coverage.json", report)
     print(f"Generated {report['questions']} questions; {len(report['review'])} similarity pairs to review")

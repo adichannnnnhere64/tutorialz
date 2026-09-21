@@ -33,8 +33,32 @@ try{
   await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-question.png',fullPage:true});
   await examPage.setViewportSize({width:390,height:844});
   assert.equal(await examPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
-  await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-mobile.png',fullPage:true});
+ await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-mobile.png',fullPage:true});
  }finally{await examContext.close();}
+ const dummyContext=await browser.newContext();
+ try{
+  const dummyPage=await dummyContext.newPage();
+  await dummyPage.route('https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json',route=>route.fulfill({path:'content/enterprise/catalog.json',contentType:'application/json'}));
+  await dummyPage.goto(base);
+  await dummyPage.getByRole('heading',{name:'Jakarta Dummy Exam',exact:true}).waitFor();
+  await dummyPage.getByLabel('Search questions and topics').fill('ActiveMQ Artemis');
+  await dummyPage.getByRole('heading',{name:'Question results'}).waitFor();
+  assert.equal(await dummyPage.getByRole('button',{name:'Practice this question'}).count(),40);
+  await dummyPage.getByLabel('Search questions and topics').fill('');
+  await dummyPage.getByRole('button',{name:'Start practicing'}).click();
+  await dummyPage.locator('.desktop-test-picker').getByLabel('Jakarta Dummy Exam').check();
+  await dummyPage.getByLabel('Number of questions').fill('200');
+  await dummyPage.getByRole('button',{name:'Start session'}).click();
+  await dummyPage.getByRole('button',{name:'Check answer'}).waitFor();
+  await dummyPage.waitForFunction(async()=>JSON.parse(await window.tutorialz.load('learner-state')).progress.active?.questions.length===200);
+  const dummy=JSON.parse(await dummyPage.evaluate(()=>window.tutorialz.load('learner-state'))).progress.active.questions;
+  assert.equal(new Set(dummy.map(q=>q.topic)).size,6);
+  assert(dummy.every(q=>q.id.startsWith('jakarta-dummy-')));
+  await dummyPage.getByRole('radio').nth(dummy[0].correct[0]).check();
+  await dummyPage.getByRole('button',{name:'Check answer'}).click();
+  await dummyPage.getByText("That's correct",{exact:false}).waitFor();
+  await dummyPage.screenshot({path:'/tmp/tutorialz-jakarta-dummy-exam.png',fullPage:true});
+ }finally{await dummyContext.close();}
  await page.getByLabel('Search questions and topics').fill('optimistic locking');
  await page.getByRole('heading',{name:'Question results'}).waitFor();
  assert(await page.getByRole('button',{name:'Practice this question'}).count()>0);

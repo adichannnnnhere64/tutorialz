@@ -176,6 +176,21 @@ class QuestionBankTests(unittest.TestCase):
             self.assertIn(q["difficulty"], {"medium", "hard"})
             self.assertIn(q["assessment"]["kind"], {"apply", "debug", "design", "trace"})
 
+    def test_jakarta_dummy_exam_blueprint(self):
+        exam = next(c for c in self.courses if c["id"] == "jakarta-dummy-exam")
+        self.assertEqual(exam["title"], "Jakarta Dummy Exam")
+        questions = exam["tests"][0]["questions"]
+        expected = {"Java Spring": 40, "Hibernate": 40, "Java - JMS": 40,
+                    "ActiveMQ Artemis": 40, "Core Java - Java 8": 20,
+                    "Core Java - Java 9": 20}
+        self.assertEqual(len(questions), 200)
+        self.assertEqual(Counter(q["topic"] for q in questions), Counter(expected))
+        self.assertEqual(Counter(q["assessment"]["kind"] for q in questions),
+                         Counter({"recall": 50, "debug": 50, "design": 50, "apply": 50}))
+        for q in questions:
+            self.assertEqual(q["origin"], "ai")
+            self.assertIn(q["difficulty"], {"medium", "hard"})
+
     def test_jakarta_java_trace_answers(self):
         exam = next(c for c in self.courses if c["id"] == "jakarta-competency-exam")
         questions = exam["tests"][0]["questions"]
