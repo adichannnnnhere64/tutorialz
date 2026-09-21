@@ -1,51 +1,52 @@
 {
   "schema_version": 1,
+  "content_revision": 1,
   "collection_id": "tutorialz-jakarta-ee",
   "courses": [
     {
       "id": "ee-basic",
       "title": "Java Enterprise and Jakarta EE — Basic",
-      "description": "100 original questions grounded in official Jakarta EE specifications.",
+      "description": "100 distinct concept checks across ten enterprise subject areas.",
       "subject": "Java Enterprise / Jakarta EE",
       "difficulty": "easy",
       "path": "basic.json",
-      "sha256": "2d1a36e54a3b9f62cb9e7e0265276dcb4d6166470499cf96efebe5b9258732c8"
+      "sha256": "ff81a43d40cbb10cb36dbf4b9f0264a6e1fd50199c5f5bc86c6071a0890c19b9"
     },
     {
       "id": "ee-medium",
       "title": "Java Enterprise and Jakarta EE — Medium",
-      "description": "300 original questions grounded in official Jakarta EE specifications.",
+      "description": "100 distinct failure diagnoses across ten enterprise subject areas.",
       "subject": "Java Enterprise / Jakarta EE",
       "difficulty": "medium",
       "path": "medium.json",
-      "sha256": "442d40bb0e9deded327cf2169ac3245131e187780faff488a60c84852db22a23"
+      "sha256": "849c87213aff6ea4cb741ee87225a05de0a949154dd820af2cd0a35e1b9a94bc"
     },
     {
       "id": "ee-advanced",
       "title": "Java Enterprise and Jakarta EE — Advanced",
-      "description": "1000 original questions grounded in official Jakarta EE specifications.",
+      "description": "20 integrated enterprise scenarios across ten subject areas.",
       "subject": "Java Enterprise / Jakarta EE",
       "difficulty": "hard",
       "path": "advanced.json",
-      "sha256": "f8f5aab14c81f9ccd11c810e9b3f7e260f6b248a8f2d96947eaf9aa22c1c969e"
+      "sha256": "fbfe1e52663c6f10610fe2bd47356b49118286422011c73710e4901f5fbb9cd2"
     },
     {
       "id": "beginner-java",
       "title": "Java fundamentals — Beginner",
-      "description": "1200 original Java practice questions across 60 curated concepts.",
+      "description": "64 focused Java 17 questions: practical repairs and five attributed imports.",
       "subject": "Java fundamentals",
       "difficulty": "easy",
       "path": "beginner-java.json",
-      "sha256": "aceadc4b701fba244da1df9f68351934602858c28bd7c99e4dde8427f053a60f"
+      "sha256": "ec5c3af8b4a3c7c3336dee39d65f731ea48d1262c13cf180aa0003e227c9c722"
     },
     {
       "id": "oop-medium",
       "title": "Object-oriented Java — Medium",
-      "description": "600 original Java practice questions across 60 curated concepts.",
+      "description": "66 distinct Java 17 assessments covering object state, construction, dispatch, contracts, equality, and generics.",
       "subject": "Java OOP",
       "difficulty": "medium",
       "path": "oop-medium.json",
-      "sha256": "f9d98fef342d06a7eaf64e4959d720deaa691e38318416f150a29b775918c78e"
+      "sha256": "64772b6285a8045642b1422e5b62a0c3beb50dcf3f99a871967495b1740b0079"
     }
   ]
 }

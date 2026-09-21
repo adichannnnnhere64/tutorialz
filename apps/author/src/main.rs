@@ -9,6 +9,8 @@ fn main() {
 #[derive(Clone, Serialize, Deserialize, PartialEq)]
 struct Draft {
     collection_id: String,
+    #[serde(default)]
+    content_revision: u32,
     courses: Vec<Course>,
     #[serde(default)]
     published: Vec<Course>,
@@ -17,6 +19,7 @@ impl Default for Draft {
     fn default() -> Self {
         Self {
             collection_id: "tutorialz-samples".into(),
+            content_revision: 0,
             courses: sample_courses(),
             published: sample_courses(),
         }
@@ -217,6 +220,11 @@ fn Toolbar() -> Element {
                                 cx.draft
                                     .set(Draft {
                                         collection_id: id,
+                                        content_revision: serde_json::from_value(
+                                            value["catalog"].get("content_revision")
+                                                .or_else(|| value.get("content_revision"))
+                                                .cloned().unwrap_or(json!(0)),
+                                        ).map_err(|e| e.to_string())?,
                                         courses: courses.clone(),
                                         published: courses,
                                     });
@@ -300,10 +308,12 @@ fn Toolbar() -> Element {
                                     }
                                 }
                                 let duplicate = duplicate_prompts(&draft.courses);
+                                draft.content_revision = draft.content_revision.checked_add(1)
+                                    .ok_or("Content revision limit reached")?;
                                 call(
                                         "bundle",
                                         json!(
-                                            { "collection_id" : draft.collection_id, "courses" : draft
+                                            { "collection_id" : draft.collection_id, "content_revision": draft.content_revision, "courses" : draft
                                             .courses }
                                         ),
                                     )
@@ -673,6 +683,11 @@ fn TestEditor(index: usize) -> Element {
                                 explanation: "Explain why the answer is correct.".into(),
                                 topic: None,
                                 second_topic: None,
+                                assessment: None,
+                                origin: None,
+                                source_url: None,
+                                second_source_url: None,
+                                attribution: None,
                                 kind: QuestionKind::Choice {
                                     options: vec!["Option A".into(), "Option B".into()],
                                     correct: vec![0],
@@ -1170,6 +1185,7 @@ fn QuestionPreview(question: Question) -> Element {
         div { class: "panel",
             span { class: "badge", "Learner preview" }
             Markdown { text: question.prompt.clone() }
+            QuestionSource { question: question.clone() }
             AnswerFields {
                 question: question.clone(),
                 answer: answer(),

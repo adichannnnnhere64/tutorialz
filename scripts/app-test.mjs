@@ -55,6 +55,9 @@ try{
  const fastResults=JSON.parse(await page.evaluate(()=>window.tutorialz.load('learner-state'))).progress.active;
  assert.equal(fastResults.answers[fastSession.questions[0].id].correct,false);
  assert.equal(fastResults.answers[fastSession.questions[1].id].correct,true);
+ const wrongReview=page.locator('.results-row').first();await wrongReview.locator('summary').click();
+ const submittedIndex=fastResults.answers[fastSession.questions[0].id].answer.value[0];
+ assert((await wrongReview.locator('.submitted-answer').innerText()).includes(fastSession.questions[0].options[submittedIndex]),'Fast-mode review must show the saved wrong choice');
  await page.getByRole('button',{name:'Practice',exact:false}).first().click();
  await page.getByRole('button',{name:'View results'}).click();
  await page.getByRole('heading',{name:'Every attempt counts.'}).waitFor();

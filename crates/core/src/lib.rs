@@ -5,6 +5,8 @@ pub const VERSION: u32 = 1;
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 pub struct Catalog {
     pub schema_version: u32,
+    #[serde(default)]
+    pub content_revision: u32,
     pub collection_id: String,
     pub courses: Vec<CourseSummary>,
 }
@@ -55,8 +57,37 @@ pub struct Question {
     pub topic: Option<String>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub second_topic: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub assessment: Option<QuestionAssessment>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub origin: Option<QuestionOrigin>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_url: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub second_source_url: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub attribution: Option<QuestionAttribution>,
     #[serde(flatten)]
     pub kind: QuestionKind,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct QuestionAssessment {
+    pub objective: String,
+    pub kind: String,
+    pub concepts: Vec<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "snake_case")]
+pub enum QuestionOrigin {
+    Ai,
+    Scraped,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+pub struct QuestionAttribution {
+    pub author: String,
+    pub license: String,
+    pub license_url: String,
+    pub notes: String,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
 #[serde(tag = "type", rename_all = "snake_case")]
@@ -295,6 +326,15 @@ pub fn validate_catalog(c: &Catalog) -> Result<(), String> {
     }
     Ok(())
 }
+/// An older remote catalog must not restore retired questions after an upgrade.
+pub fn validate_catalog_update(current: &Catalog, incoming: &Catalog) -> Result<(), String> {
+    if current.collection_id == incoming.collection_id
+        && incoming.content_revision < current.content_revision
+    {
+        return Err("The online catalog is older than your current question bank.".into());
+    }
+    Ok(())
+}
 pub fn safe_id(s: &str) -> bool {
     !s.is_empty()
         && s.bytes()
@@ -302,6 +342,7 @@ pub fn safe_id(s: &str) -> bool {
 }
 pub fn validate_courses(courses: &[Course]) -> Result<(), String> {
     let mut ids = BTreeSet::new();
+    let mut objectives = BTreeSet::new();
     for c in courses {
         if c.schema_version != VERSION
             || !safe_id(&c.id)
@@ -339,6 +380,14 @@ pub fn validate_courses(courses: &[Course]) -> Result<(), String> {
                     return Err(format!("Duplicate ID: {}", q.id));
                 }
                 validate_question(q)?;
+                if let Some(assessment) = &q.assessment {
+                    if !objectives.insert(&assessment.objective) {
+                        return Err(format!(
+                            "Duplicate learning objective: {}",
+                            assessment.objective
+                        ));
+                    }
+                }
             }
         }
     }
@@ -356,6 +405,47 @@ pub fn validate_question(q: &Question) -> Result<(), String> {
     {
         return Err(format!("Incomplete question: {}", q.id));
     }
+    if let Some(assessment) = &q.assessment {
+        if !safe_id(&assessment.objective)
+            || !matches!(
+                assessment.kind.as_str(),
+                "recall" | "apply" | "trace" | "debug" | "design"
+            )
+            || assessment.concepts.is_empty()
+            || assessment.concepts.iter().any(|c| !safe_id(c))
+            || assessment.concepts.iter().collect::<BTreeSet<_>>().len()
+                != assessment.concepts.len()
+        {
+            return Err(format!("Invalid assessment metadata: {}", q.id));
+        }
+    }
+    for url in [&q.source_url, &q.second_source_url].into_iter().flatten() {
+        if !url.starts_with("https://")
+            || url.len() <= "https://".len()
+            || url.chars().any(char::is_whitespace)
+        {
+            return Err(format!("Invalid source URL: {}", q.id));
+        }
+    }
+    if let Some(attribution) = &q.attribution {
+        if attribution.author.trim().is_empty()
+            || attribution.license.trim().is_empty()
+            || attribution.notes.trim().is_empty()
+            || !attribution.license_url.starts_with("https://")
+            || attribution.license_url.len() <= "https://".len()
+            || attribution.license_url.chars().any(char::is_whitespace)
+        {
+            return Err(format!("Invalid question attribution: {}", q.id));
+        }
+    }
+    if q.origin == Some(QuestionOrigin::Scraped)
+        && (q.source_url.is_none() || q.attribution.is_none())
+    {
+        return Err(format!(
+            "Scraped question needs a source and attribution: {}",
+            q.id
+        ));
+    }
     let valid = match &q.kind {
         QuestionKind::Choice {
             options,
@@ -364,6 +454,12 @@ pub fn validate_question(q: &Question) -> Result<(), String> {
         } => {
             options.len() >= 2
                 && options.iter().all(|s| !s.trim().is_empty())
+                && options
+                    .iter()
+                    .map(|s| s.trim())
+                    .collect::<BTreeSet<_>>()
+                    .len()
+                    == options.len()
                 && !correct.is_empty()
                 && (*multiple || correct.len() == 1)
                 && correct.iter().all(|i| *i < options.len())
@@ -451,6 +547,77 @@ mod tests {
     #[test]
     fn sample_content_is_valid() {
         validate_courses(&sample_courses()).unwrap();
+    }
+    #[test]
+    fn question_provenance_survives_serialization_and_session_snapshots() {
+        let courses = enterprise_courses();
+        validate_courses(&courses).unwrap();
+        for question in courses
+            .iter()
+            .flat_map(|c| &c.tests)
+            .flat_map(|t| &t.questions)
+        {
+            let encoded = serde_json::to_value(question).unwrap();
+            assert!(encoded["origin"].is_string());
+            assert!(encoded["assessment"]["objective"].is_string());
+            let decoded: Question = serde_json::from_value(encoded).unwrap();
+            assert_eq!(*question, decoded);
+        }
+        let old: Question = serde_json::from_str(
+            r#"{"id":"old","revision":1,"prompt":"Choose one","difficulty":"easy","explanation":"One","type":"choice","options":["One","Two"],"correct":[0],"multiple":false}"#,
+        ).unwrap();
+        assert!(old.origin.is_none());
+        assert!(old.assessment.is_none());
+        validate_question(&old).unwrap();
+    }
+    #[test]
+    fn scraped_questions_require_attribution_and_safe_sources() {
+        let mut q = enterprise_courses()
+            .into_iter()
+            .flat_map(|c| c.tests)
+            .flat_map(|t| t.questions)
+            .find(|q| q.origin == Some(QuestionOrigin::Scraped))
+            .unwrap();
+        validate_question(&q).unwrap();
+        q.source_url = Some("javascript:alert(1)".into());
+        assert!(validate_question(&q).is_err());
+        q.source_url = Some("https://example.com/question".into());
+        q.attribution = None;
+        assert!(validate_question(&q).is_err());
+    }
+    #[test]
+    fn duplicate_objectives_and_choices_are_rejected() {
+        let mut courses = enterprise_courses();
+        let assessment = courses[0].tests[0].questions[0].assessment.clone();
+        courses[1].tests[0].questions[0].assessment = assessment;
+        assert!(validate_courses(&courses)
+            .unwrap_err()
+            .contains("Duplicate learning objective"));
+        let mut q = questions()
+            .into_iter()
+            .find(|q| matches!(q.kind, QuestionKind::Choice { .. }))
+            .unwrap();
+        if let QuestionKind::Choice { options, .. } = &mut q.kind {
+            options[1] = format!(" {} ", options[0]);
+        }
+        assert!(validate_question(&q).is_err());
+    }
+    #[test]
+    fn older_catalog_cannot_restore_retired_questions() {
+        let current: Catalog =
+            serde_json::from_str(include_str!("../../../content/enterprise/catalog.json")).unwrap();
+        let mut older = current.clone();
+        older.content_revision = 0;
+        assert!(validate_catalog_update(&current, &older).is_err());
+        assert!(validate_catalog_update(&current, &current).is_ok());
+        older.content_revision = current.content_revision + 1;
+        assert!(validate_catalog_update(&current, &older).is_ok());
+        older.content_revision = 0;
+        older.collection_id = "another-collection".into();
+        assert!(validate_catalog_update(&current, &older).is_ok());
+        let legacy: Catalog =
+            serde_json::from_str(include_str!("../../../content/catalog.json")).unwrap();
+        assert_eq!(legacy.content_revision, 0);
     }
     #[test]
     fn duplicate_id_across_tests_rejected() {

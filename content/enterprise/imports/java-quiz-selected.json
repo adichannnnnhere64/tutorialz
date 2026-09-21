@@ -1,0 +1,172 @@
+[
+  {
+    "id": "java-scraped-string-comparison-zero",
+    "revision": 1,
+    "prompt": "What does the 'compareTo()' method return when two strings are equal?",
+    "difficulty": "easy",
+    "explanation": "String.compareTo returns zero when the strings have the same character sequence; negative and positive results indicate lexicographic ordering.",
+    "type": "choice",
+    "options": [
+      "1",
+      "-1",
+      "0",
+      "True"
+    ],
+    "correct": [
+      2
+    ],
+    "multiple": false,
+    "source_url": "https://raw.githubusercontent.com/imtahirnaseer/Java-Quiz-App/c1499f5aed8804d21e93ba76f1fa011afdf07d15/questions.js",
+    "topic": "String ordering",
+    "assessment": {
+      "objective": "java-string-comparison-zero",
+      "kind": "recall",
+      "concepts": [
+        "string-ordering"
+      ]
+    },
+    "origin": "scraped",
+    "attribution": {
+      "author": "Tahir Naseer",
+      "license": "MIT",
+      "license_url": "https://github.com/imtahirnaseer/Java-Quiz-App/blob/c1499f5aed8804d21e93ba76f1fa011afdf07d15/LICENSE",
+      "notes": "Source question 22; prompt and choices imported verbatim. Explanation added by AI."
+    }
+  },
+  {
+    "id": "java-scraped-string-is-reference-type",
+    "revision": 1,
+    "prompt": "Which of these is not a primitive data type in Java?",
+    "difficulty": "easy",
+    "explanation": "String is a class, so String values are references. int, char, and boolean are primitive types.",
+    "type": "choice",
+    "options": [
+      "int",
+      "char",
+      "boolean",
+      "String"
+    ],
+    "correct": [
+      3
+    ],
+    "multiple": false,
+    "source_url": "https://raw.githubusercontent.com/imtahirnaseer/Java-Quiz-App/c1499f5aed8804d21e93ba76f1fa011afdf07d15/questions.js",
+    "topic": "Primitive and reference types",
+    "assessment": {
+      "objective": "java-string-is-reference-type",
+      "kind": "recall",
+      "concepts": [
+        "primitive-and-reference-types"
+      ]
+    },
+    "origin": "scraped",
+    "attribution": {
+      "author": "Tahir Naseer",
+      "license": "MIT",
+      "license_url": "https://github.com/imtahirnaseer/Java-Quiz-App/blob/c1499f5aed8804d21e93ba76f1fa011afdf07d15/LICENSE",
+      "notes": "Source question 59; prompt and choices imported verbatim. Explanation added by AI."
+    }
+  },
+  {
+    "id": "java-scraped-bitwise-and-operator",
+    "revision": 1,
+    "prompt": "Which operator is used for bitwise AND in Java?",
+    "difficulty": "easy",
+    "explanation": "For integral operands, & computes bitwise AND. The other choices are bitwise OR, XOR, and complement, respectively.",
+    "type": "choice",
+    "options": [
+      "&",
+      "|",
+      "^",
+      "~"
+    ],
+    "correct": [
+      0
+    ],
+    "multiple": false,
+    "source_url": "https://raw.githubusercontent.com/imtahirnaseer/Java-Quiz-App/c1499f5aed8804d21e93ba76f1fa011afdf07d15/questions.js",
+    "topic": "Bitwise operators",
+    "assessment": {
+      "objective": "java-bitwise-and-operator",
+      "kind": "recall",
+      "concepts": [
+        "bitwise-operators"
+      ]
+    },
+    "origin": "scraped",
+    "attribution": {
+      "author": "Tahir Naseer",
+      "license": "MIT",
+      "license_url": "https://github.com/imtahirnaseer/Java-Quiz-App/blob/c1499f5aed8804d21e93ba76f1fa011afdf07d15/LICENSE",
+      "notes": "Source question 60; prompt and choices imported verbatim. Explanation added by AI."
+    }
+  },
+  {
+    "id": "java-scraped-signed-byte-range",
+    "revision": 1,
+    "prompt": "What is the range of byte data type in Java?",
+    "difficulty": "easy",
+    "explanation": "byte is an 8-bit signed two's-complement integer, with values from -128 through 127.",
+    "type": "choice",
+    "options": [
+      "-128 to 127",
+      "-256 to 255",
+      "-32768 to 32767",
+      "0 to 255"
+    ],
+    "correct": [
+      0
+    ],
+    "multiple": false,
+    "source_url": "https://raw.githubusercontent.com/imtahirnaseer/Java-Quiz-App/c1499f5aed8804d21e93ba76f1fa011afdf07d15/questions.js",
+    "topic": "Byte range",
+    "assessment": {
+      "objective": "java-signed-byte-range",
+      "kind": "recall",
+      "concepts": [
+        "byte-range"
+      ]
+    },
+    "origin": "scraped",
+    "attribution": {
+      "author": "Tahir Naseer",
+      "license": "MIT",
+      "license_url": "https://github.com/imtahirnaseer/Java-Quiz-App/blob/c1499f5aed8804d21e93ba76f1fa011afdf07d15/LICENSE",
+      "notes": "Source question 63; prompt and choices imported verbatim. Explanation added by AI."
+    }
+  },
+  {
+    "id": "java-scraped-list-size-method",
+    "revision": 1,
+    "prompt": "Which of these methods is used to get the size of a List in Java?",
+    "difficulty": "easy",
+    "explanation": "List exposes its element count through size(). Arrays instead have a length field; String has a length() method.",
+    "type": "choice",
+    "options": [
+      "length()",
+      "getSize()",
+      "size()",
+      "length"
+    ],
+    "correct": [
+      2
+    ],
+    "multiple": false,
+    "source_url": "https://raw.githubusercontent.com/imtahirnaseer/Java-Quiz-App/c1499f5aed8804d21e93ba76f1fa011afdf07d15/questions.js",
+    "topic": "List size",
+    "assessment": {
+      "objective": "java-list-size-method",
+      "kind": "recall",
+      "concepts": [
+        "list-size"
+      ]
+    },
+    "origin": "scraped",
+    "attribution": {
+      "author": "Tahir Naseer",
+      "license": "MIT",
+      "license_url": "https://github.com/imtahirnaseer/Java-Quiz-App/blob/c1499f5aed8804d21e93ba76f1fa011afdf07d15/LICENSE",
+      "notes": "Source question 89; prompt and choices imported verbatim. Explanation added by AI."
+    }
+  }
+]

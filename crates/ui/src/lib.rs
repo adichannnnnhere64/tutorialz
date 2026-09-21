@@ -192,6 +192,84 @@ pub fn kind_name(q: &Question) -> &'static str {
     }
 }
 #[component]
+pub fn QuestionSource(question: Question) -> Element {
+    rsx! {
+        div { class: "question-source small muted",
+            if let Some(origin) = &question.origin {
+                span { class: "badge",
+                    match origin { QuestionOrigin::Ai => "AI", QuestionOrigin::Scraped => "Scraped" }
+                }
+            }
+            if let Some(url) = &question.source_url {
+                if url.starts_with("https://") {
+                    a { href: url.clone(), target: "_blank", rel: "noopener noreferrer", "Source" }
+                }
+            }
+            if let Some(attribution) = &question.attribution {
+                span { "{attribution.author}" }
+                if attribution.license_url.starts_with("https://") {
+                    a { href: attribution.license_url.clone(), target: "_blank", rel: "noopener noreferrer",
+                        "{attribution.license}"
+                    }
+                }
+                span { "{attribution.notes}" }
+            }
+        }
+    }
+}
+
+/// Render the saved submission against the session's question snapshot.
+/// Student input is rendered as text, never interpreted as Markdown or HTML.
+#[component]
+pub fn SubmittedAnswer(question: Question, answer: Option<Answer>) -> Element {
+    rsx! {
+        div { class: "submitted-answer",
+            strong { "Your answer" }
+            match answer {
+                None => rsx! { p { "No answer submitted." } },
+                Some(Answer::Skipped) => rsx! { p { "You skipped this question." } },
+                Some(Answer::Choice(selected)) => {
+                    if let QuestionKind::Choice { options, .. } = &question.kind {
+                        rsx! {
+                            if selected.is_empty() { p { "No option selected." } }
+                            ul {
+                                for index in selected {
+                                    li {
+                                        if let Some(option) = options.get(index) {
+                                            Markdown { text: option.clone() }
+                                        } else {
+                                            "Selected option is unavailable."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else { rsx! { p { "Saved answer does not match this question." } } }
+                },
+                Some(Answer::Blanks(values)) => {
+                    if let QuestionKind::Blanks { blanks } = &question.kind {
+                        rsx! {
+                            dl {
+                                for (index, blank) in blanks.iter().enumerate() {
+                                    dt { "{blank.label}" }
+                                    dd { class: "submitted-value",
+                                        if let Some(value) = values.get(index).filter(|v| !v.is_empty()) {
+                                            "{value}"
+                                        } else {
+                                            "(empty)"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else { rsx! { p { "Saved answer does not match this question." } } }
+                },
+                Some(Answer::Code(source)) => rsx! { pre { class: "code", "{source}" } },
+            }
+        }
+    }
+}
+#[component]
 pub fn AnswerFields(
     question: Question,
     answer: Answer,
@@ -233,7 +311,7 @@ pub fn AnswerFields(
                                 },
                             }
                             span { class: "option-letter", "{((b'A'+i as u8) as char)}" }
-                            span { "{label}" }
+                            Markdown { text: label.clone() }
                         }
                     }
                 }

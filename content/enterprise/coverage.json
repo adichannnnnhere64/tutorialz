@@ -1,0 +1,1208 @@
+{
+  "questions": 350,
+  "courses": [
+    {
+      "id": "ee-basic",
+      "questions": 100,
+      "skills": {
+        "recall": 100
+      },
+      "coverage": {
+        "acknowledgment": [
+          "ee-basic-073-01"
+        ],
+        "alternatives": [
+          "ee-basic-039-01"
+        ],
+        "application-lifecycle-callbacks": [
+          "ee-basic-009-01"
+        ],
+        "application-scope": [
+          "ee-basic-015-01"
+        ],
+        "application-server-services": [
+          "ee-basic-004-01"
+        ],
+        "async-servlet-processing": [
+          "ee-basic-016-01"
+        ],
+        "at-least-once-delivery": [
+          "ee-basic-076-01"
+        ],
+        "atomic-commit": [
+          "ee-basic-051-01"
+        ],
+        "audit-trails": [
+          "ee-basic-070-01"
+        ],
+        "authentication-mechanism": [
+          "ee-basic-062-01"
+        ],
+        "backpressure": [
+          "ee-basic-080-01"
+        ],
+        "bean-scopes": [
+          "ee-basic-033-01"
+        ],
+        "bean-validation-constraints": [
+          "ee-basic-081-01"
+        ],
+        "bounded-task-queues": [
+          "ee-basic-093-01"
+        ],
+        "bulkheads": [
+          "ee-basic-098-01"
+        ],
+        "cascaded-validation": [
+          "ee-basic-083-01"
+        ],
+        "conditional-requests": [
+          "ee-basic-030-01"
+        ],
+        "configuration-by-environment": [
+          "ee-basic-007-01"
+        ],
+        "connection-pool-boundaries": [
+          "ee-basic-059-01"
+        ],
+        "connection-pool-sizing": [
+          "ee-basic-097-01"
+        ],
+        "constraint-message-interpolation": [
+          "ee-basic-087-01"
+        ],
+        "content-negotiation": [
+          "ee-basic-022-01"
+        ],
+        "context-propagation": [
+          "ee-basic-092-01"
+        ],
+        "cross-field-validation": [
+          "ee-basic-085-01"
+        ],
+        "csrf-protection": [
+          "ee-basic-065-01"
+        ],
+        "custom-constraints": [
+          "ee-basic-084-01"
+        ],
+        "database-constraints": [
+          "ee-basic-088-01"
+        ],
+        "dead-letter-handling": [
+          "ee-basic-074-01"
+        ],
+        "declarative-authorization": [
+          "ee-basic-061-01"
+        ],
+        "decorators": [
+          "ee-basic-037-01"
+        ],
+        "dependent-scope": [
+          "ee-basic-034-01"
+        ],
+        "eager-relationships": [
+          "ee-basic-045-01"
+        ],
+        "ear-packaging": [
+          "ee-basic-006-01"
+        ],
+        "entity-identity": [
+          "ee-basic-041-01"
+        ],
+        "events": [
+          "ee-basic-038-01"
+        ],
+        "exception-mapping": [
+          "ee-basic-024-01"
+        ],
+        "filter-chains": [
+          "ee-basic-012-01"
+        ],
+        "flush": [
+          "ee-basic-043-01"
+        ],
+        "forward-and-redirect": [
+          "ee-basic-020-01"
+        ],
+        "graceful-shutdown": [
+          "ee-basic-100-01"
+        ],
+        "http-method-semantics": [
+          "ee-basic-017-01"
+        ],
+        "idempotent-updates": [
+          "ee-basic-028-01"
+        ],
+        "interceptors": [
+          "ee-basic-036-01"
+        ],
+        "jakarta-ee-profiles": [
+          "ee-basic-001-01"
+        ],
+        "jpql-parameters": [
+          "ee-basic-049-01"
+        ],
+        "lazy-relationships": [
+          "ee-basic-044-01"
+        ],
+        "least-privilege": [
+          "ee-basic-064-01"
+        ],
+        "managed-executors": [
+          "ee-basic-091-01"
+        ],
+        "message-driven-beans": [
+          "ee-basic-077-01"
+        ],
+        "message-expiration": [
+          "ee-basic-079-01"
+        ],
+        "message-ordering": [
+          "ee-basic-075-01"
+        ],
+        "method-validation": [
+          "ee-basic-086-01"
+        ],
+        "multipart-handling": [
+          "ee-basic-019-01"
+        ],
+        "n-plus-one-queries": [
+          "ee-basic-046-01"
+        ],
+        "optimistic-locking": [
+          "ee-basic-047-01"
+        ],
+        "outbox-pattern": [
+          "ee-basic-057-01"
+        ],
+        "output-encoding": [
+          "ee-basic-066-01"
+        ],
+        "pagination": [
+          "ee-basic-029-01"
+        ],
+        "parameter-conversion": [
+          "ee-basic-023-01"
+        ],
+        "passivation": [
+          "ee-basic-040-01"
+        ],
+        "persistence-context": [
+          "ee-basic-042-01"
+        ],
+        "pessimistic-locking": [
+          "ee-basic-048-01"
+        ],
+        "portable-deployment": [
+          "ee-basic-003-01"
+        ],
+        "principal-propagation": [
+          "ee-basic-063-01"
+        ],
+        "producer-methods": [
+          "ee-basic-035-01"
+        ],
+        "qualifiers": [
+          "ee-basic-032-01"
+        ],
+        "queues": [
+          "ee-basic-071-01"
+        ],
+        "read-isolation": [
+          "ee-basic-058-01"
+        ],
+        "request-filters": [
+          "ee-basic-025-01"
+        ],
+        "request-reply-messaging": [
+          "ee-basic-078-01"
+        ],
+        "request-scope": [
+          "ee-basic-013-01"
+        ],
+        "resource-injection": [
+          "ee-basic-008-01"
+        ],
+        "resource-paths": [
+          "ee-basic-021-01"
+        ],
+        "response-commitment": [
+          "ee-basic-018-01"
+        ],
+        "response-filters": [
+          "ee-basic-026-01"
+        ],
+        "rest-client-timeouts": [
+          "ee-basic-027-01"
+        ],
+        "rollback-rules": [
+          "ee-basic-053-01"
+        ],
+        "saga-compensation": [
+          "ee-basic-056-01"
+        ],
+        "scheduled-tasks": [
+          "ee-basic-096-01"
+        ],
+        "secret-rotation": [
+          "ee-basic-067-01"
+        ],
+        "servlet-mappings": [
+          "ee-basic-011-01"
+        ],
+        "session-fixation-defense": [
+          "ee-basic-069-01"
+        ],
+        "session-scope": [
+          "ee-basic-014-01"
+        ],
+        "specification-compatibility": [
+          "ee-basic-010-01"
+        ],
+        "structured-cancellation": [
+          "ee-basic-094-01"
+        ],
+        "the-jakarta-namespace": [
+          "ee-basic-002-01"
+        ],
+        "thread-safe-bean-state": [
+          "ee-basic-095-01"
+        ],
+        "timeouts-and-retries": [
+          "ee-basic-099-01"
+        ],
+        "topics": [
+          "ee-basic-072-01"
+        ],
+        "transaction-propagation": [
+          "ee-basic-052-01"
+        ],
+        "transaction-scoped-entity-managers": [
+          "ee-basic-050-01"
+        ],
+        "transaction-timeout": [
+          "ee-basic-054-01"
+        ],
+        "transactional-tests": [
+          "ee-basic-060-01"
+        ],
+        "transport-security": [
+          "ee-basic-068-01"
+        ],
+        "two-phase-commit": [
+          "ee-basic-055-01"
+        ],
+        "type-safe-injection": [
+          "ee-basic-031-01"
+        ],
+        "validation-boundaries": [
+          "ee-basic-089-01"
+        ],
+        "validation-error-format": [
+          "ee-basic-090-01"
+        ],
+        "validation-groups": [
+          "ee-basic-082-01"
+        ],
+        "war-packaging": [
+          "ee-basic-005-01"
+        ]
+      }
+    },
+    {
+      "id": "ee-medium",
+      "questions": 100,
+      "skills": {
+        "debug": 100
+      },
+      "coverage": {
+        "acknowledgment": [
+          "ee-medium-073-01"
+        ],
+        "alternatives": [
+          "ee-medium-039-01"
+        ],
+        "application-lifecycle-callbacks": [
+          "ee-medium-009-01"
+        ],
+        "application-scope": [
+          "ee-medium-015-01"
+        ],
+        "application-server-services": [
+          "ee-medium-004-01"
+        ],
+        "async-servlet-processing": [
+          "ee-medium-016-01"
+        ],
+        "at-least-once-delivery": [
+          "ee-medium-076-01"
+        ],
+        "atomic-commit": [
+          "ee-medium-051-01"
+        ],
+        "audit-trails": [
+          "ee-medium-070-01"
+        ],
+        "authentication-mechanism": [
+          "ee-medium-062-01"
+        ],
+        "backpressure": [
+          "ee-medium-080-01"
+        ],
+        "bean-scopes": [
+          "ee-medium-033-01"
+        ],
+        "bean-validation-constraints": [
+          "ee-medium-081-01"
+        ],
+        "bounded-task-queues": [
+          "ee-medium-093-01"
+        ],
+        "bulkheads": [
+          "ee-medium-098-01"
+        ],
+        "cascaded-validation": [
+          "ee-medium-083-01"
+        ],
+        "conditional-requests": [
+          "ee-medium-030-01"
+        ],
+        "configuration-by-environment": [
+          "ee-medium-007-01"
+        ],
+        "connection-pool-boundaries": [
+          "ee-medium-059-01"
+        ],
+        "connection-pool-sizing": [
+          "ee-medium-097-01"
+        ],
+        "constraint-message-interpolation": [
+          "ee-medium-087-01"
+        ],
+        "content-negotiation": [
+          "ee-medium-022-01"
+        ],
+        "context-propagation": [
+          "ee-medium-092-01"
+        ],
+        "cross-field-validation": [
+          "ee-medium-085-01"
+        ],
+        "csrf-protection": [
+          "ee-medium-065-01"
+        ],
+        "custom-constraints": [
+          "ee-medium-084-01"
+        ],
+        "database-constraints": [
+          "ee-medium-088-01"
+        ],
+        "dead-letter-handling": [
+          "ee-medium-074-01"
+        ],
+        "declarative-authorization": [
+          "ee-medium-061-01"
+        ],
+        "decorators": [
+          "ee-medium-037-01"
+        ],
+        "dependent-scope": [
+          "ee-medium-034-01"
+        ],
+        "eager-relationships": [
+          "ee-medium-045-01"
+        ],
+        "ear-packaging": [
+          "ee-medium-006-01"
+        ],
+        "entity-identity": [
+          "ee-medium-041-01"
+        ],
+        "events": [
+          "ee-medium-038-01"
+        ],
+        "exception-mapping": [
+          "ee-medium-024-01"
+        ],
+        "filter-chains": [
+          "ee-medium-012-01"
+        ],
+        "flush": [
+          "ee-medium-043-01"
+        ],
+        "forward-and-redirect": [
+          "ee-medium-020-01"
+        ],
+        "graceful-shutdown": [
+          "ee-medium-100-01"
+        ],
+        "http-method-semantics": [
+          "ee-medium-017-01"
+        ],
+        "idempotent-updates": [
+          "ee-medium-028-01"
+        ],
+        "interceptors": [
+          "ee-medium-036-01"
+        ],
+        "jakarta-ee-profiles": [
+          "ee-medium-001-01"
+        ],
+        "jpql-parameters": [
+          "ee-medium-049-01"
+        ],
+        "lazy-relationships": [
+          "ee-medium-044-01"
+        ],
+        "least-privilege": [
+          "ee-medium-064-01"
+        ],
+        "managed-executors": [
+          "ee-medium-091-01"
+        ],
+        "message-driven-beans": [
+          "ee-medium-077-01"
+        ],
+        "message-expiration": [
+          "ee-medium-079-01"
+        ],
+        "message-ordering": [
+          "ee-medium-075-01"
+        ],
+        "method-validation": [
+          "ee-medium-086-01"
+        ],
+        "multipart-handling": [
+          "ee-medium-019-01"
+        ],
+        "n-plus-one-queries": [
+          "ee-medium-046-01"
+        ],
+        "optimistic-locking": [
+          "ee-medium-047-01"
+        ],
+        "outbox-pattern": [
+          "ee-medium-057-01"
+        ],
+        "output-encoding": [
+          "ee-medium-066-01"
+        ],
+        "pagination": [
+          "ee-medium-029-01"
+        ],
+        "parameter-conversion": [
+          "ee-medium-023-01"
+        ],
+        "passivation": [
+          "ee-medium-040-01"
+        ],
+        "persistence-context": [
+          "ee-medium-042-01"
+        ],
+        "pessimistic-locking": [
+          "ee-medium-048-01"
+        ],
+        "portable-deployment": [
+          "ee-medium-003-01"
+        ],
+        "principal-propagation": [
+          "ee-medium-063-01"
+        ],
+        "producer-methods": [
+          "ee-medium-035-01"
+        ],
+        "qualifiers": [
+          "ee-medium-032-01"
+        ],
+        "queues": [
+          "ee-medium-071-01"
+        ],
+        "read-isolation": [
+          "ee-medium-058-01"
+        ],
+        "request-filters": [
+          "ee-medium-025-01"
+        ],
+        "request-reply-messaging": [
+          "ee-medium-078-01"
+        ],
+        "request-scope": [
+          "ee-medium-013-01"
+        ],
+        "resource-injection": [
+          "ee-medium-008-01"
+        ],
+        "resource-paths": [
+          "ee-medium-021-01"
+        ],
+        "response-commitment": [
+          "ee-medium-018-01"
+        ],
+        "response-filters": [
+          "ee-medium-026-01"
+        ],
+        "rest-client-timeouts": [
+          "ee-medium-027-01"
+        ],
+        "rollback-rules": [
+          "ee-medium-053-01"
+        ],
+        "saga-compensation": [
+          "ee-medium-056-01"
+        ],
+        "scheduled-tasks": [
+          "ee-medium-096-01"
+        ],
+        "secret-rotation": [
+          "ee-medium-067-01"
+        ],
+        "servlet-mappings": [
+          "ee-medium-011-01"
+        ],
+        "session-fixation-defense": [
+          "ee-medium-069-01"
+        ],
+        "session-scope": [
+          "ee-medium-014-01"
+        ],
+        "specification-compatibility": [
+          "ee-medium-010-01"
+        ],
+        "structured-cancellation": [
+          "ee-medium-094-01"
+        ],
+        "the-jakarta-namespace": [
+          "ee-medium-002-01"
+        ],
+        "thread-safe-bean-state": [
+          "ee-medium-095-01"
+        ],
+        "timeouts-and-retries": [
+          "ee-medium-099-01"
+        ],
+        "topics": [
+          "ee-medium-072-01"
+        ],
+        "transaction-propagation": [
+          "ee-medium-052-01"
+        ],
+        "transaction-scoped-entity-managers": [
+          "ee-medium-050-01"
+        ],
+        "transaction-timeout": [
+          "ee-medium-054-01"
+        ],
+        "transactional-tests": [
+          "ee-medium-060-01"
+        ],
+        "transport-security": [
+          "ee-medium-068-01"
+        ],
+        "two-phase-commit": [
+          "ee-medium-055-01"
+        ],
+        "type-safe-injection": [
+          "ee-medium-031-01"
+        ],
+        "validation-boundaries": [
+          "ee-medium-089-01"
+        ],
+        "validation-error-format": [
+          "ee-medium-090-01"
+        ],
+        "validation-groups": [
+          "ee-medium-082-01"
+        ],
+        "war-packaging": [
+          "ee-medium-005-01"
+        ]
+      }
+    },
+    {
+      "id": "ee-advanced",
+      "questions": 20,
+      "skills": {
+        "design": 20
+      },
+      "coverage": {
+        "acknowledgment": [
+          "ee-advanced-deduplicate-with-business-transaction"
+        ],
+        "async-servlet-processing": [
+          "ee-advanced-bound-async-request-work"
+        ],
+        "at-least-once-delivery": [
+          "ee-advanced-deduplicate-with-business-transaction"
+        ],
+        "atomic-commit": [
+          "ee-advanced-persist-idempotency-with-result",
+          "ee-advanced-deduplicate-with-business-transaction"
+        ],
+        "backpressure": [
+          "ee-advanced-preserve-order-with-parallel-consumers"
+        ],
+        "bean-scopes": [
+          "ee-advanced-qualify-implementation-with-correct-lifetime"
+        ],
+        "bounded-task-queues": [
+          "ee-advanced-bound-async-request-work"
+        ],
+        "bulkheads": [
+          "ee-advanced-isolate-slow-dependency-capacity"
+        ],
+        "cascaded-validation": [
+          "ee-advanced-combine-nested-and-cross-field-validation"
+        ],
+        "conditional-requests": [
+          "ee-advanced-combine-http-and-database-concurrency"
+        ],
+        "connection-pool-sizing": [
+          "ee-advanced-isolate-slow-dependency-capacity"
+        ],
+        "cross-field-validation": [
+          "ee-advanced-combine-nested-and-cross-field-validation"
+        ],
+        "csrf-protection": [
+          "ee-advanced-rotate-session-and-check-browser-intent"
+        ],
+        "database-constraints": [
+          "ee-advanced-close-uniqueness-validation-race"
+        ],
+        "declarative-authorization": [
+          "ee-advanced-authorize-each-tenant-resource"
+        ],
+        "events": [
+          "ee-advanced-transaction-observer-is-not-durable-outbox"
+        ],
+        "exception-mapping": [
+          "ee-advanced-handle-failure-after-commit"
+        ],
+        "graceful-shutdown": [
+          "ee-advanced-cooperative-cancellation-and-durable-work"
+        ],
+        "idempotent-updates": [
+          "ee-advanced-persist-idempotency-with-result"
+        ],
+        "jakarta-ee-profiles": [
+          "ee-advanced-verify-profile-before-portable-deployment"
+        ],
+        "lazy-relationships": [
+          "ee-advanced-page-parents-with-bounded-fetches"
+        ],
+        "least-privilege": [
+          "ee-advanced-authorize-each-tenant-resource"
+        ],
+        "managed-executors": [
+          "ee-advanced-cooperative-cancellation-and-durable-work"
+        ],
+        "message-ordering": [
+          "ee-advanced-preserve-order-with-parallel-consumers"
+        ],
+        "n-plus-one-queries": [
+          "ee-advanced-page-parents-with-bounded-fetches"
+        ],
+        "optimistic-locking": [
+          "ee-advanced-combine-http-and-database-concurrency",
+          "ee-advanced-retry-conflict-from-fresh-state"
+        ],
+        "outbox-pattern": [
+          "ee-advanced-transaction-observer-is-not-durable-outbox"
+        ],
+        "pagination": [
+          "ee-advanced-page-parents-with-bounded-fetches"
+        ],
+        "persistence-context": [
+          "ee-advanced-retry-conflict-from-fresh-state"
+        ],
+        "portable-deployment": [
+          "ee-advanced-verify-profile-before-portable-deployment"
+        ],
+        "principal-propagation": [
+          "ee-advanced-authorize-each-tenant-resource"
+        ],
+        "qualifiers": [
+          "ee-advanced-qualify-implementation-with-correct-lifetime"
+        ],
+        "request-scope": [
+          "ee-advanced-bound-async-request-work"
+        ],
+        "response-commitment": [
+          "ee-advanced-handle-failure-after-commit"
+        ],
+        "rollback-rules": [
+          "ee-advanced-checked-exception-rolls-back-use-case"
+        ],
+        "saga-compensation": [
+          "ee-advanced-compensate-independent-service-steps"
+        ],
+        "session-fixation-defense": [
+          "ee-advanced-rotate-session-and-check-browser-intent"
+        ],
+        "specification-compatibility": [
+          "ee-advanced-migrate-api-and-provider-together"
+        ],
+        "structured-cancellation": [
+          "ee-advanced-cooperative-cancellation-and-durable-work"
+        ],
+        "the-jakarta-namespace": [
+          "ee-advanced-migrate-api-and-provider-together"
+        ],
+        "timeouts-and-retries": [
+          "ee-advanced-isolate-slow-dependency-capacity"
+        ],
+        "transactional-tests": [
+          "ee-advanced-checked-exception-rolls-back-use-case"
+        ],
+        "two-phase-commit": [
+          "ee-advanced-compensate-independent-service-steps"
+        ],
+        "type-safe-injection": [
+          "ee-advanced-qualify-implementation-with-correct-lifetime"
+        ],
+        "validation-boundaries": [
+          "ee-advanced-close-uniqueness-validation-race"
+        ],
+        "validation-groups": [
+          "ee-advanced-combine-nested-and-cross-field-validation"
+        ]
+      }
+    },
+    {
+      "id": "beginner-java",
+      "questions": 64,
+      "skills": {
+        "debug": 59,
+        "recall": 5
+      },
+      "coverage": {
+        "array-creation": [
+          "java-beginner-java-041-11"
+        ],
+        "array-declaration": [
+          "java-beginner-java-040-11"
+        ],
+        "array-indexing": [
+          "java-beginner-java-042-11"
+        ],
+        "array-length": [
+          "java-beginner-java-043-11"
+        ],
+        "assignment": [
+          "java-beginner-java-022-11"
+        ],
+        "bitwise-operators": [
+          "java-scraped-bitwise-and-operator"
+        ],
+        "block-comments": [
+          "java-beginner-java-009-11"
+        ],
+        "blocks": [
+          "java-beginner-java-007-11"
+        ],
+        "boolean-values": [
+          "java-beginner-java-018-11"
+        ],
+        "break-statement": [
+          "java-beginner-java-038-11"
+        ],
+        "byte-range": [
+          "java-scraped-signed-byte-range"
+        ],
+        "case-sensitivity": [
+          "java-beginner-java-011-11"
+        ],
+        "character-literals": [
+          "java-beginner-java-019-11"
+        ],
+        "compilation": [
+          "java-beginner-java-004-11"
+        ],
+        "compound-assignment": [
+          "java-beginner-java-031-11"
+        ],
+        "continue-statement": [
+          "java-beginner-java-039-11"
+        ],
+        "do-while-loop": [
+          "java-beginner-java-037-11"
+        ],
+        "else-branch": [
+          "java-beginner-java-033-11"
+        ],
+        "else-if-chain": [
+          "java-beginner-java-034-11"
+        ],
+        "enhanced-for-loop": [
+          "java-beginner-java-044-11"
+        ],
+        "equality-comparison": [
+          "java-beginner-java-023-11"
+        ],
+        "finally-block": [
+          "java-beginner-java-056-11"
+        ],
+        "float-literals": [
+          "java-beginner-java-016-11"
+        ],
+        "floating-point-default": [
+          "java-beginner-java-016-11"
+        ],
+        "for-loop": [
+          "java-beginner-java-035-11"
+        ],
+        "identifiers": [
+          "java-beginner-java-010-11"
+        ],
+        "if-statement": [
+          "java-beginner-java-032-11"
+        ],
+        "import-declaration": [
+          "java-beginner-java-058-11"
+        ],
+        "increment": [
+          "java-beginner-java-030-11"
+        ],
+        "integer-division": [
+          "java-beginner-java-029-11"
+        ],
+        "integer-type": [
+          "java-beginner-java-014-11"
+        ],
+        "line-comments": [
+          "java-beginner-java-008-11"
+        ],
+        "list-size": [
+          "java-scraped-list-size-method"
+        ],
+        "local-initialization": [
+          "java-beginner-java-013-11"
+        ],
+        "logical-and": [
+          "java-beginner-java-025-11"
+        ],
+        "logical-not": [
+          "java-beginner-java-027-11"
+        ],
+        "logical-or": [
+          "java-beginner-java-026-11"
+        ],
+        "long-literals": [
+          "java-beginner-java-015-11"
+        ],
+        "method-argument": [
+          "java-beginner-java-047-11"
+        ],
+        "method-declaration": [
+          "java-beginner-java-045-11"
+        ],
+        "not-equal-comparison": [
+          "java-beginner-java-024-11"
+        ],
+        "null-reference": [
+          "java-beginner-java-050-11"
+        ],
+        "package-declaration": [
+          "java-beginner-java-057-11"
+        ],
+        "parsing-an-integer": [
+          "java-beginner-java-054-11"
+        ],
+        "primitive-and-reference-types": [
+          "java-scraped-string-is-reference-type"
+        ],
+        "program-entry-point": [
+          "java-beginner-java-001-11"
+        ],
+        "public-class-filename": [
+          "java-beginner-java-003-11"
+        ],
+        "remainder": [
+          "java-beginner-java-028-11"
+        ],
+        "return-statement": [
+          "java-beginner-java-048-11"
+        ],
+        "running-a-class": [
+          "java-beginner-java-005-11"
+        ],
+        "scope": [
+          "java-beginner-java-049-11"
+        ],
+        "source-file-extension": [
+          "java-beginner-java-002-11"
+        ],
+        "statements": [
+          "java-beginner-java-006-11"
+        ],
+        "static-import": [
+          "java-beginner-java-059-11"
+        ],
+        "string-concatenation": [
+          "java-beginner-java-021-11"
+        ],
+        "string-equality": [
+          "java-beginner-java-052-11"
+        ],
+        "string-immutability": [
+          "java-beginner-java-053-11"
+        ],
+        "string-length": [
+          "java-beginner-java-051-11"
+        ],
+        "string-literals": [
+          "java-beginner-java-020-11"
+        ],
+        "string-ordering": [
+          "java-scraped-string-comparison-zero"
+        ],
+        "try-catch": [
+          "java-beginner-java-055-11"
+        ],
+        "type-inference-with-var": [
+          "java-beginner-java-060-11"
+        ],
+        "variable-declaration": [
+          "java-beginner-java-012-11"
+        ],
+        "void-method": [
+          "java-beginner-java-046-11"
+        ],
+        "while-loop": [
+          "java-beginner-java-036-11"
+        ]
+      }
+    },
+    {
+      "id": "oop-medium",
+      "questions": 66,
+      "skills": {
+        "apply": 16,
+        "debug": 17,
+        "design": 13,
+        "trace": 20
+      },
+      "coverage": {
+        "abstract-class": [
+          "java-oop-instantiate-concrete-abstraction"
+        ],
+        "abstract-method": [
+          "java-oop-instantiate-concrete-abstraction"
+        ],
+        "aggregation": [
+          "java-oop-shared-versus-owned-part-lifetimes"
+        ],
+        "anonymous-class": [
+          "java-oop-lambda-this-versus-anonymous-this"
+        ],
+        "association": [
+          "java-oop-shared-versus-owned-part-lifetimes"
+        ],
+        "class-blueprint": [
+          "java-oop-independent-instance-fields"
+        ],
+        "composition": [
+          "java-oop-wrap-final-class",
+          "java-oop-delegate-changing-discount-policy"
+        ],
+        "composition-ownership": [
+          "java-oop-shared-versus-owned-part-lifetimes"
+        ],
+        "constructor-chaining": [
+          "java-oop-delegating-constructor-order"
+        ],
+        "constructor-initialization": [
+          "java-oop-construct-subclass-explicitly",
+          "java-oop-virtual-call-during-construction",
+          "java-oop-assign-blank-final-on-every-path"
+        ],
+        "covariant-return": [
+          "java-oop-covariant-return-keeps-subtype"
+        ],
+        "data-validation": [
+          "java-oop-guard-balance-invariant",
+          "java-oop-reject-invalid-construction"
+        ],
+        "defensive-copying": [
+          "java-oop-copy-input-and-protect-output",
+          "java-oop-shallow-copy-keeps-mutable-elements"
+        ],
+        "dependency-injection": [
+          "java-oop-inject-fake-through-abstraction"
+        ],
+        "dependency-inversion": [
+          "java-oop-inject-fake-through-abstraction"
+        ],
+        "downcasting": [
+          "java-oop-incompatible-downcast-fails-at-runtime"
+        ],
+        "dynamic-dispatch": [
+          "java-oop-virtual-call-during-construction",
+          "java-oop-runtime-override-selection"
+        ],
+        "encapsulation": [
+          "java-oop-guard-balance-invariant"
+        ],
+        "field-hiding": [
+          "java-oop-field-selection-versus-method-dispatch"
+        ],
+        "final-class": [
+          "java-oop-wrap-final-class"
+        ],
+        "final-method": [
+          "java-oop-final-method-preserves-algorithm"
+        ],
+        "generics": [
+          "java-oop-reject-wrong-generic-element",
+          "java-oop-super-wildcard-permits-specific-input"
+        ],
+        "hash-code-contract": [
+          "java-oop-equal-keys-need-consistent-hashes",
+          "java-oop-mutable-key-after-insertion"
+        ],
+        "immutable-object": [
+          "java-oop-assign-blank-final-on-every-path",
+          "java-oop-mutable-key-after-insertion",
+          "java-oop-final-reference-allows-mutation",
+          "java-oop-shallow-copy-keeps-mutable-elements",
+          "java-oop-record-component-is-shallowly-final"
+        ],
+        "inheritance": [
+          "java-oop-explicit-super-method-call",
+          "java-oop-class-method-beats-default",
+          "java-oop-sealed-direct-subclass-policy"
+        ],
+        "inheritance-and-generics": [
+          "java-oop-generic-invariance-protects-list",
+          "java-oop-extends-wildcard-restricts-writes"
+        ],
+        "inner-class": [
+          "java-oop-construct-inner-with-enclosing-instance"
+        ],
+        "instance-state": [
+          "java-oop-independent-instance-fields",
+          "java-oop-superclass-before-subclass-initializers"
+        ],
+        "instanceof-test": [
+          "java-oop-instanceof-null-is-false"
+        ],
+        "interface-contract": [
+          "java-oop-implement-public-interface-operation"
+        ],
+        "interface-default-method": [
+          "java-oop-resolve-unrelated-defaults",
+          "java-oop-class-method-beats-default"
+        ],
+        "interface-segregation": [
+          "java-oop-segregate-read-and-write-capabilities"
+        ],
+        "interface-static-method": [
+          "java-oop-qualify-interface-static-member"
+        ],
+        "lambda-target": [
+          "java-oop-lambda-this-versus-anonymous-this",
+          "java-oop-functional-interface-abstract-method-count",
+          "java-oop-captured-local-must-be-effectively-final"
+        ],
+        "liskov-contract": [
+          "java-oop-preserve-withdrawal-contract"
+        ],
+        "method-argument": [
+          "java-oop-reference-parameter-reassignment"
+        ],
+        "method-reference": [
+          "java-oop-unbound-method-reference-receiver"
+        ],
+        "multiple-interfaces": [
+          "java-oop-one-superclass-many-contracts"
+        ],
+        "nested-class": [
+          "java-oop-construct-static-nested-helper"
+        ],
+        "no-arg-constructor": [
+          "java-oop-restore-no-argument-construction"
+        ],
+        "object-equality": [
+          "java-oop-logical-equality-versus-identity",
+          "java-oop-equals-parameter-must-be-object"
+        ],
+        "object-instance": [
+          "java-oop-independent-instance-fields"
+        ],
+        "open-closed-design": [
+          "java-oop-delegate-changing-discount-policy"
+        ],
+        "overloading": [
+          "java-oop-overload-uses-declared-argument-type",
+          "java-oop-return-type-is-not-overload-key"
+        ],
+        "override-annotation": [
+          "java-oop-detect-misspelled-override",
+          "java-oop-equals-parameter-must-be-object"
+        ],
+        "overriding": [
+          "java-oop-override-cannot-narrow-access",
+          "java-oop-override-checked-exception-bound",
+          "java-oop-explicit-super-method-call"
+        ],
+        "package-private-access": [
+          "java-oop-package-access-excludes-subpackages"
+        ],
+        "polymorphic-collection": [
+          "java-oop-iterate-polymorphic-elements"
+        ],
+        "private-access": [
+          "java-oop-private-access-through-peer"
+        ],
+        "protected-access": [
+          "java-oop-protected-receiver-across-packages"
+        ],
+        "public-access": [
+          "java-oop-public-member-hidden-type"
+        ],
+        "records": [
+          "java-oop-record-component-is-shallowly-final"
+        ],
+        "reference-identity": [
+          "java-oop-alias-mutation",
+          "java-oop-reference-parameter-reassignment"
+        ],
+        "sealed-classes": [
+          "java-oop-sealed-direct-subclass-policy"
+        ],
+        "single-class-inheritance": [
+          "java-oop-one-superclass-many-contracts"
+        ],
+        "single-responsibility": [
+          "java-oop-separate-independent-change-reasons"
+        ],
+        "static-method-hiding": [
+          "java-oop-static-method-selection"
+        ],
+        "static-state": [
+          "java-oop-class-counter-and-instance-state",
+          "java-oop-instance-context-required"
+        ],
+        "subclass-substitutability": [
+          "java-oop-preserve-withdrawal-contract"
+        ],
+        "superclass-construction": [
+          "java-oop-supply-required-super-argument",
+          "java-oop-superclass-before-subclass-initializers"
+        ],
+        "this-reference": [
+          "java-oop-resolve-field-shadowing",
+          "java-oop-instance-context-required"
+        ],
+        "tostring-representation": [
+          "java-oop-redact-sensitive-representation"
+        ],
+        "upcasting": [
+          "java-oop-runtime-override-selection"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "review": []
+}

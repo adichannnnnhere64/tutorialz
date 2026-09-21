@@ -4,6 +4,7 @@ use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use tutorialz_core::*;
 use tutorialz_ui::*;
+const DEFAULT_CATALOG_URL: &str = "https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json";
 fn main() {
     dioxus::launch(App);
 }
@@ -21,7 +22,7 @@ impl Default for State {
     fn default() -> Self {
         Self {
             catalog_url: option_env!("TUTORIALZ_CATALOG_URL")
-                .unwrap_or("https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json")
+                .unwrap_or(DEFAULT_CATALOG_URL)
                 .into(),
             catalog: Some(
                 serde_json::from_str(include_str!("../../../content/enterprise/catalog.json"))
@@ -31,6 +32,23 @@ impl Default for State {
             progress: Progress::new("tutorialz-jakarta-ee"),
             pack_url: option_env!("TUTORIALZ_JAVA_PACK_URL").unwrap_or("").into(),
             last_synced: None,
+        }
+    }
+}
+impl State {
+    fn upgrade_bundled_content(&mut self) {
+        let bundled = Self::default();
+        // Only upgrade the default source. Custom catalogs remain under the user's control.
+        if self.catalog_url == DEFAULT_CATALOG_URL
+            && self.progress.collection_id == bundled.progress.collection_id
+            && self.catalog.as_ref().is_none_or(|current| {
+                current.content_revision < bundled.catalog.as_ref().unwrap().content_revision
+            })
+        {
+            self.catalog = bundled.catalog;
+            self.courses = bundled.courses;
+            self.last_synced = None;
+            // Attempts and the active session retain their original question snapshots.
         }
     }
 }
@@ -65,6 +83,9 @@ async fn sync_catalog(
     let catalog: Catalog = serde_json::from_str(raw.as_str().ok_or("Invalid catalog response")?)
         .map_err(|e| e.to_string())?;
     validate_catalog(&catalog)?;
+    if let Some(current) = &original.catalog {
+        validate_catalog_update(current, &catalog)?;
+    }
     if !allow_switch && catalog.collection_id != original.progress.collection_id {
         return Err(
             "This catalog is a different collection. Confirm the switch in Settings.".into(),
@@ -142,9 +163,10 @@ fn App() -> Element {
             Ok(()) => {
                 match load("learner-state").await {
                     Ok(Some(raw)) => match serde_json::from_str::<State>(&raw) {
-                        Ok(s) => {
+                        Ok(mut s) => {
                             if validate_courses(&s.courses).is_ok() && s.progress.validate().is_ok()
                             {
+                                s.upgrade_bundled_content();
                                 cx.state.set(s)
                             } else {
                                 cx.message
@@ -435,12 +457,16 @@ fn Library() -> Element {
             .filter(|(_, _, q)| level() == "all" || level() == q.difficulty)
             .filter(|(c, t, q)| {
                 let haystack = format!(
-                    "{} {} {} {} {}",
+                    "{} {} {} {} {} {}",
                     c.title,
                     t.title,
                     q.prompt,
                     q.topic.as_deref().unwrap_or(""),
-                    q.second_topic.as_deref().unwrap_or("")
+                    q.second_topic.as_deref().unwrap_or(""),
+                    q.assessment
+                        .as_ref()
+                        .map(|a| a.concepts.join(" ").replace('-', " "))
+                        .unwrap_or_default()
                 )
                 .to_lowercase();
                 terms.iter().all(|word| haystack.contains(word))
@@ -573,7 +599,8 @@ fn Library() -> Element {
                     div { class: "panel row", key: "{q.id}",
                         div {
                             p { class: "small muted", "{course_title} · {test_title} · {q.difficulty}" }
-                            strong { "{q.prompt}" }
+                            Markdown { text: q.prompt.clone() }
+                            QuestionSource { question: q.clone() }
                             if let Some(topic) = &q.topic {
                                 p { class: "small muted", "Topic: {topic}" }
                             }
@@ -1193,6 +1220,7 @@ fn QuestionView(question: Question, index: usize, total: usize) -> Element {
                     span { class: "badge", "↻ Answered before" }
                 }
                 Markdown { text: question.prompt.clone() }
+                QuestionSource { question: question.clone() }
                 AnswerFields {
                     question: question
                             .clone(),
@@ -1271,6 +1299,7 @@ fn QuestionView(question: Question, index: usize, total: usize) -> Element {
                                 "Keep learning — here's why"
                             }
                         }
+                        SubmittedAnswer { question: question.clone(), answer: Some(a.answer.clone()) }
                         Markdown { text: question.explanation
                                     .clone() }
                         details {
@@ -1520,7 +1549,13 @@ fn Results() -> Element {
             for q in &session.questions {
                 details { class: "results-row",
                     summary {
-                        "{q.prompt}"
+                        span {
+                            if q.prompt.contains("```java") {
+                                {q.topic.clone().unwrap_or_else(|| "Code reasoning".into())}
+                            } else {
+                                "{q.prompt.lines().next().unwrap_or(&q.prompt)}"
+                            }
+                        }
                         span { class: "badge",
                             {
                                 match session.answers.get(&q.id) {
@@ -1530,9 +1565,19 @@ fn Results() -> Element {
                                 }
                             }
                         }
-                        Markdown { text: q.explanation.clone() }
-                        Markdown { text: solution(q) }
                     }
+                    Markdown { text: q.prompt.clone() }
+                    QuestionSource { question: q.clone() }
+                    div { class: if session.answers.get(&q.id).is_some_and(|a| a.correct) { "answer-review" } else { "answer-review incorrect" },
+                        SubmittedAnswer {
+                            question: q.clone(),
+                            answer: session.answers.get(&q.id).map(|a| a.answer.clone())
+                        }
+                    }
+                    strong { "Correct answer" }
+                    Markdown { text: solution(q) }
+                    strong { "Explanation" }
+                    Markdown { text: q.explanation.clone() }
                 }
             }
             div { class: "actions",

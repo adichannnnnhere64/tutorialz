@@ -1,13 +1,11 @@
-"""Generate original Java language and OOP practice from curated concept rows.
-
-Rows describe one rule, one concrete use, one common mistake, and a repair. The
-variants test recognition and application of that rule; they are not independent
-facts. Sources are official Oracle Java language tutorials.
-"""
+"""One beginner repair per concept; OOP scenarios are authored in oop_content.py."""
 from __future__ import annotations
 
 import json
 from pathlib import Path
+
+from oop_content import course as oop_course
+from question_bank import assessment, choice, preserve_revisions, slug
 
 BEGINNER = """
 Program entry point|main is the conventional launcher entry method|public static void main(String[] args)|starting a class that has no suitable main method|add a suitable main method to the launched class
@@ -72,163 +70,176 @@ Static import|static import allows unqualified access to a static member|import 
 Type inference with var|var infers a local variable's static type from its initializer|var name = "Ada";|declaring var name; without an initializer|initialize a var local variable in its declaration
 """.strip().splitlines()
 
-OOP = """
-Class blueprint|a class declares the state and behavior of its instances|class Account { private int balance; }|using one mutable global value for every customer's balance|give each Account instance its own balance field
-Object instance|an object is an instance created from a class|Account a = new Account();|treating a class declaration as an already-created account|construct an Account instance before using instance methods
-Reference identity|two references can point at the same object|Account b = a;|expecting b = a to copy every field into a new Account|create a separate object when independent identity is required
-Instance state|each object has its own instance field values|a.balance differs from b.balance for separate objects|using static for per-customer balance|store per-customer data in instance fields
-Static state|a static field is associated with a class|static int instanceCount;|using a static balance for independent accounts|reserve static state for class-wide data
-Encapsulation|a class can hide state behind methods|private balance with deposit()|allowing callers to write any balance directly|make balance private and expose checked operations
-Data validation|mutator methods can enforce object invariants|deposit rejects a negative amount|accepting a negative deposit without a rule|validate the amount before changing state
-Private access|private members are accessible within their declaring class|private int balance;|accessing account.balance from unrelated code|call an accessible method instead
-Public access|public members can be accessed wherever the type is accessible|public int balance()|expecting public to limit calls to one package|choose narrower access for internal APIs
-Protected access|protected supports package and subclass access under Java rules|protected void recalculate()|assuming protected means only subclasses can access it|review package access as well as subclass access
-Package-private access|omitting an access modifier gives package access|void recalculate()|expecting an unmodified method to be public|declare public if external packages must call it
-Constructor initialization|a constructor initializes a newly created instance|new Account(100)|assuming constructors are inherited by subclasses|declare the needed subclass constructor explicitly
-No-arg constructor|a compiler adds a default no-arg constructor only when none is declared|new Account() when no constructor is declared|adding Account(int) then assuming new Account() still works|declare an explicit no-arg constructor if needed
-Constructor chaining|this(...) invokes another constructor of the same class|Account() { this(0); }|repeating initialization inconsistently across constructors|delegate shared setup through a constructor
-Superclass construction|super(...) invokes a superclass constructor|Child() { super(1); }|assuming a superclass with only a parameterized constructor needs no call|invoke an accessible superclass constructor
-This reference|this denotes the current object|this.balance = balance;|assigning a shadowing parameter to itself|use this.field to distinguish the instance field
-Inheritance|a subclass can reuse and specialize a superclass|class Savings extends Account|using inheritance for two unrelated classes that merely share a helper|extract a shared component or interface instead
-Single class inheritance|a Java class has at most one direct superclass|class Savings extends Account|trying to extend two classes at once|extend one class and use interfaces for additional contracts
-Subclass substitutability|a subclass should honor the base type's observable contract|Account a = new Savings();|making a subclass reject valid base-class operations unexpectedly|preserve the base contract or use composition
-Overriding|an instance method can replace inherited behavior with a compatible signature|@Override public String toString()|changing only the return type to an incompatible type|match the inherited method signature and compatible return type
-Override annotation|@Override asks the compiler to verify an override|@Override void draw()|misspelling a method name while expecting an override|add @Override and fix the signature
-Overloading|methods can share a name with different parameter lists|print(int n) and print(String s)|declaring two methods that differ only by return type|change the parameter list for a valid overload
-Dynamic dispatch|an overridden instance method is selected from the runtime object type|Shape s = new Circle(); s.draw();|expecting s.draw() to always call Shape.draw()|account for the Circle override at runtime
-Field hiding|fields are selected from the reference type rather than dynamically overridden|a hidden field accessed through a Base reference|expecting fields to dispatch like overridden methods|expose behavior through methods instead of hidden fields
-Static method hiding|a static method is hidden rather than overridden|Child.utility() hides Base.utility()|expecting static methods to use runtime dispatch|call static methods through their declaring type
-Final method|a final method cannot be overridden|final void verify()|trying to override a final verify method|remove the override or redesign the extension point
-Final class|a final class cannot be subclassed|final class Token|trying to extend a final class|use the class through composition
-Abstract class|an abstract class cannot be directly instantiated|abstract class Shape|calling new Shape() when Shape is abstract|instantiate a concrete subclass
-Abstract method|a concrete subclass must implement inherited abstract methods|abstract double area();|leaving area() unimplemented in a concrete subclass|implement area() or keep the subclass abstract
-Interface contract|an interface declares a type contract implemented by classes|class Circle implements Drawable|treating an interface as an instantiated concrete class|instantiate a class implementing the interface
-Multiple interfaces|one class may implement more than one interface|class Job implements Runnable, AutoCloseable|trying to extend two classes for two roles|implement multiple interfaces when appropriate
-Interface default method|a default method supplies an interface implementation|default void reset() { }|assuming every default method must be implemented again|inherit it unless customization is needed
-Interface static method|an interface static method is called on the interface type|Comparator.naturalOrder()|expecting an interface static method to be inherited as an instance method|call it through the interface name
-Composition|an object can delegate to contained collaborators|Car has an Engine field|subclassing Engine just to let Car use one|store an Engine collaborator in Car
-Dependency injection|a collaborator can be passed to a constructor|Service(Repository repository)|constructing a fixed repository inside every service constructor|accept the repository as a dependency
-Polymorphic collection|a base type collection can hold different implementations|List<Shape> shapes with Circle and Square|writing one loop per concrete shape solely to call area()|iterate the base type and invoke the common method
-Upcasting|a subtype reference can be assigned to a supertype variable|Shape shape = new Circle();|expecting upcasting to erase the object's Circle behavior|use the base reference while runtime overrides remain available
-Downcasting|a cast to a subtype needs a compatible runtime object|if (s instanceof Circle) { Circle c = (Circle) s; }|casting every Shape to Circle without checking|check the runtime type before a necessary cast
-Instanceof test|instanceof checks whether an object has a compatible runtime type|shape instanceof Circle|expecting a null reference to match Circle|handle null separately when needed
-Object equality|equals can define logical equality of objects|a.equals(b) for equal value objects|using == when logical value equality is intended|implement and call equals consistently
-Hash code contract|equal objects must have equal hash codes|equal keys produce the same hashCode()|overriding equals without a consistent hashCode|override hashCode consistently with equals
-ToString representation|toString supplies a textual representation of an object|account.toString()|printing a sensitive object with a secret-bearing toString|design a useful representation without secrets
-Immutable object|an immutable object's observable state does not change after construction|final fields with no mutators|returning a mutable internal list directly|defensively copy mutable state at boundaries
-Defensive copying|copies prevent callers from mutating internal objects|List.copyOf(items)|storing a caller-owned mutable list without protection|make a defensive copy before storing it
-Interface segregation|small interfaces avoid forcing clients to depend on unrelated operations|Readable and Writable contracts|forcing a read-only class to implement write()|split broad contracts into focused interfaces
-Open-closed design|new implementations can extend behavior through a stable contract|add a new PaymentMethod implementation|editing a long type switch for every new payment type|dispatch through a common interface
-Liskov contract|subtypes should preserve valid expectations of the base type|a derived account honors the account contract|a subtype strengthens preconditions unexpectedly|keep subtype behavior compatible with base callers
-Single responsibility|a class has one cohesive reason to change|InvoiceCalculator computes totals|one class computes totals, sends mail, and writes SQL|separate unrelated responsibilities into collaborators
-Dependency inversion|high-level code can depend on abstractions|Checkout depends on PaymentGateway|Checkout constructs a specific StripeGateway internally|depend on a PaymentGateway interface and inject it
-Association|one object may know and use another object|Order stores a Customer reference|calling every object relationship inheritance|model a uses-a relationship with a field
-Aggregation|a container may reference parts that live independently|Team references existing Player objects|deleting Player solely because Team is removed|model independent part lifetimes
-Composition ownership|a whole may manage a part's lifecycle|Order owns its LineItems|sharing a mutable owned LineItem across unrelated Orders|keep owned parts within their aggregate boundary
-Nested class|a class can be declared inside another class|class Outer { static class Helper {} }|putting every helper in the same top-level namespace|nest a helper when it belongs to the enclosing type
-Inner class|a non-static inner instance refers to an enclosing instance|outer.new Inner()|creating a non-static Inner without an Outer instance|create it through an enclosing object
-Anonymous class|an anonymous class creates an unnamed implementation|new Runnable() { public void run() {} }|expecting an anonymous class to have a reusable declared name|use a named class if reuse or documentation is needed
-Lambda target|a lambda can implement a functional interface|Runnable r = () -> work();|assigning a lambda to an interface with two abstract methods|use a functional interface target
-Method reference|a method reference can supply compatible functional behavior|items.forEach(System.out::println)|using a method reference with an incompatible target signature|match the functional interface method signature
-Generics|a generic type carries compile-time element information|List<String> names|putting an Integer into a List<String>|add elements matching the declared type argument
-Inheritance and generics|List<Child> is not a subtype of List<Parent>|List<? extends Parent> view = children|assigning List<Child> directly to List<Parent>|use an appropriate wildcard view
-Covariant return|an override may return a subtype of the original return type|Child copy() overrides Base copy()|returning an unrelated type from an override|choose the same return type or a valid subtype
+# Plausible misconceptions about the same rule, rather than unrelated topics.
+# The default floating-point type and f suffix share one repair assessment.
+DISTRACTORS = """
+Program entry point|rename any method to start|make the class abstract so the launcher supplies main|add a constructor named main
+Source file extension|rename the source to Hello.class without compiling it|save only Hello.jar as plain source text|change the class name to Hello.txt
+Public class filename|make the constructor name match Welcome while leaving the class Hello|add an import for Welcome|add a second public class named Welcome to the same file
+Compilation|use java on the same missing path|rename the missing output class without supplying source|remove the .java extension from the missing path
+Running a class|launch Hello.class as the class name|supply javac as the application class|rename the compiled class file to Hello.java
+Statements|end the declaration with a colon|put a comma after the declaration|use an empty comment in place of the terminator
+Blocks|add another opening brace at the end|replace the missing brace with a semicolon|indent the last statement to close the block
+Line comments|add a semicolon after the commented text to execute it|indent the text after // to make it executable|use uppercase letters after // to end the comment
+Block comments|close the comment with //|close the comment with a brace|insert a newline to end every block comment
+Identifiers|put quotes around 2item to make it an identifier|import a variable named 2item|declare 2item final to allow the leading digit
+Case sensitivity|add final to make names case-insensitive|capitalize all uses without changing the declaration|add an import to alias Count to count
+Variable declaration|use age first so Java infers its type from the later call|add parentheses around the undeclared name|write age as a comment before using it
+Local initialization|rely on every local int starting at zero|mark the unassigned local final and read it|add an import to initialize the local automatically
+Integer type|append f while leaving the variable int|put the fraction in quotes and assign it to int|declare the int final to permit fractional values
+Long literals|append f to preserve the exact integer as a long literal|cast the already out-of-range unsuffixed literal to long|put the digits in quotes and assign the String directly to long
+Floating-point default|leave 1.5 unchanged because every decimal literal is float|append L to the decimal literal|make the float variable final without changing the literal
+Boolean values|cast the String directly to boolean|use the integer 1 as a boolean literal|remove quotes and use yes as a built-in boolean literal
+Character literals|keep double quotes and make the char final|add a second character inside single quotes|use a String cast as an automatic char conversion
+String literals|keep multiple characters in single quotes|use backticks as Java String delimiters|omit all delimiters so the words become a literal
+String concatenation|cast the combined String directly to int|use == to add two numeric Strings|use multiplication to concatenate instead of plus
+Assignment|use === to assign the new value|reverse == to =! for assignment|add parentheses around the equality comparison to make it assign
+Equality comparison|use = and rely on automatic boolean conversion|use === for primitive equality in Java|use != when testing whether both values are the same
+Not equal comparison|use <> as the Java inequality operator|put spaces inside =! to make it valid|replace the comparison with assignment
+Logical AND|keep & because it skips the right operand when the left is false|use logical OR to require both operands to be true|use ! on the right operand to create short-circuit AND
+Logical OR|use && so either operand can make the result true|keep the single pipe because it always skips an unnecessary right operand|add ! to both operands instead of using OR
+Logical NOT|write NOT as an uppercase keyword|use ~ on the boolean expression|compare the boolean to the integer zero
+Remainder|use / and keep the quotient|use // as the remainder operator|use %% as a separate Java operator
+Integer division|cast the integer result to double only after dividing|store the int division result in a double and expect the fraction back|append a decimal point to the variable name
+Increment|apply ++ twice and expect only one increment|replace ++ with -- to increase the value|make the variable final before incrementing it
+Compound assignment|leave count + 2 as a standalone Java expression statement|use count == count + 2 to store the sum|make count final so addition updates it automatically
+If statement|use a nonzero int because Java treats it as true|cast the int directly to boolean|surround the int with extra parentheses to make it boolean
+Else branch|put the alternate action inside the true branch|add another else to force both branches to run|use else without a matching if to run after every condition
+Else-if chain|raise the first matching threshold so every later else-if executes|add braces around the same else-if chain to run every branch|replace all conditions with assignment expressions
+For loop|make the counter final so it advances automatically|add a semicolon immediately after the loop header to increment it|move the counter declaration outside the loop without ever updating it
+While loop|add braces to guarantee one iteration even when false|initialize the condition to false to force the first iteration|place a semicolon after while so the body runs exactly once as part of the loop
+Do-while loop|add braces to skip the first body execution|put false in the trailing condition to prevent all body executions|use continue before the condition to undo the first iteration
+Break statement|add a second break after the first unconditional break|use continue to exit all enclosing loops|indent break under the outer loop to change its target
+Continue statement|add another continue immediately afterward|use return to exit only the current iteration while keeping the method running|use a semicolon after continue to terminate the whole loop
+Array declaration|declare int scores and rely on later indexing to turn it into an array|use angle brackets int<scores>|declare array int scores without square brackets
+Array creation|write to scores[scores.length] to append automatically|increase scores.length with ++|cast scores to a longer array without allocating one
+Array indexing|use index 1 because Java arrays are one-based|use index -1 for the first element|use the length as the first valid index
+Array length|keep length() because every array field is a method|use size() because all arrays implement List|subtract one from the last index to get every array length
+Enhanced for loop|use the element value as an index for every array|increment the enhanced-for variable to make the array longer|assign to the loop variable to replace every primitive array element
+Method declaration|change the method name to the return type|add a semicolon after the body to return automatically|rely on an implicit zero result from every non-void method
+Void method|cast the void result to int|assign the void call to an Integer instead|make the method public so its void call produces a value
+Method argument|call twice() because missing int arguments default to zero|put the int value after the call's closing parenthesis|declare the result variable final to supply the argument
+Return statement|add another return after the unconditional return|put needed work immediately after return in the same block|make the method static so execution continues after return
+Scope|indent the later use into the old scope without changing braces|mark the block-local variable final to extend its visibility|add an import for the local variable
+Null reference|cast null to String so method calls succeed|call length first and check for null afterward|compare the null reference to an empty String using its instance equals method
+String length|read text.length as though String were an array|read text.size without calling a method|use text.capacity() as a String method
+String equality|use == because it always compares character sequences|use = to compare String values|call hashCode and assume equal hashes guarantee equal text
+String immutability|mark name final so trim modifies the original String|call trim repeatedly until the original String mutates|assign the result of length() back to the same String variable
+Parsing an integer|cast the String object directly to int|remove the quotes at runtime by subtracting an empty String|assign the String to Integer using automatic unboxing
+Try-catch|expect catch to execute once on every successful call|put an unconditional return before try so catch runs|use finally instead of catch to identify only NumberFormatException
+Finally block|return every success result from finally even when it suppresses a failure|put cleanup after a return in the same try block|assume a matching catch always replaces the need for cleanup
+Package declaration|ignore the declaration because folder names always override it|import the package as though it were an object instance|remove dots from the qualified class name without moving the type
+Import declaration|call a constructor by writing an import inside a method|expect the import to allocate one object per use|use import instead of new to choose a list implementation
+Static import|use static import to construct the declaring class|import an instance field statically without an object|write a constructor call in the static import declaration
+Type inference with var|assign null alone and expect a useful inferred class type|declare var as a field without a type or initializer|use var for a method parameter in an ordinary named method
 """.strip().splitlines()
 
-SOURCES = {
-    "beginner-java": "https://dev.java/learn/language-basics/",
-    "oop-medium": "https://dev.java/learn/classes-objects/",
-}
 
-LEADS = [
-    "A learner is practicing Java fundamentals.",
-    "A team discusses a small console exercise.",
-    "A developer reviews a Java class.",
-    "A student traces a Java program.",
-    "A mentor checks a practice project.",
-]
+PROMPTS = """
+Program entry point|`java Hello` reports that no main method was found. Hello is intended to be a Java 17 console application. What needs to be added?
+Source file extension|A Java source file is saved as Hello.txt. Which change makes its filename suitable for the usual javac source-file workflow?
+Public class filename|Welcome.java declares `public class Hello`. What fixes the public-class filename mismatch?
+Compilation|`javac src/Hello.java` reports that the source file does not exist. The file is actually in app/Hello.java. What should the command use?
+Running a class|Hello.class has already been compiled in the current directory, and no Hello.java source is available. How should it be launched from that directory?
+Statements|The declaration `int count = 1` appears inside a method without a terminator. Which correction completes this declaration statement?
+Blocks|An if block opens with `{` but never closes before the surrounding method ends. What fixes the unmatched block?
+Line comments|In `// count++;`, the increment never executes. What must change to make it executable code?
+Block comments|A `/*` comment accidentally includes the rest of the source file. How should the intended comment be closed?
+Identifiers|Why must `int 2item = 4;` be changed, and which naming rule should the replacement follow?
+Case sensitivity|A method declares count but later reads Count. How should the unresolved name be corrected?
+Variable declaration|A method tries to assign to age, but no local, parameter, or field named age exists. What must be added before use?
+Local initialization|`int age; System.out.print(age);` appears inside a method. What is required before the print statement?
+Integer type|`int price = 12.75;` does not compile. Which type or conversion decision is required for the fractional value?
+Long literals|`long size = 3000000000;` fails because the unsuffixed literal is out of range. How should the exact long literal be written?
+Floating-point default|`float rate = 1.5;` fails with a possible loss of precision. Which correction fits Java's literal typing rules?
+Boolean values|`boolean ready = "true";` does not compile. Which value belongs on the right side for a true boolean?
+Character literals|`char grade = "A";` does not compile. How should the single character literal be delimited?
+String literals|`String name = 'Ada';` uses invalid literal syntax. What should delimit the text?
+String concatenation|A greeting and a name are both Strings. Which use of plus correctly combines their text?
+Assignment|`count == 3;` was intended to store 3 in count. Which operator should be used for that update?
+Equality comparison|`if (count = 3)` does not compare count with 3. Which change produces the intended primitive equality test?
+Not equal comparison|`count =! 0` was intended to test whether count differs from zero. Which operator is required?
+Logical AND|A condition must be true only when ready and valid are true, and valid must not be evaluated when ready is false. Which operator fits?
+Logical OR|A fallback condition must be evaluated only when the first condition is false. Which boolean OR operator provides that behavior?
+Logical NOT|ready is a boolean. What should replace the invalid expression `not ready` to reverse its value?
+Remainder|The expression `7 / 3` produces a quotient, but the program needs the remainder. Which operator should replace division?
+Integer division|`double average = 7 / 2;` stores 3.0. How can the division itself produce 3.5?
+Increment|count starts at 4. The statement `count++;` leaves it at 5, but the intended result was 6. Which correction matches the required step?
+Compound assignment|`count + 2;` neither forms a valid standalone Java expression statement nor stores the sum. Which change updates count?
+If statement|`if (count)` uses an int as a condition. What must replace count in the condition?
+Else branch|An alternate action should run only when ready is false in an if/else pair. Where should that action go?
+Else-if chain|Several independent conditions may be true, and every matching action must run. An else-if chain runs only the first match. What structure is needed?
+For loop|A for loop's counter never changes, so its true condition never becomes false. Where should the required counter update be supplied?
+While loop|A loop body must run once even when its initial continuation condition is false. Which loop form meets that requirement?
+Do-while loop|A do-while body runs once with an initially false condition, but zero iterations are required in that case. Which loop form should be used?
+Break statement|An unlabeled break inside nested loops exits only the inner loop. What is needed to also leave the outer loop?
+Continue statement|Finding a target should end the loop, but continue merely advances to another iteration. Which statement matches the intended behavior?
+Array declaration|scores must refer to an int array, but `int scores;` declares a scalar. What must be included in its declaration?
+Array creation|An int array is full, and writing at its length index fails. What storage change is needed to support more elements?
+Array indexing|The program reads `scores[1]` but needs the first element of a nonempty Java array. Which index should it use?
+Array length|`scores.length()` fails when scores is an int array. How should its element count be accessed?
+Enhanced for loop|In `for (int score : scores)`, score is an element value. The algorithm also needs each position. Which loop approach should be used?
+Method declaration|`int twice(int n) { int result = n * 2; }` computes a value but has no return. What must the method supply?
+Void method|A caller tries `int result = greet();`, but greet returns void. What must the API provide if this call should produce an int result?
+Method argument|`int twice(int n)` requires a parameter, but the caller writes twice(). What must the invocation supply?
+Return statement|A required update appears immediately after an unconditional return in the same block. Where should that update be moved?
+Scope|A variable declared inside an if block is needed by later code outside that block. Where should its declaration be placed if both uses must share it?
+Null reference|`String name = null; name.length();` fails at runtime. What is needed before this method invocation can succeed?
+String length|`text.length` fails when text is a String. How should its length be read?
+String equality|Two separately created Strings contain the same text, but == reports false. Which comparison expresses equality of their contents?
+String immutability|Calling `name.trim();` leaves name referring to the original String. How should the trimmed result be used?
+Parsing an integer|The program receives the text "42" and needs its numeric int value. Which conversion should be performed?
+Try-catch|Parsing invalid decimal input may throw NumberFormatException. Where should recovery for that failure be placed?
+Finally block|Cleanup is needed whether a try block completes normally or throws. Which purpose should the finally block serve?
+Package declaration|A class declares `package example.app;`, but other code treats it as being in the unnamed package. What must references account for?
+Import declaration|`import java.util.List;` makes the type name available but no list object exists. What additional action is needed to use an instance?
+Static import|A static import is expected to create a Math object. What does the import actually allow instead?
+Type inference with var|`var name;` has no initializer. What must be supplied so Java can infer the local variable's type?
+""".strip().splitlines()
 
 
-def parse(rows: list[str]) -> list[list[str]]:
-    parsed = [line.split("|") for line in rows]
-    assert len(parsed) == 60, len(parsed)
-    assert all(len(row) == 5 and all(row) for row in parsed)
-    assert len({row[0] for row in parsed}) == len(parsed)
-    return parsed
+def courses() -> list[dict]:
+    distractors = {row[0]: row[1:] for line in DISTRACTORS if (row := line.split("|"))}
+    prompts = dict(line.split("|", 1) for line in PROMPTS)
+    tests = []
+    for group in range(6):
+        questions = []
+        for index in range(group * 10, group * 10 + 10):
+            topic, rule, example, mistake, repair = BEGINNER[index].split("|")
+            if topic == "Float literals":
+                continue  # The default-type repair already tests the f suffix.
+            concepts = [slug(topic)]
+            if topic == "Floating-point default":
+                concepts.append("float-literals")
+            q = choice(
+                f"java-beginner-java-{index + 1:03d}-11",
+                prompts[topic],
+                repair, distractors[topic],
+                f"{topic}: {rule}. {repair[0].upper() + repair[1:]}. Example: {example}.",
+                topic, "https://dev.java/learn/language-basics/",
+                assessment(f"java-{slug(topic)}-repair", "debug", *concepts), "easy",
+            )
+            questions.append(q)
+        tests.append({"id": f"beginner-java-practice-{group + 1}",
+                      "title": ["Getting a program running", "Names and values", "Operators",
+                                "Control flow", "Arrays and methods", "Strings and program structure"][group],
+                      "description": "Correct common Java mistakes using choices about the same concept.",
+                      "difficulty": "easy", "questions": questions})
+    imported = json.loads((Path(__file__).resolve().parents[1] / "content/enterprise/imports/java-quiz-selected.json").read_text())
+    tests.append({"id": "beginner-java-imported-practice", "title": "Types, operators, and library methods",
+                  "description": "Five reviewed questions imported from Tahir Naseer's MIT-licensed Java quiz.",
+                  "difficulty": "easy", "questions": imported})
+    total = sum(len(test["questions"]) for test in tests)
+    return [{"schema_version": 1, "id": "beginner-java", "title": "Java fundamentals — Beginner",
+             "description": f"{total} focused Java 17 questions: practical repairs and five attributed imports.",
+             "subject": "Java fundamentals", "difficulty": "easy", "lessons": [], "tests": tests}, oop_course()]
 
 
 def generate(out: Path, write_json) -> list[dict]:
     entries = []
-    for course_id, raw, difficulty, count in [
-        ("beginner-java", BEGINNER, "easy", 20),
-        ("oop-medium", OOP, "medium", 10),
-    ]:
-        rows = parse(raw)
-        path = out / f"{course_id}.json"
-        previous = {}
-        if path.exists():
-            old = json.loads(path.read_text())
-            previous = {q["id"]: q for test in old["tests"] for q in test["questions"]}
-        tests = []
-        for group in range(6):
-            questions = []
-            for index in range(group * 10, group * 10 + 10):
-                topic, rule, example, mistake, repair = rows[index]
-                for variant in range(count):
-                    family, frame = divmod(variant, 5)
-                    lead = LEADS[frame]
-                    if family == 0:
-                        prompt = f"{lead} Which statement best describes {topic} in Java?"
-                        answer_field, answer = 1, rule
-                    elif family == 1:
-                        prompt = f"{lead} Which example correctly illustrates {topic}?"
-                        answer_field, answer = 2, example
-                    elif family == 2:
-                        prompt = f"{lead} A programmer makes this mistake: {mistake}. What is the best correction?"
-                        answer_field, answer = 4, repair
-                    else:
-                        prompt = f"{lead} Which topic explains this rule: {rule}?"
-                        answer_field, answer = 0, topic
-                    distractors = []
-                    for step in range(1, 61):
-                        candidate = rows[(index + 7 + variant * 3 + step * 11) % 60][answer_field]
-                        if candidate != answer and candidate not in distractors:
-                            distractors.append(candidate)
-                        if len(distractors) == 3:
-                            break
-                    assert len(distractors) == 3
-                    answers = [answer] + distractors
-                    shift = (index + variant) % 4
-                    options = answers[shift:] + answers[:shift]
-                    question = {
-                        "id": f"java-{course_id}-{index + 1:03d}-{variant + 1:02d}",
-                        "revision": 1,
-                        "prompt": prompt,
-                        "difficulty": difficulty,
-                        "explanation": f"{topic}: {rule}. Example: {example}. If {mistake}, {repair}.",
-                        "type": "choice",
-                        "options": options,
-                        "correct": [(4 - shift) % 4],
-                        "multiple": False,
-                        "source_url": SOURCES[course_id],
-                        "topic": topic,
-                    }
-                    old = previous.get(question["id"])
-                    if old and {k: v for k, v in old.items() if k != "revision"} != {k: v for k, v in question.items() if k != "revision"}:
-                        question["revision"] = old["revision"] + 1
-                    elif old:
-                        question["revision"] = old["revision"]
-                    questions.append(question)
-            tests.append({"id": f"{course_id}-practice-{group + 1}",
-                          "title": f"{('Java basics' if difficulty == 'easy' else 'OOP')}: set {group + 1}",
-                          "description": f"Practice ten concepts with {count} question variations each.",
-                          "difficulty": difficulty, "questions": questions})
-        total = len(rows) * count
-        course = {"schema_version": 1, "id": course_id,
-                  "title": "Java fundamentals — Beginner" if difficulty == "easy" else "Object-oriented Java — Medium",
-                  "description": f"{total} original Java practice questions across {len(rows)} curated concepts.",
-                  "subject": "Java fundamentals" if difficulty == "easy" else "Java OOP",
-                  "difficulty": difficulty, "lessons": [], "tests": tests}
+    for course in courses():
+        path = out / f"{course['id']}.json"
+        preserve_revisions(course, json.loads(path.read_text()) if path.exists() else None)
         digest = write_json(path, course)
         entries.append({key: course[key] for key in ("id", "title", "description", "subject", "difficulty")} |
                        {"path": path.name, "sha256": digest})

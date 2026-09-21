@@ -217,3 +217,15 @@
   .learner-shell .mobile-dashboard strong{font-size:23px}
   .learner-shell .mobile-course-row{padding:13px 12px;gap:10px}
 }
+
+/* Question attribution and saved-answer review. */
+.question-source{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:12px 0;overflow-wrap:anywhere}
+.answer-review{margin:16px 0;padding:14px 18px;border-left:3px solid #729269;background:#f3f7ed;border-radius:6px}
+.answer-review.incorrect{border-left-color:#bd6943;background:#fff3ec}
+.submitted-answer p,.submitted-answer ul{margin:8px 0}
+.submitted-answer dd{margin:5px 0 12px}
+.submitted-value{white-space:pre-wrap;overflow-wrap:anywhere}
+.choice .markdown{min-width:0;flex:1}
+.choice .markdown p{margin:0}
+.results-row>summary{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.results-row>summary .badge{flex-shrink:0}

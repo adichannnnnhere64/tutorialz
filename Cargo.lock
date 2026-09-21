@@ -5391,7 +5391,7 @@ dependencies = [
 
 [[package]]
 name = "tutorialz-author"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "dioxus",
  "serde",
@@ -5411,7 +5411,7 @@ dependencies = [
 
 [[package]]
 name = "tutorialz-learner"
-version = "0.2.0"
+version = "0.3.0"
 dependencies = [
  "dioxus",
  "serde",

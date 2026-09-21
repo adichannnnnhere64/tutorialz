@@ -1,14 +1,17 @@
 """Build original practice questions grounded in the Jakarta EE specifications.
 
-Each row is a reviewed concept: API, core behavior, failure signal, and practical
-response. The generator varies the assessment context without copying source text.
+Each row contributes one recall question and one repair question. Integrated
+advanced cases and OOP questions are authored separately, without variant loops.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from pathlib import Path
-from java_content import generate as generate_java_courses
+from java_content import courses as java_courses
+from advanced_content import course as advanced_course
+from question_bank import assessment, audit, choice, preserve_revisions, slug
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "content" / "enterprise"
@@ -134,64 +137,42 @@ ROWS = [line.split("|") for line in FACTS]
 assert len(ROWS) == 100, len(ROWS)
 assert all(len(row) == 5 and row[0] in SOURCES for row in ROWS)
 
-ADVANCED_CONTEXTS = [
-    "During a production incident", "While reviewing a migration", "During a security review",
-    "When planning a zero-downtime rollout", "While investigating a load-test regression",
-    "After a node restart", "During a design review", "While preparing a failure drill",
-    "When defining operational alerts", "While reviewing a cross-service workflow",
-]
 
-
-def question(row: list[str], index: int, tier: str, variant: int) -> dict:
+def question(row: list[str], index: int, tier: str) -> dict:
     category, concept, behavior, symptom, response = row
-    if tier == "basic":
-        prompt = f"In Jakarta EE, what is the main purpose of {concept}?"
-        answer = behavior
-        distractor_field = 2
-    elif tier == "medium":
-        prompts = [
-            f"A team sees this problem: {symptom}. Which response best addresses {concept}?",
-            f"In a code review about {concept}, how should the team address a case where {symptom}?",
-            f"Which change should be tested first when {symptom} in a Jakarta EE service?",
-        ]
-        prompt = prompts[variant]
-        answer = response
-        distractor_field = 4
-    else:
-        context = ADVANCED_CONTEXTS[variant]
-        partner = ROWS[(index + 1 + variant * 9) % len(ROWS)]
-        secondary = ROWS[(index + 40 + variant * 5) % len(ROWS)]
-        tertiary = ROWS[(index + 65 + variant * 3) % len(ROWS)]
-        prompt = (f"{context}, two failures appear together: {symptom}; and "
-                  f"{partner[3]}. Which paired response addresses both {concept} "
-                  f"and {partner[1]}?")
-        answer = f"{response}; {partner[4]}"
-        options = [answer, f"{response}; {secondary[4]}",
-                   f"{secondary[4]}; {partner[4]}",
-                   f"{secondary[4]}; {tertiary[4]}"]
-    if tier != "advanced":
-        # Wrong choices come from other categories so each is a distinct mechanism.
-        others = [r[distractor_field] for r in ROWS if r[0] != category]
-        offset = (index * 17 + variant * 13) % len(others)
-        options = [answer] + [others[(offset + j * 11) % len(others)] for j in range(3)]
-    shift = (index + variant) % 4
-    options = options[shift:] + options[:shift]
-    return {
-        "id": f"ee-{tier}-{index + 1:03d}-{variant + 1:02d}",
-        "revision": 1,
-        "prompt": prompt,
-        "difficulty": {"basic": "easy", "medium": "medium", "advanced": "hard"}[tier],
-        "explanation": (f"{concept.capitalize()} {behavior}. When {symptom}, {response}. "
-                        + (f"For {partner[1]}, {partner[4]}." if tier == "advanced" else "")),
-        "type": "choice",
-        "options": options,
-        "correct": [(4 - shift) % 4],
-        "multiple": False,
-        "source_url": SOURCES[category],
-        "topic": concept,
-        **({"second_source_url": SOURCES[partner[0]], "second_topic": partner[1]}
-           if tier == "advanced" else {}),
-    }
+    field = 2 if tier == "basic" else 4
+    prompt = (f"In Jakarta EE, what is the main purpose of {concept}?" if tier == "basic"
+              else f"{symptom[0].upper() + symptom[1:]}. Which change addresses this failure?")
+    # Competing answers stay within the subject area. No synthetic lead-ins or
+    # answer permutations are counted as new questions.
+    others = [r[field] for r in ROWS if r[0] == category and r[1] != concept]
+    offset = index % len(others)
+    wrong = [others[(offset + j * 3) % len(others)] for j in range(3)]
+    return choice(
+        f"ee-{tier}-{index + 1:03d}-01", prompt, row[field], wrong,
+        f"{concept[0].upper() + concept[1:]} {behavior}. When {symptom}, {response}.",
+        concept, SOURCES[category],
+        assessment(f"ee-{slug(concept)}-{'purpose' if tier == 'basic' else 'repair'}",
+                   "recall" if tier == "basic" else "debug", slug(concept)),
+        "easy" if tier == "basic" else "medium",
+    )
+
+
+def courses() -> list[dict]:
+    result = []
+    for tier, difficulty in [("basic", "easy"), ("medium", "medium")]:
+        tests = []
+        for category in SOURCES:
+            items = [question(row, i, tier) for i, row in enumerate(ROWS) if row[0] == category]
+            tests.append({"id": f"ee-{tier}-{category}-test", "title": f"{category.title()} practice",
+                          "description": f"{tier.title()} Jakarta EE {category} questions.",
+                          "difficulty": difficulty, "questions": items})
+        result.append({"schema_version": 1, "id": f"ee-{tier}",
+                       "title": f"Java Enterprise and Jakarta EE — {tier.title()}",
+                       "description": f"100 distinct {'concept checks' if tier == 'basic' else 'failure diagnoses'} across ten enterprise subject areas.",
+                       "subject": "Java Enterprise / Jakarta EE", "difficulty": difficulty,
+                       "lessons": [], "tests": tests})
+    return [*result, advanced_course(SOURCES), *java_courses()]
 
 
 def write_json(path: Path, value: object) -> str:
@@ -200,34 +181,27 @@ def write_json(path: Path, value: object) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
-OUT.mkdir(parents=True, exist_ok=True)
-entries = []
-for tier, variants, difficulty in [("basic", 1, "easy"), ("medium", 3, "medium"), ("advanced", 10, "hard")]:
-    path = OUT / f"{tier}.json"
-    previous = {}
-    if path.exists():
-        old_course = json.loads(path.read_text())
-        previous = {q["id"]: q for test in old_course["tests"] for q in test["questions"]}
-    tests = []
-    for category in SOURCES:
-        questions = [question(row, i, tier, v) for i, row in enumerate(ROWS)
-                     if row[0] == category for v in range(variants)]
-        for q in questions:
-            old = previous.get(q["id"])
-            if old:
-                old_content = {k: v for k, v in old.items() if k != "revision"}
-                new_content = {k: v for k, v in q.items() if k != "revision"}
-                q["revision"] = old["revision"] + (old_content != new_content)
-        tests.append({"id": f"ee-{tier}-{category}-test", "title": f"{category.title()} practice",
-                      "description": f"{tier.title()} Jakarta EE {category} questions.",
-                      "difficulty": difficulty, "questions": questions})
-    course = {"schema_version": 1, "id": f"ee-{tier}", "title": f"Java Enterprise and Jakarta EE — {tier.title()}",
-              "description": f"{100 * variants} original questions grounded in official Jakarta EE specifications.",
-              "subject": "Java Enterprise / Jakarta EE", "difficulty": difficulty, "lessons": [], "tests": tests}
-    digest = write_json(path, course)
-    entries.append({key: course[key] for key in ("id", "title", "description", "subject", "difficulty")} |
-                   {"path": path.name, "sha256": digest})
-entries.extend(generate_java_courses(OUT, write_json))
-write_json(OUT / "catalog.json", {"schema_version": 1, "collection_id": "tutorialz-jakarta-ee",
-                                  "courses": entries})
-print("Generated 1,300 easy, 900 medium, and 1,000 advanced questions")
+def generate(out: Path = OUT) -> None:
+    generated = courses()
+    report = audit(generated)
+    if report["errors"]:
+        raise ValueError("Question quality checks failed:\n" + "\n".join(report["errors"]))
+    out.mkdir(parents=True, exist_ok=True)
+    entries = []
+    for course in generated:
+        name = {"ee-basic": "basic", "ee-medium": "medium", "ee-advanced": "advanced"}.get(course["id"], course["id"])
+        path = out / f"{name}.json"
+        preserve_revisions(course, json.loads(path.read_text()) if path.exists() else None)
+        digest = write_json(path, course)
+        entries.append({key: course[key] for key in ("id", "title", "description", "subject", "difficulty")} |
+                       {"path": path.name, "sha256": digest})
+    write_json(out / "catalog.json", {"schema_version": 1, "content_revision": 1,
+                                    "collection_id": "tutorialz-jakarta-ee", "courses": entries})
+    write_json(out / "coverage.json", report)
+    print(f"Generated {report['questions']} questions; {len(report['review'])} similarity pairs to review")
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path, default=OUT)
+    generate(parser.parse_args().out)

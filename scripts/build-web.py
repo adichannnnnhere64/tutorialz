@@ -5,6 +5,9 @@ root=pathlib.Path(__file__).resolve().parent.parent
 os.chdir(root)
 base=os.environ.get('SITE_BASE_PATH','').strip('/')
 dx=os.environ.get('DX','dx')
+catalog=json.loads((root/'content/enterprise/catalog.json').read_text())
+question_count=sum(len(test['questions']) for entry in catalog['courses']
+                   for test in json.loads((root/'content/enterprise'/entry['path']).read_text())['tests'])
 for app in ['learner','author']:
     path='/'.join(filter(None,[base,'author' if app=='author' else '']))
     subprocess.run([dx,'build','--web','--release','--package',f'tutorialz-{app}','--base-path',path],check=True)
@@ -16,10 +19,10 @@ for app in ['learner','author']:
     html=index.read_text()
     if app=='learner':
         site_url='https://adichannnnnhere64.github.io/'+(base+'/' if base else '')
-        metadata=(f'<meta name="description" content="Search 3,200 Java, OOP, and Jakarta EE questions and take free practice quizzes.">'
+        metadata=(f'<meta name="description" content="Search {question_count:,} Java, OOP, and Jakarta EE questions and take free practice quizzes.">'
                   f'<link rel="canonical" href="{site_url}">'
                   f'<meta property="og:title" content="Tutorialz · Java and Jakarta EE quizzes">'
-                  f'<meta property="og:description" content="Search 3,200 Java, OOP, and Jakarta EE practice questions.">'
+                  f'<meta property="og:description" content="Search {question_count:,} Java, OOP, and Jakarta EE practice questions.">'
                   f'<meta property="og:url" content="{site_url}">')
     else:
         metadata='<meta name="robots" content="noindex">'

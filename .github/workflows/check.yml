@@ -18,8 +18,17 @@ jobs:
         with:
           node-version: 24
           cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: python3 -m unittest discover -s tests -p '*_test.py'
       - run: cargo test -p tutorialz-core --locked
       - run: cargo run -p tutorialz-core --locked -- content/catalog.json
+      - run: cargo run -p tutorialz-core --locked -- content/enterprise/catalog.json
       - run: cargo check --workspace --target wasm32-unknown-unknown --locked
       - run: npm ci && npm test
       - uses: taiki-e/install-action@v2
@@ -40,6 +49,7 @@ jobs:
           export CHROME_BIN="$(node --input-type=module -e 'import {chromium} from "playwright"; console.log(chromium.executablePath())')"
           node scripts/browser-test.mjs
           APP_URL=http://127.0.0.1:8766/tutorialz/ node scripts/app-test.mjs
+          APP_URL=http://127.0.0.1:8766/tutorialz/ node scripts/question-review-test.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: tutorialz-web
