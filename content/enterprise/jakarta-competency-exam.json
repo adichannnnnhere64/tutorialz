@@ -15,10 +15,10 @@
       "questions": [
         {
           "id": "jakarta-competency-qualifier-over-primary",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Spring application registers two PaymentGateway beans. CardGateway is @Primary; BankGateway has @Qualifier(\"bank\"). A constructor parameter is annotated @Qualifier(\"bank\"). With no other candidates, which gateway is injected?",
           "difficulty": "medium",
-          "explanation": "Qualifiers filter type-matching candidates. Primary selection resolves preference among eligible candidates; it does not undo the bank qualifier.",
+          "explanation": "The bank qualifier leaves BankGateway as the eligible candidate. @Primary only resolves a preference among eligible beans. A single PaymentGateway parameter receives one bean, and using @Primary on a different bean is not a configuration conflict.",
           "type": "choice",
           "options": [
             "Neither gateway, because @Primary and @Qualifier cannot coexist.",
@@ -45,16 +45,16 @@
         },
         {
           "id": "jakarta-competency-required-rollback-only",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Using Spring's default transaction settings, an outer REQUIRED method calls a separate bean's REQUIRED method through its proxy. The inner method throws an unchecked exception after a database write. The outer method catches it and returns normally. What happens when the outer boundary tries to commit?",
           "difficulty": "hard",
-          "explanation": "Both logical scopes share one physical transaction. Catching the exception does not clear its rollback-only state, so the caller must not be told that a commit succeeded.",
+          "explanation": "Both REQUIRED methods share the same physical transaction. The inner proxy marks it rollback-only when the unchecked exception escapes. Catching that exception does not undo the mark. There is no independent inner commit, savepoint recovery, or automatic retry, so the outer commit raises UnexpectedRollbackException.",
           "type": "choice",
           "options": [
             "Commit fails with UnexpectedRollbackException because the shared transaction is rollback-only.",
             "The inner changes roll back independently and the outer changes commit.",
             "All changes commit because the outer method caught the exception.",
-            "Spring repeats the inner method in a new transaction automatically."
+            "The inner write is rolled back to a savepoint, and the outer transaction commits."
           ],
           "correct": [
             0
@@ -75,10 +75,10 @@
         },
         {
           "id": "jakarta-competency-requires-new-pool-starvation",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Ten concurrent Spring requests each hold a JDBC connection in an outer transaction. Each then calls REQUIRES_NEW through another bean. The pool has ten connections and all requests wait for a second connection. What deployment change addresses this specific stall?",
           "difficulty": "hard",
-          "explanation": "Suspension keeps the outer connection held while the independent transaction needs another. Pool sizing must account for this demand; readOnly does not change propagation.",
+          "explanation": "Each suspended outer transaction keeps its connection while the inner transaction needs another. Admission limits and sufficient pool capacity address that demand. More request threads increase contention; a longer timeout only postpones failure. readOnly does not make REQUIRES_NEW reuse the outer transaction.",
           "type": "choice",
           "options": [
             "Mark the inner method readOnly so REQUIRES_NEW reuses the outer transaction.",
@@ -105,13 +105,13 @@
         },
         {
           "id": "jakarta-competency-test-real-commit",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Spring integration test is itself @Transactional and rolls back after calling an order service. It asserts the returned object but never commits. Production reports a deferred database constraint violation at commit. Which test addition targets the missing behavior?",
           "difficulty": "medium",
-          "explanation": "A rollback-only test does not exercise successful commit or commit-time failure. Ending the test transaction explicitly, or invoking the service outside a test transaction, exposes that boundary.",
+          "explanation": "A transaction that always rolls back never exercises commit-time constraint checking. Commit explicitly and check the result from a separate transaction. A mocked save call, an assigned ID, or an ordinary read inside the original transaction cannot establish that the database would accept the commit.",
           "type": "choice",
           "options": [
-            "Replace the database with a list so the test cannot encounter constraints.",
+            "Read the saved row again before the test transaction rolls back.",
             "Exercise a real commit boundary and verify the outcome using a separate transaction.",
             "Mock the repository and assert that save was called once.",
             "Keep rollback-only tests and assert that the entity has a generated ID."
@@ -135,14 +135,14 @@
         },
         {
           "id": "jakarta-competency-aot-runtime-bean-discovery",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Spring application discovers arbitrary plugin classes from names in a database and registers new bean definitions at runtime. The team plans a Spring AOT native image. Which design assumption needs to change?",
           "difficulty": "hard",
-          "explanation": "Spring AOT prepares a fixed bean model at build time. Runtime hints describe required dynamic access but do not turn a native image into a general runtime plugin loader.",
+          "explanation": "Spring AOT processes the bean definitions at build time, and a native image needs its dynamic access requirements described in advance. Runtime hints can cover known reflective operations; they do not allow arbitrary new classes to be loaded later. Changing discovery location or bean-selection annotations does not remove that constraint.",
           "type": "choice",
           "options": [
-            "Adding @Primary to the plugin interface enables unrestricted runtime class loading.",
-            "Moving class names from the database to an HTTP response removes AOT restrictions.",
+            "Runtime hints allow previously unknown plugin classes to be downloaded after image creation.",
+            "Scanning an external plugin directory at startup discovers classes omitted from the native image.",
             "The bean graph and required reflective access must be known during AOT processing; arbitrary late plugins need another deployment model.",
             "All classes reachable on a JVM are automatically discoverable in any native image."
           ],
@@ -165,10 +165,10 @@
         },
         {
           "id": "jakarta-competency-owning-side-association",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Hibernate maps Order.lines with @OneToMany(mappedBy=\"order\") and Line.order with @ManyToOne. Both objects are managed. Code adds a line to order.getLines() but leaves line.order null. Which change makes the foreign-key relationship explicit?",
           "difficulty": "medium",
-          "explanation": "The many-to-one field owns this relationship. Cascade controls operation propagation; it does not synchronize both sides of an object association.",
+          "explanation": "Line.order owns the foreign-key relationship; mappedBy identifies Order.lines as the inverse side. Set the owning field and maintain the collection consistently. Cascading propagates persistence operations, flushing sends pending state, and eager fetching controls reads. None of these assigns a missing owning-side reference.",
           "type": "choice",
           "options": [
             "Add CascadeType.ALL only; cascade automatically assigns the owning field.",
@@ -194,10 +194,10 @@
         },
         {
           "id": "jakarta-competency-bulk-update-managed-state",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Hibernate session loads Account 7 with status OPEN. In the same transaction, a bulk HQL update sets matching accounts to CLOSED. No refresh or clear occurs. What should code assume about the already-managed Account object?",
           "difficulty": "medium",
-          "explanation": "Bulk DML changes database rows directly. Plan the persistence-context boundary or explicitly refresh affected state before relying on it, taking pending changes into account.",
+          "explanation": "Bulk HQL updates database rows without rewriting fields in existing managed instances. An affected object can therefore remain stale until explicitly refreshed or reloaded in a new context. The update neither detaches every object nor makes normal getters requery the database.",
           "type": "choice",
           "options": [
             "Its status can remain OPEN because bulk updates bypass synchronization of managed object state.",
@@ -224,10 +224,10 @@
         },
         {
           "id": "jakarta-competency-identity-insert-batching",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Hibernate ORM 6.6 import sets hibernate.jdbc.batch_size=50, but inserts for an entity using an IDENTITY identifier are not JDBC-batched. The supported database also offers sequences. Which diagnosis should guide a measured optimization?",
           "difficulty": "hard",
-          "explanation": "Hibernate disables JDBC insert batching with identity generation. A sequence-based design can permit batching, but changing identifier generation requires compatible database objects and migration planning.",
+          "explanation": "Hibernate ORM 6.6 disables JDBC insert batching for IDENTITY-generated identifiers. Sequence-based generation can allow batching, subject to database support and a safe identifier migration. A larger batch size, a longer-lived persistence context, and second-level caching do not remove the identity-generation restriction.",
           "type": "choice",
           "options": [
             "IDENTITY batches only when every entity is retained in the persistence context until the final commit.",
@@ -253,10 +253,10 @@
         },
         {
           "id": "jakarta-competency-measure-query-growth",
-          "revision": 1,
+          "revision": 2,
           "prompt": "An order-list endpoint is suspected of N+1 queries. A warm second-level cache hides the issue in a local test. Which measurement best reveals how its database work scales with page size?",
           "difficulty": "medium",
-          "explanation": "Generated SQL and its growth with result size expose repeated selects. Controlled fixtures and cache state make comparisons meaningful; annotation inspection alone cannot establish query behavior.",
+          "explanation": "SQL counts over controlled, cold-cache fixtures reveal whether database work grows with the number of returned orders. Repository-call counts hide ORM-generated statements. A warm one-row measurement can hide repeated selects, and a LAZY annotation alone does not describe the executed fetch plan.",
           "type": "choice",
           "options": [
             "Measure only the fastest warm-cache request for a one-order fixture.",
@@ -283,10 +283,10 @@
         },
         {
           "id": "jakarta-competency-record-embeddable-not-entity",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Java 17 service uses Hibernate ORM 6.6 and Jakarta Persistence 3.1. The team wants to model an immutable Money value with a record. Which option respects this provider/version combination?",
           "difficulty": "medium",
-          "explanation": "Hibernate 6.6 supports records as embeddables. Records are final and are not ordinary compliant entity classes here; provider support must not be confused with cross-provider guarantees.",
+          "explanation": "Hibernate ORM 6.6 supports record embeddables, but a record is final and does not satisfy ordinary entity-class requirements for the stated Persistence 3.1 baseline. Adding an annotation or constructor does not remove those restrictions. Hibernate support also does not prove portability to every Persistence 3.1 provider.",
           "type": "choice",
           "options": [
             "Assume record embeddables are portable to every Persistence 3.1 provider.",
@@ -313,10 +313,10 @@
         },
         {
           "id": "jakarta-competency-servlet-mapping-precedence",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Servlet web app has mappings /reports/*, *.csv, and /. For a request to /app/reports/daily.csv in context /app, which mapping wins?",
           "difficulty": "medium",
-          "explanation": "The container removes the context path, then checks exact matches, longest path matches, extension matches, and finally the default mapping.",
+          "explanation": "After removing /app, the container evaluates /reports/daily.csv. Exact matches take priority, followed by the longest matching path mapping, an extension mapping, and the default mapping. /reports/* therefore wins; neither declaration order nor the .csv suffix overrides it.",
           "type": "choice",
           "options": [
             "/reports/*, because a matching path mapping precedes an extension mapping.",
@@ -342,10 +342,10 @@
         },
         {
           "id": "jakarta-competency-async-dispatch-filter",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Servlet filter is asyncSupported=true but mapped only to DispatcherType.REQUEST. An endpoint starts async processing and later calls AsyncContext.dispatch(). The filter must also run on that redispatch. What configuration is missing?",
           "difficulty": "medium",
-          "explanation": "Async support permits asynchronous processing; dispatcher-type mappings decide which dispatches invoke the filter. These are separate settings.",
+          "explanation": "asyncSupported allows asynchronous processing, while dispatcher types determine when a filter runs. AsyncContext.dispatch uses ASYNC, not REQUEST or FORWARD. Disabling async support prevents the intended processing; starting another async cycle does not repair the mapping.",
           "type": "choice",
           "options": [
             "Map only DispatcherType.FORWARD because every async dispatch is a forward.",
@@ -371,10 +371,10 @@
         },
         {
           "id": "jakarta-competency-rotate-session-after-login",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A servlet implements a custom login flow and retains a pre-login shopping cart in HttpSession. After validating credentials, it must mitigate session fixation while retaining those attributes. Which Servlet API operation fits?",
           "difficulty": "medium",
-          "explanation": "Changing the session identifier prevents continued use of the pre-authentication identifier while retaining the session data. Attribute changes alone do not rotate the identifier.",
+          "explanation": "changeSessionId rotates the identifier while retaining the existing session and cart attributes. Updating a login attribute does not invalidate the old identifier. Reusing an identifier in a URL preserves the fixation risk, and getSession(false) only retrieves an existing session.",
           "type": "choice",
           "options": [
             "Call request.changeSessionId() on the existing session after authentication.",
@@ -401,10 +401,10 @@
         },
         {
           "id": "jakarta-competency-test-request-encoding",
-          "revision": 1,
-          "prompt": "A UTF-8 form POST produces corrupted non-ASCII values. A servlet calls getParameter(\"name\") before a filter later calls setCharacterEncoding(\"UTF-8\"). Which integration-test-backed repair addresses parameter decoding?",
+          "revision": 2,
+          "prompt": "A UTF-8 form POST produces corrupted characters. One filter reads getParameter(\"name\") before a later filter sets the request encoding to UTF-8. Which change fixes the order of decoding?",
           "difficulty": "medium",
-          "explanation": "Parameter parsing can happen on the first access. Setting request encoding afterward cannot reliably undo that decoding; response encoding controls a different direction.",
+          "explanation": "The first parameter read may decode and cache the form data. Set the request encoding before that read. Response encoding affects output, not input. Re-encoding an already corrupted String can lose information, and a filter placed after parameter parsing is too late.",
           "type": "choice",
           "options": [
             "Put the encoding filter after the controller so it can inspect the rendered output.",
@@ -430,10 +430,10 @@
         },
         {
           "id": "jakarta-competency-virtual-thread-servlet-state",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A servlet container is configured to run requests on Java 21 virtual threads. A servlet stores currentCustomer in an instance field during each request. What changes about the correctness of this field?",
           "difficulty": "medium",
-          "explanation": "Changing request thread implementation does not change servlet instance ownership. Volatile provides visibility, not isolation between users.",
+          "explanation": "Concurrent requests still use the shared servlet instance, regardless of whether their threads are virtual or platform threads. A request-local variable keeps customer state separate. Neither volatile nor a different thread implementation creates one field per request or serializes service invocations.",
           "type": "choice",
           "options": [
             "It is still shared across concurrent requests; request-specific customer state must remain isolated.",
@@ -460,10 +460,10 @@
         },
         {
           "id": "jakarta-competency-jsp-include-translation",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Two JSP fragments both declare a local variable named total in scriptlets. A page combines them using two <%@ include file=... %> directives and fails translation with a duplicate-variable error. Why?",
           "difficulty": "medium",
-          "explanation": "A directive include is translation-time source inclusion. A request-time jsp:include has different execution semantics; moving rendering into tags can also avoid scriptlet coupling.",
+          "explanation": "The include directive inserts fragment source before JSP translation, so scriptlet declarations can end up in the same generated Java scope. Separate source files do not create separate execution scopes in this case. A jsp:include is a runtime inclusion, and session scope is unrelated to Java local-variable declarations.",
           "type": "choice",
           "options": [
             "JSP directives automatically promote every local variable to session scope.",
@@ -489,10 +489,10 @@
         },
         {
           "id": "jakarta-competency-jsp-explicit-scope",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A JSP has page-scope customer='preview' and request-scope customer='approved'. Its summary must display the controller's request value even when a tag creates a page attribute with the same name. Which expression is appropriate?",
           "difficulty": "medium",
-          "explanation": "Unqualified scoped-attribute lookup checks page scope first. The explicit requestScope map selects the controller's request attribute and avoids shadowing.",
+          "explanation": "requestScope selects the controller's request attribute directly. The unqualified customer expression finds the page attribute first. sessionScope and applicationScope select different lifetimes and do not fall back to the request value.",
           "type": "choice",
           "options": [
             "${applicationScope.customer}",
@@ -518,10 +518,10 @@
         },
         {
           "id": "jakarta-competency-jsp-precompile-smoke-test",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A WAR compiles in CI, but its first production request to invoice.jsp fails because a tag library is missing. Java compilation did not translate JSP files. Which release check would expose this before users encounter it?",
           "difficulty": "medium",
-          "explanation": "JSP translation resolves directives, tag libraries, and generated Java. Testing the assembled artifact catches packaging and container integration failures that source compilation misses.",
+          "explanation": "JSP translation resolves tag libraries and generates servlet code. Target-compatible precompilation plus a deployed-page smoke test checks both translation and packaging. Controller compilation, source-file presence, and longer HTTP timeouts cannot supply a missing tag library.",
           "type": "choice",
           "options": [
             "Run javac only on controller sources and assume JSPs share that compilation step.",
@@ -548,10 +548,10 @@
         },
         {
           "id": "jakarta-competency-jsp-text-output-escaping",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A JSP displays an untrusted comment between ordinary HTML <p> tags. Jakarta Tags is available. Which rendering approach escapes HTML metacharacters for this text context?",
           "difficulty": "medium",
-          "explanation": "c:out escapes XML/HTML metacharacters by default. EL evaluation and raw printing do not provide this escaping; JavaScript, URL, and other contexts require their own handling.",
+          "explanation": "c:out escapes metacharacters by default, which fits ordinary HTML text content. Plain EL and out.print emit the value without this escaping; escapeXml=false disables it. Other contexts, such as JavaScript or a URL, need context-appropriate handling.",
           "type": "choice",
           "options": [
             "Use <c:out value=\"${comment}\" escapeXml=\"false\"/> to enable escaping.",
@@ -577,15 +577,15 @@
         },
         {
           "id": "jakarta-competency-pages-four-threadsafe-migration",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A legacy JSP contains <%@ page isThreadSafe=\"false\" %>. It is being migrated to Jakarta Pages 4.0. Which action is required?",
           "difficulty": "medium",
-          "explanation": "Pages 4.0 removes isThreadSafe. A migration must address concurrency in the application; changing the attribute value does not restore a removed feature.",
+          "explanation": "Pages 4.0 removes the isThreadSafe attribute entirely. Remove it and address any unsafe shared state in the page or supporting code. Neither keeping the old value, changing its name, nor switching it to true makes a removed attribute valid.",
           "type": "choice",
           "options": [
-            "Remove the removed directive attribute and eliminate unsafe shared page state explicitly.",
+            "Remove the unsupported attribute and make any shared page state safe for concurrent access.",
             "Keep the attribute because Pages 4.0 guarantees a SingleThreadModel servlet for it.",
-            "Rename the attribute to jakarta.isThreadSafe without changing the page's state handling.",
+            "Retain the attribute and increase the response buffer to prevent concurrent page execution.",
             "Switch the value to true because Pages 4.0 retains only that value."
           ],
           "correct": [
@@ -606,13 +606,13 @@
         },
         {
           "id": "jakarta-competency-suppressed-close-exception",
-          "revision": 1,
+          "revision": 2,
           "prompt": "In Java 17, what does this program print?\n```java\nclass Main {\n  static class R implements AutoCloseable {\n    public void close() { throw new IllegalStateException(\"close\"); }\n  }\n  public static void main(String[] args) {\n    try (R r = new R()) { throw new IllegalArgumentException(\"body\"); }\n    catch (Exception e) {\n      System.out.print(e.getMessage() + \":\" + e.getSuppressed()[0].getMessage());\n    }\n  }\n}\n```",
           "difficulty": "medium",
-          "explanation": "The body exception remains primary. The resource-close exception is attached as suppressed, so diagnostics should retain both.",
+          "explanation": "The exception from the try body is primary, and the exception from close is recorded as suppressed. The output is body:close. Reversing the strings incorrectly makes the close failure primary; repeating body ignores the close failure. Both unchecked exceptions are legal here.",
           "type": "choice",
           "options": [
-            "Compilation fails because both blocks throw unchecked exceptions.",
+            "An ArrayIndexOutOfBoundsException occurs because no exception is suppressed.",
             "`body:close`",
             "`close:body`",
             "`body:body`"
@@ -635,16 +635,16 @@
         },
         {
           "id": "jakarta-competency-money-decimal-contract",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A billing rule calculates a decimal tax amount and rounds once to two decimal places using HALF_UP. Inputs arrive as decimal strings. Which implementation best preserves that stated rule?",
           "difficulty": "medium",
-          "explanation": "String-based decimal construction avoids introducing binary floating-point approximation. Rounding location and mode are part of the business contract and should be tested explicitly.",
+          "explanation": "Constructing BigDecimal directly from decimal strings preserves the input values. Apply HALF_UP once at the required boundary. Constructing it from a double can preserve a binary approximation, while rounding each intermediate value or choosing another rounding mode changes the stated business rule.",
           "type": "choice",
           "options": [
             "Parse BigDecimal from the strings, perform decimal arithmetic, then apply the specified scale and rounding at the rule boundary.",
             "Parse double first, construct BigDecimal from that double, and expect the original decimal value to be restored.",
-            "Round every intermediate multiplication to an integer before calculating the tax total.",
-            "Compare formatted currency strings to determine whether the unrounded numeric values are equal."
+            "Parse BigDecimal from strings and round each intermediate amount to two decimal places.",
+            "Parse BigDecimal from strings and use HALF_EVEN when rounding the final amount."
           ],
           "correct": [
             0
@@ -665,16 +665,16 @@
         },
         {
           "id": "jakarta-competency-executor-nested-wait",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Java fixed pool has four workers. Four parent tasks each submit a child to that same pool and immediately wait on child.get(). No timeout or cancellation exists. Why can all work stop?",
           "difficulty": "hard",
-          "explanation": "Blocking dependencies inside a saturated bounded executor can starve queued work. Compose tasks without blocking the same workers, or design execution capacity and boundaries explicitly.",
+          "explanation": "All four workers can be held by parents whose children are queued behind them. The children cannot run until a worker becomes free. This is thread starvation caused by a dependency cycle, not a monitor-lock requirement, queue rejection, or an implicit executor shutdown.",
           "type": "choice",
           "options": [
-            "A fixed pool automatically creates extra workers whenever a task waits.",
-            "Submitting a child causes the parent to release its worker until the child completes.",
+            "The queue rejects every child because submitting a task from another task is prohibited.",
+            "The executor shuts down automatically when all its workers call Future.get.",
             "Every worker can be occupied by a parent waiting for queued child tasks that have no available worker.",
-            "Future.get always executes its queued child inline on the calling thread."
+            "The executor requires synchronized on the Future before any child can begin."
           ],
           "correct": [
             2
@@ -694,16 +694,16 @@
         },
         {
           "id": "jakarta-competency-jdeps-internal-api-audit",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Before a JDK upgrade, a team needs a static report of compiled application references to JDK internal APIs. Which tool invocation targets that evidence?",
           "difficulty": "medium",
-          "explanation": "jdeps analyzes class dependencies and can report internal API use. Static analysis cannot discover every reflection-driven dependency, so runtime coverage remains necessary.",
+          "explanation": "jdeps --jdk-internals reports statically visible dependencies on internal JDK APIs. Dependency listing alone does not classify internal use, jdeprscan reports deprecated APIs, and javap disassembles classes. Reflection and runtime-loaded dependencies still need separate investigation.",
           "type": "choice",
           "options": [
-            "Run java -version to validate every reflective class name in application code.",
+            "Run javap -public and treat public application members as proof of supported JDK use.",
             "Run jdeps --jdk-internals on the application artifacts and review dependencies separately.",
-            "Run javap -version to list all internal APIs referenced by the application.",
-            "Run jlink --list-plugins to prove third-party dependencies use only public APIs."
+            "Run jdeprscan to list deprecated APIs and treat that as the internal-API report.",
+            "Run jdeps --list-deps and treat every listed module as a JDK-internal dependency."
           ],
           "correct": [
             1
@@ -723,14 +723,14 @@
         },
         {
           "id": "jakarta-competency-virtual-thread-downstream-limit",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Java 21 standalone service replaces a 100-thread pool with a virtual-thread-per-task executor. Its partner permits only 40 concurrent requests. What should happen to the partner concurrency limit?",
           "difficulty": "medium",
-          "explanation": "Virtual threads reduce the cost of blocking threads, not the cost or capacity of downstream resources. A semaphore or equivalent admission mechanism can bound those calls.",
+          "explanation": "Virtual threads make waiting cheaper but do not raise the partner's capacity. Keep a separate limit on simultaneous partner calls. Timeouts, an HTTP connection count that permits multiplexing, and thread availability do not by themselves enforce the required concurrency ceiling.",
           "type": "choice",
           "options": [
-            "Create a pool of 40 reusable virtual threads as the only supported virtual-thread model.",
-            "Increase partner concurrency without measuring it because virtual threads speed up remote servers.",
+            "Replace the concurrency limit with a timeout on every partner call.",
+            "Limit HTTP connections to 40 even though each connection permits concurrent multiplexed calls.",
             "Keep an explicit admission limit around partner calls; inexpensive threads do not increase partner capacity.",
             "Remove the limit because virtual threads provide automatic partner backpressure."
           ],
@@ -752,16 +752,16 @@
         },
         {
           "id": "jakarta-competency-null-unrelated-overloads",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Java 17 declares void send(String value) and void send(Integer value) in the same class. Why does send(null) fail to compile?",
           "difficulty": "medium",
-          "explanation": "String and Integer are unrelated reference types. An explicit cast can express the intended overload, but declaration order cannot resolve the ambiguity.",
+          "explanation": "null is compatible with both String and Integer, but neither class is a subtype of the other. There is no most-specific overload. Source order does not break the tie, and runtime dispatch or unboxing cannot rescue a call that fails overload resolution.",
           "type": "choice",
           "options": [
-            "Java forbids any two overloads with the same parameter count.",
+            "The runtime type of null is needed to select the overriding method.",
             "Both overloads are applicable and neither parameter type is more specific than the other.",
-            "null cannot be passed to any reference parameter.",
-            "The compiler always picks Integer and then rejects autounboxing."
+            "The first declared overload wins, but its result cannot be assigned.",
+            "Integer wins through boxing, but converting null to int fails during compilation."
           ],
           "correct": [
             1
@@ -781,10 +781,10 @@
         },
         {
           "id": "jakarta-competency-generic-interface-dual-role",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Java 17 declares Sink<T> with void accept(T item). TextSink extends Sink<String>; NumberSink extends Sink<Integer>. A proposed adapter implements both TextSink and NumberSink. Which design respects Java's type rules?",
           "difficulty": "medium",
-          "explanation": "Java forbids a class from implementing different parameterizations of the same generic interface. Separate typed roles preserve the contracts without relying on erasure to distinguish them.",
+          "explanation": "A class cannot inherit two different parameterizations of the same generic interface. Separate typed adapter objects preserve both roles. Adding overloaded accept methods, marking the class final, or suppressing warnings does not make the conflicting inheritance legal.",
           "type": "choice",
           "options": [
             "Mark the adapter final so erasure no longer applies to its implemented interfaces.",
@@ -810,10 +810,10 @@
         },
         {
           "id": "jakarta-competency-binary-method-descriptor",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A client was compiled against library method public Number amount(). A replacement library changes that method to public Integer amount(), without retaining a bridge or old method. The old client is not recompiled. What failure can occur on invocation?",
           "difficulty": "hard",
-          "explanation": "Changing a method's return type changes its binary descriptor. Source compatibility and binary compatibility differ; compiler bridges in overriding situations do not imply an arbitrary library edit retains the old descriptor.",
+          "explanation": "The old binary references a method descriptor with Number as its return type. Removing that descriptor can produce NoSuchMethodError. Integer being a subtype helps source-level assignments but does not retain the old method. A cast failure would occur later, and the JVM does not recompile clients automatically.",
           "type": "choice",
           "options": [
             "NoSuchMethodError, because the old binary references the method descriptor returning Number.",
@@ -839,10 +839,10 @@
         },
         {
           "id": "jakarta-competency-equality-inheritance-symmetry",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Money.equals accepts any instanceof Money and compares amount. Voucher extends Money but its equals accepts only Voucher and also compares store. For equal amounts, money.equals(voucher) is true and voucher.equals(money) is false. Which contract test exposes the defect?",
           "difficulty": "medium",
-          "explanation": "Equality must be symmetric. Adding subtype-specific value identity while the base accepts every subtype breaks that contract; matching hash codes alone does not repair equals.",
+          "explanation": "The two calls disagree when their operands are reversed, violating symmetry. Hash-code equality is a separate requirement and cannot repair this defect. String representations and serialization metadata do not participate in the equals contract.",
           "type": "choice",
           "options": [
             "Assert that Voucher has a serialVersionUID to make equality symmetric.",
@@ -868,10 +868,10 @@
         },
         {
           "id": "jakarta-competency-sealed-exhaustive-domain",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Java 21 application models PaymentResult as a sealed interface permitting Approved and Declined records. A switch expression handles both without default. After adding Pending to permits and recompiling the whole application, what useful check does the compiler provide?",
           "difficulty": "medium",
-          "explanation": "Sealed types bound the alternatives for exhaustive pattern switches. Recompilation exposes missing domain cases; this is not a promise about separately deployed old binaries.",
+          "explanation": "The compiler uses the permitted subclasses to check exhaustiveness. Adding Pending makes the recompiled switch incomplete. No existing case is selected automatically, and editing a sealed hierarchy is allowed. Record immutability does not provide a missing case; separately deployed old binaries need their own compatibility analysis.",
           "type": "choice",
           "options": [
             "It silently treats Pending as Declined because that was the last existing case.",
@@ -897,10 +897,10 @@
         },
         {
           "id": "jakarta-competency-decorator-retry-metric-order",
-          "revision": 1,
+          "revision": 2,
           "prompt": "RetryGateway calls its delegate until success, at most three attempts. MetricsGateway increments a counter once per invocation and calls its delegate once. The raw gateway fails twice then succeeds. In MetricsGateway(RetryGateway(raw)), what does the metrics counter record for one client call?",
           "difficulty": "medium",
-          "explanation": "The outer metrics decorator sees one logical call. A metrics decorator around the raw gateway sees each retry attempt. Composition order defines which boundary is observed.",
+          "explanation": "The outer metrics decorator is entered once; the retry decorator performs all three raw attempts inside that call. Moving metrics inside retry would count each attempt. Counts of two or zero would require failure-only counting or bypassing the metrics wrapper, neither of which is specified.",
           "type": "choice",
           "options": [
             "One invocation; placing MetricsGateway inside RetryGateway would record three.",
@@ -927,16 +927,16 @@
         },
         {
           "id": "jakarta-competency-visitor-change-axis",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A reporting engine has a stable, application-owned hierarchy of document node types. New operations such as export, validation, and cost estimation arrive frequently. The team accepts updating each visitor if a new node type is introduced. Which pattern matches that change tradeoff?",
           "difficulty": "medium",
-          "explanation": "Visitor makes adding operations over a known type family straightforward, at the cost of updating visitors when the type family changes. The stated stable hierarchy makes that tradeoff explicit.",
+          "explanation": "Visitor groups each operation over the known node types, making new operations straightforward. Adding a node type requires visitor updates, which the scenario accepts. A strategy chooses an algorithm, a composite organizes a tree, and a decorator wraps behavior; none provides the same explicit operation-by-node dispatch structure.",
           "type": "choice",
           "options": [
-            "Proxy: replace type-specific operations with access checks around the same node method.",
+            "Decorator: add a wrapper for each operation while leaving node-type dispatch unspecified.",
             "Visitor: keep each operation in a visitor with a visit method for each concrete node type.",
-            "Singleton: store all current nodes in one global object shared by every operation.",
-            "Builder: reconstruct the hierarchy every time an existing node needs an operation."
+            "Strategy: select one interchangeable calculation without type-specific visitor dispatch.",
+            "Composite: organize nodes into a tree while implementing every new operation on each node class."
           ],
           "correct": [
             1
@@ -956,15 +956,15 @@
         },
         {
           "id": "jakarta-competency-adapter-anti-corruption",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A payment provider SDK exposes vendor status codes and checked exceptions. A second provider must be introduced while domain services keep a stable PaymentPort interface and domain outcomes. Where should vendor translation live?",
           "difficulty": "medium",
-          "explanation": "An adapter translates an external interface into the application's port. Keeping mapping at this boundary contains provider-specific semantics and makes contract tests possible.",
+          "explanation": "The provider adapter translates the vendor contract into the stable domain port. Mapping in every service duplicates provider knowledge; exposing SDK response types leaks that knowledge through the port. A shared catch-all response mapper also lacks the provider-specific meaning needed for reliable translation.",
           "type": "choice",
           "options": [
             "In every domain service so each call site interprets vendor codes independently.",
             "In the PaymentPort signature by exposing both providers' concrete response classes.",
-            "In a Singleton holding the last provider response for all concurrent payments.",
+            "In a single generic exception handler that discards provider-specific status details.",
             "In a provider adapter implementing PaymentPort, with explicit status and error mappings."
           ],
           "correct": [
@@ -986,15 +986,15 @@
         },
         {
           "id": "jakarta-competency-builder-domain-invariant",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A report request has optional filters and requires startDate <= endDate. A fluent Builder offers setters in any order. Where should it enforce the complete cross-field invariant before publishing an immutable request?",
           "difficulty": "medium",
-          "explanation": "Construction is the boundary that has the complete candidate value. The builder's convenience must not bypass domain validation or allow partially valid objects to escape.",
+          "explanation": "build() or the validated value constructor sees the complete candidate request and can reject an invalid date range before publication. Per-field checks cannot establish the relationship when the other field is unset. Relying on consumers or post-construction validation allows invalid immutable values to escape.",
           "type": "choice",
           "options": [
             "In each consumer independently, allowing the builder to publish invalid values.",
             "In build() or the constructed value's validated constructor, after the required inputs are available.",
-            "Only in toString(), because every valid request must eventually be logged.",
+            "Immediately after construction, by asking each caller to invoke a validation method.",
             "Only in the first setter, before the other date is known."
           ],
           "correct": [
@@ -1015,14 +1015,14 @@
         },
         {
           "id": "jakarta-competency-ai-adapter-policy-boundary",
-          "revision": 1,
+          "revision": 2,
           "prompt": "An application adds two generative-AI providers to suggest claim categories. Suggestions must pass existing deterministic eligibility rules before affecting a claim. Which architecture keeps provider changes and nondeterministic output out of domain policy?",
           "difficulty": "hard",
-          "explanation": "Ports and adapters isolate integrations. Treating a generated suggestion as untrusted input preserves deterministic business decisions and supports provider-independent contract tests.",
+          "explanation": "Provider adapters translate external suggestions, while the domain workflow validates input and applies eligibility rules. A valid output schema does not establish eligibility. Direct database writes bypass the domain boundary, and rules duplicated in vendor adapters can diverge.",
           "type": "choice",
           "options": [
             "Expose a suggestion port with provider adapters; validate suggestions and apply eligibility rules in the domain workflow.",
-            "Move eligibility decisions into provider prompts and accept every returned category as authoritative.",
+            "Validate the provider's response schema and treat every well-formed category as eligible.",
             "Let each SDK write directly to claim tables to minimize the number of boundaries.",
             "Return vendor response types from every domain method and duplicate rule checks in each adapter."
           ],
@@ -1045,16 +1045,16 @@
         },
         {
           "id": "jakarta-competency-ejb-independent-audit-commit",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A container-managed EJB REQUIRED checkout method calls a separate audit EJB through its business proxy. Audit uses REQUIRES_NEW and commits successfully. Checkout then rolls back. Assuming no later failure, what happens to the audit row?",
           "difficulty": "medium",
-          "explanation": "REQUIRES_NEW suspends the caller transaction and commits or rolls back independently. This can suit an audit of an attempted action, but not an invariant requiring both writes to succeed together.",
+          "explanation": "REQUIRES_NEW commits the audit transaction independently while the checkout transaction is suspended. Rolling back checkout does not undo the completed audit commit. A savepoint would remain part of the outer transaction; neither delayed commit nor bean-pool lifecycle is the rule here.",
           "type": "choice",
           "options": [
             "It remains committed because the audit method used an independent transaction.",
-            "It rolls back because every EJB call shares one transaction regardless of its attribute.",
-            "It remains uncommitted until the original caller starts another checkout.",
-            "It is deleted by the container when the outer bean instance returns to the pool."
+            "It rolls back because the inner method uses a savepoint in the checkout transaction.",
+            "It remains pending because the audit commit waits for checkout's final outcome.",
+            "It is rolled back when the audit bean instance is returned to its pool."
           ],
           "correct": [
             0
@@ -1074,10 +1074,10 @@
         },
         {
           "id": "jakarta-competency-ejb-singleton-read-lock",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A @Singleton EJB uses container-managed concurrency. Its refresh() method has @Lock(READ) and mutates a shared HashMap. Multiple callers run refresh concurrently and corrupt state. Which annotation-level repair matches this mutation?",
           "difficulty": "medium",
-          "explanation": "READ locks allow concurrent access. WRITE is exclusive for the singleton instance; it does not provide a cluster-wide lock across distinct server instances.",
+          "explanation": "A READ lock permits concurrent invocations, including the unsafe concurrent mutations in this example. WRITE excludes other container-managed invocations on that singleton instance. A final reference does not make the map immutable, and asynchronous execution does not serialize access. The lock is not cluster-wide.",
           "type": "choice",
           "options": [
             "Use @Lock(WRITE) for the mutating method so it excludes other container-managed invocations on the instance.",
@@ -1103,16 +1103,16 @@
         },
         {
           "id": "jakarta-competency-ejb-async-transaction-context",
-          "revision": 1,
+          "revision": 2,
           "prompt": "An EJB caller has an active transaction and invokes another EJB's @Asynchronous method through its business interface. That async method uses REQUIRED. Which transaction context should its business work use?",
           "difficulty": "hard",
-          "explanation": "EJB asynchronous invocations do not propagate the caller transaction. REQUIRED therefore provides a transaction for that invocation, not atomicity with the original request.",
+          "explanation": "The caller's transaction is not propagated to an asynchronous EJB invocation. REQUIRED starts a transaction for that invocation. This is neither a shared caller transaction nor a transaction-free execution. Waiting on a returned Future also does not merge the two transaction boundaries.",
           "type": "choice",
           "options": [
             "A new transaction for the asynchronous invocation; the caller's transaction is not propagated.",
             "The caller's transaction, kept open until every asynchronous method completes.",
             "No transaction because REQUIRED is ignored on all asynchronous EJB methods.",
-            "The transaction of whichever unrelated request last used the worker thread."
+            "The caller's transaction only if the caller later waits on the returned Future."
           ],
           "correct": [
             0
@@ -1132,10 +1132,10 @@
         },
         {
           "id": "jakarta-competency-ejb-application-exception-rollback",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A CMT EJB updates a row and throws a checked business exception annotated @ApplicationException(rollback=false). The transaction was not otherwise marked rollback-only. A test expects automatic rollback. Which correction aligns the business failure with that expectation?",
           "difficulty": "medium",
-          "explanation": "An application exception does not automatically mark rollback when rollback=false. The failure contract and transaction outcome must be configured and asserted together.",
+          "explanation": "An application exception with rollback=false does not mark the transaction for rollback. Set rollback=true or mark the transaction rollback-only at the correct boundary. Client-side catching occurs too late to change that rule, and bean scope does not select rollback semantics.",
           "type": "choice",
           "options": [
             "Keep rollback=false because every checked exception forces CMT rollback.",
@@ -1161,10 +1161,10 @@
         },
         {
           "id": "jakarta-competency-ejb-lite-mdb-portability",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A modernization plan moves an application containing message-driven beans to a runtime whose declared guarantee is EJB Lite only. What must be checked before approving this target?",
           "difficulty": "medium",
-          "explanation": "EJB Lite is a subset and does not require message-driven beans. A smaller runtime must be selected by the services actually guaranteed, including any explicitly supported extensions.",
+          "explanation": "EJB Lite does not require message-driven beans. Confirm that the target provides the necessary extension or choose another consumer design. Having Messaging APIs, compatible annotation names, or servlet support does not itself provide an MDB container.",
           "type": "choice",
           "options": [
             "Whether the MDB has a public constructor, which makes any servlet-only engine an EJB container.",
@@ -1190,10 +1190,10 @@
         },
         {
           "id": "jakarta-competency-java-nine-optional-stream",
-          "revision": 1,
+          "revision": 2,
           "prompt": "In Java 9, what does this code print?\n```java\njava.util.List<java.util.Optional<String>> values = java.util.List.of(\n    java.util.Optional.of(\"A\"), java.util.Optional.empty(),\n    java.util.Optional.of(\"BC\"));\nlong count = values.stream().flatMap(java.util.Optional::stream).count();\nSystem.out.print(count);\n```",
           "difficulty": "medium",
-          "explanation": "Optional.stream, added in Java 9, produces zero or one elements. flatMap drops the empty optional and exposes the two present Strings; it does not count their characters.",
+          "explanation": "Optional.stream contributes one element for each present value and none for an empty value. There are two present Strings, so count is 2. A count of 3 would count the containers or characters; a count of 1 would discard a present value. Empty optionals do not throw here.",
           "type": "choice",
           "options": [
             "NoSuchElementException is thrown for the empty Optional.",
@@ -1219,10 +1219,10 @@
         },
         {
           "id": "jakarta-competency-java-nine-transitive-api",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Module billing.api exports a package whose public method returns a type from money.api. Client modules require billing.api and should be able to use that exposed money type without separately declaring its dependency. money.api exports the type's package. Which directive belongs in billing.api?",
           "difficulty": "medium",
-          "explanation": "A transitive requires conveys readability to consumers of the module. Exports names this module's packages; opens controls reflective access rather than downstream readability.",
+          "explanation": "requires transitive makes money.api readable to consumers that read billing.api. requires static describes an optional runtime dependency and does not express this transitive API contract. opens and exports refer to this module's packages, not a dependency module's name.",
           "type": "choice",
           "options": [
             "requires static money.api;",
@@ -1248,10 +1248,10 @@
         },
         {
           "id": "jakarta-competency-java-nine-qualified-opens",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A named module exports com.acme.model. A framework module named mapper.core tries deep reflection on private model fields and gets an access error. The team wants to grant that framework access without opening every package to everyone. Which directive fits?",
           "difficulty": "medium",
-          "explanation": "Exports allows ordinary access to public types and members. A qualified opens grants the named module deep reflective access to the specified package.",
+          "explanation": "A qualified opens grants mapper.core deep reflective access to com.acme.model. Exporting a package only exposes its public API; requires adds readability rather than private-member access. A provides directive registers a service implementation and is unrelated to reflective access.",
           "type": "choice",
           "options": [
             "provides com.acme.model with mapper.core;",
@@ -1277,10 +1277,10 @@
         },
         {
           "id": "jakarta-competency-jlink-bind-provider",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Java 9 modular application uses ServiceLoader. The consumer declares uses, and a provider module on the module path declares provides. A jlink image rooted only at the consumer omits the otherwise unreferenced provider. Which option can include observable service providers and their dependencies during linking?",
           "difficulty": "medium",
-          "explanation": "Service binding resolves provider modules in addition to ordinary requires dependencies. The provider must still be present on the module path and correctly declare its service.",
+          "explanation": "--bind-services resolves observable provider modules and their dependencies during image linking. The provider still needs a correct provides declaration and must be available on the module path. Debug stripping, header removal, and compression change image contents or size, not service resolution.",
           "type": "choice",
           "options": [
             "--no-header-files",
@@ -1306,14 +1306,14 @@
         },
         {
           "id": "jakarta-competency-java-nine-to-seventeen-encapsulation",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A library used on Java 9 relies on reflective access to private JDK implementation fields. During migration to Java 17 it fails with InaccessibleObjectException. Which long-term response best addresses modern JDK encapsulation?",
           "difficulty": "hard",
-          "explanation": "Java 17 strongly encapsulates JDK internals; the older broad illegal-access escape hatch no longer restores access. Targeted flags may bridge a migration but leave dependence on unstable internals.",
+          "explanation": "Java 17 strongly encapsulates JDK internals. Updating the dependency to supported APIs addresses the underlying compatibility problem. --illegal-access no longer restores the older relaxed behavior; exports does not grant private reflection, and setAccessible still obeys module access restrictions. A targeted opens can be a temporary migration measure.",
           "type": "choice",
           "options": [
-            "Copy private JDK classes into the application's java.base package to preserve access.",
-            "Change private reflection targets to strings because string-based lookup bypasses module access checks.",
+            "Export the JDK package with --add-exports and expect that to permit private-field reflection.",
+            "Call setAccessible(true) without opening the JDK package and rely on the library's previous behavior.",
             "Upgrade or replace the library to use supported APIs, using narrowly scoped opens only as a documented migration bridge if needed.",
             "Set --illegal-access=permit and assume Java 17 restores Java 9's relaxed behavior indefinitely."
           ],
@@ -1335,10 +1335,10 @@
         },
         {
           "id": "jakarta-competency-jms-client-ack-session-scope",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A standalone Jakarta Messaging client uses a non-transacted CLIENT_ACKNOWLEDGE session and synchronously receives messages A and B. It calls B.acknowledge(). With no earlier acknowledgement, which messages does that acknowledge?",
           "difficulty": "medium",
-          "explanation": "CLIENT_ACKNOWLEDGE operates at session scope for consumed messages, not per individual message or globally across the destination.",
+          "explanation": "CLIENT_ACKNOWLEDGE covers messages consumed by this session, so acknowledging B also acknowledges A. It is not per-message or destination-wide. Session.commit belongs to transacted sessions and is not the completion mechanism for the non-transacted session in this question.",
           "type": "choice",
           "options": [
             "Both A and B, because acknowledgement covers messages consumed by that session.",
@@ -1364,10 +1364,10 @@
         },
         {
           "id": "jakarta-competency-jms-shared-durable-fanout",
-          "revision": 1,
+          "revision": 2,
           "prompt": "Billing and Analytics must each receive every retained topic event. Each service has multiple competing workers and must survive disconnects. How should shared durable subscriptions be arranged?",
           "difficulty": "hard",
-          "explanation": "A subscription defines a copy of the topic stream. Consumers sharing one subscription divide that copy; separate service subscriptions provide the required fan-out and independent retention.",
+          "explanation": "Each subscription receives its own topic stream; workers sharing a subscription divide that stream. Separate subscriptions for Billing and Analytics therefore give each service a copy. One shared subscription or one competing-consumer queue divides work between the services, and non-durable subscriptions do not retain disconnected subscribers' messages.",
           "type": "choice",
           "options": [
             "Use non-durable subscribers and assume disconnected consumers retain the same delivery guarantee.",
@@ -1393,10 +1393,10 @@
         },
         {
           "id": "jakarta-competency-jms-atomic-consume-produce",
-          "revision": 1,
-          "prompt": "A standalone Jakarta Messaging worker receives from queue A and sends a transformed message to queue B using the same locally transacted Session and provider. There are no database or external effects. Transformation fails after send but before commit, and the worker calls rollback. Which result follows?",
+          "revision": 2,
+          "prompt": "A standalone Jakarta Messaging worker receives from queue A and sends a transformed message to queue B using the same locally transacted Session and provider. There are no database or external effects. A validation step fails after send but before commit, and the worker calls rollback. Which result follows?",
           "difficulty": "hard",
-          "explanation": "A local messaging transaction groups sends and receives on its Session. This can make consume-transform-produce atomic within that messaging boundary, without extending atomicity to unrelated resources.",
+          "explanation": "The same local messaging transaction includes the receive from A and send to B. Rollback cancels the send and recovers the received message, subject to redelivery policy. send does not implicitly commit, and XA is unnecessary for this single-session messaging boundary. Separate database work would require additional coordination.",
           "type": "choice",
           "options": [
             "The send is rolled back and the consumed message is recovered for redelivery subject to provider redelivery policy.",
@@ -1422,10 +1422,10 @@
         },
         {
           "id": "jakarta-competency-jms-selector-property-type",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A producer calls setStringProperty(\"priorityCode\", \"7\"). A consumer selector is priorityCode = 7, using a numeric literal, and receives no matches. Which fix aligns the property with this numeric selector?",
           "difficulty": "medium",
-          "explanation": "Selector comparisons use property types and do not apply string-to-number conversions like typed getter methods. A body field is not automatically a selector property.",
+          "explanation": "The selector compares a numeric literal with a property, so publish that property as an integer. Selector evaluation does not convert a String to a number as typed message getters may do. JMSPriority is a different header, and body content is not automatically a selector property.",
           "type": "choice",
           "options": [
             "Move the value into the text body because selectors parse body fields automatically.",
@@ -1451,10 +1451,10 @@
         },
         {
           "id": "jakarta-competency-jms-delivery-delay-version",
-          "revision": 1,
+          "revision": 2,
           "prompt": "A Jakarta Messaging 3.1 producer must defer an event's earliest delivery by 30 seconds using a standard API. Which setting expresses that requirement without sleeping in the request thread?",
           "difficulty": "medium",
-          "explanation": "Delivery delay sets the earliest delivery time; it does not promise exact scheduling. Time-to-live concerns expiry. This modern standard capability should be distinguished from older JMS 1.1 assumptions.",
+          "explanation": "A delivery delay of 30,000 milliseconds sets the earliest delivery time. A time-to-live controls expiry, and priority affects ordering rather than a fixed delay. Standard delivery delay is available in Messaging 3.1, so a vendor-only scheduling header is unnecessary. Exact dispatch at 30 seconds is not guaranteed.",
           "type": "choice",
           "options": [
             "Use a vendor-only header because standard delayed delivery was never added after JMS 1.1.",

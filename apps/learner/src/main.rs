@@ -601,9 +601,6 @@ fn Library() -> Element {
                             p { class: "small muted", "{course_title} · {test_title} · {q.difficulty}" }
                             Markdown { text: q.prompt.clone() }
                             QuestionSource { question: q.clone() }
-                            if let Some(topic) = &q.topic {
-                                p { class: "small muted", "Topic: {topic}" }
-                            }
                         }
                         button {
                             disabled: s.progress.active.is_some(),
@@ -1551,7 +1548,7 @@ fn Results() -> Element {
                     summary {
                         span {
                             if q.prompt.contains("```java") {
-                                {q.topic.clone().unwrap_or_else(|| "Code reasoning".into())}
+                                {q.topic.as_deref().map(question_topic_label).unwrap_or("Code reasoning")}
                             } else {
                                 "{q.prompt.lines().next().unwrap_or(&q.prompt)}"
                             }

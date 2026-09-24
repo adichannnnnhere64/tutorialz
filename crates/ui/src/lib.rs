@@ -191,10 +191,58 @@ pub fn kind_name(q: &Question) -> &'static str {
         QuestionKind::Java { .. } => "Write a program",
     }
 }
+/// Keep stored topic IDs intact while presenting consistent learner-facing names.
+pub fn question_topic_label(topic: &str) -> &str {
+    match topic.trim() {
+        "Java - Servlets" => "Servlets",
+        "Java - JSP" => "JSP",
+        "Java - OOPS" => "OOP",
+        "Java Design Patterns" => "Design Patterns",
+        "Java - EJB" => "EJB",
+        "Java - JMS" => "JMS",
+        topic => topic,
+    }
+}
+
+#[cfg(test)]
+mod topic_tests {
+    use super::question_topic_label;
+
+    #[test]
+    fn displays_jakarta_topic_names() {
+        for (stored, expected) in [
+            ("Java Spring", "Java Spring"),
+            ("Hibernate", "Hibernate"),
+            ("Java - Servlets", "Servlets"),
+            ("Java - JSP", "JSP"),
+            ("Core Java - General", "Core Java - General"),
+            ("Java - OOPS", "OOP"),
+            ("Java Design Patterns", "Design Patterns"),
+            ("Java - EJB", "EJB"),
+            ("Core Java - Java 9", "Core Java - Java 9"),
+            ("Java - JMS", "JMS"),
+        ] {
+            assert_eq!(question_topic_label(stored), expected);
+            assert_eq!(question_topic_label(expected), expected);
+        }
+    }
+
+    #[test]
+    fn preserves_other_topics_and_trims_whitespace() {
+        assert_eq!(question_topic_label(" ActiveMQ "), "ActiveMQ");
+        assert_eq!(question_topic_label(" Java - JMS "), "JMS");
+        assert_eq!(question_topic_label("  "), "");
+    }
+}
+
 #[component]
 pub fn QuestionSource(question: Question) -> Element {
+    let topic = question.topic.as_deref().map(question_topic_label);
     rsx! {
         div { class: "question-source small muted",
+            if let Some(topic) = topic.filter(|topic| !topic.is_empty()) {
+                span { class: "badge question-topic", "Topic: {topic}" }
+            }
             if let Some(origin) = &question.origin {
                 span { class: "badge",
                     match origin { QuestionOrigin::Ai => "AI", QuestionOrigin::Scraped => "Scraped" }
