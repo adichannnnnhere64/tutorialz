@@ -2,7 +2,7 @@
   "schema_version": 1,
   "id": "jakarta-competency-exam",
   "title": "Jakarta Competency Exam",
-  "description": "50 original enterprise Java scenarios across ten topics and five knowledge areas. Independent competency practice; not affiliated with or validated by Accenture. Java 17 unless a question specifies Java 9 or 21; framework and Jakarta versions are stated where relevant.",
+  "description": "100 original enterprise Java scenarios across ten topics and five knowledge areas. Independent competency practice; not affiliated with or validated by Accenture. Java 17 unless a question specifies Java 9 or 21; framework and Jakarta versions are stated where relevant.",
   "subject": "Java Enterprise / Jakarta EE",
   "difficulty": "hard",
   "lessons": [],
@@ -10,7 +10,7 @@
     {
       "id": "jakarta-competency-exam-test",
       "title": "Jakarta Competency Exam",
-      "description": "Mixed-topic assessment of implementation, architecture, deployment, tools, and modernization. Select all 50 questions for the full practice exam; this is not an official scoring benchmark.",
+      "description": "Mixed-topic assessment of implementation, architecture, deployment, tools, and modernization. Select all 100 questions for the full practice exam; this is not an official scoring benchmark.",
       "difficulty": "hard",
       "questions": [
         {
@@ -1473,6 +1473,1456 @@
             "kind": "apply",
             "concepts": [
               "jms-delivery-delay"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-prototype-per-job",
+          "revision": 1,
+          "prompt": "A singleton Spring ReportService receives a prototype-scoped ReportBuilder through constructor injection. The service stores it in a field. Each report needs a fresh builder, but reports reuse state. Which change supplies a new managed builder for each job?",
+          "difficulty": "medium",
+          "explanation": "Constructor injection resolves the prototype once when the singleton is created. ObjectProvider performs a new lookup for each job. Lazy service creation only delays the first lookup; primary selection and synchronization do not repeat it.",
+          "type": "choice",
+          "options": [
+            "Keep the injected field and add @Primary to the ReportBuilder bean definition.",
+            "Keep the injected field and synchronize generateReport() to force prototype lookup.",
+            "Inject ObjectProvider<ReportBuilder> and call getObject() at the start of each job.",
+            "Keep constructor injection and add @Lazy to delay creation of the singleton service."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html",
+          "topic": "Java Spring",
+          "assessment": {
+            "objective": "jakarta-competency-prototype-per-job",
+            "kind": "debug",
+            "concepts": [
+              "spring-prototype-lookup"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-bean-method-lite-invocation",
+          "revision": 1,
+          "prompt": "A Spring @Configuration(proxyBeanMethods=false) class has a singleton @Bean client() that returns a new Client. Another @Bean service() calls client() directly. The service must use the same Client that other beans inject. Which change makes that dependency explicit?",
+          "difficulty": "hard",
+          "explanation": "With proxyBeanMethods=false, a Java call to client() executes its body and creates another object. A @Bean method parameter resolves the container-managed bean. An explicit singleton scope, a static method, or initialization ordering does not intercept the direct call.",
+          "type": "choice",
+          "options": [
+            "Keep the direct call and make client() a static factory method.",
+            "Keep the direct call and name both bean definitions in @DependsOn.",
+            "Declare service(Client client) and use the injected method parameter.",
+            "Keep the direct call and add @Scope(\"singleton\") to client()."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html",
+          "topic": "Java Spring",
+          "assessment": {
+            "objective": "jakarta-competency-bean-method-lite-invocation",
+            "kind": "debug",
+            "concepts": [
+              "spring-lite-bean-calls"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-select-transaction-manager",
+          "revision": 1,
+          "prompt": "A Spring service has two independent local transaction managers named ordersTx and auditTx. An order repository uses the orders data source. An externally invoked service method must run under ordersTx, without combining the databases. Which annotation selects it?",
+          "difficulty": "medium",
+          "explanation": "transactionManager selects the named manager. value is an alias but auditTx names the wrong resource. Propagation and isolation control other transaction properties; neither chooses ordersTx nor coordinates both databases.",
+          "type": "choice",
+          "options": [
+            "@Transactional(propagation = Propagation.REQUIRES_NEW)",
+            "@Transactional(isolation = Isolation.SERIALIZABLE)",
+            "@Transactional(transactionManager = \"ordersTx\")",
+            "@Transactional(value = \"auditTx\")"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html",
+          "topic": "Java Spring",
+          "assessment": {
+            "objective": "jakarta-competency-select-transaction-manager",
+            "kind": "apply",
+            "concepts": [
+              "spring-multiple-transaction-managers"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-cache-key-tenant-isolation",
+          "revision": 1,
+          "prompt": "A Spring method findInvoice(tenantId, invoiceId) uses @Cacheable(value=\"invoices\", key=\"#invoiceId\"). Tenant A and tenant B both have invoice 12. A test sees A's cached invoice returned for B. Which fix addresses the cache collision?",
+          "difficulty": "medium",
+          "explanation": "The key must distinguish every input that changes the returned invoice. A shorter lifetime or one-time clearing leaves a collision window. sync=true coordinates loads for a key; it does not distinguish tenants. Authorization remains necessary separately.",
+          "type": "choice",
+          "options": [
+            "Keep the key and set sync=true so only one invocation populates it.",
+            "Keep the key and clear the cache once before starting the application.",
+            "Include tenantId and invoiceId in the key, and test both tenants against the same cache.",
+            "Keep the key and shorten the cache's time-to-live to one second."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.spring.io/spring-framework/reference/integration/cache/annotations.html",
+          "topic": "Java Spring",
+          "assessment": {
+            "objective": "jakarta-competency-cache-key-tenant-isolation",
+            "kind": "debug",
+            "concepts": [
+              "spring-cache-key-isolation"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-reactive-transaction-subscription",
+          "revision": 1,
+          "prompt": "A Spring service uses a ReactiveTransactionManager and returns Mono<Void>. Its transactional method starts a database write with an independent subscribe() call, then returns Mono.empty(). How should it keep the write within the caller's reactive transaction?",
+          "difficulty": "hard",
+          "explanation": "Reactive transaction state is carried in the reactive context. Composing the write into the returned publisher keeps it in that execution chain. A separate subscription has its own context; thread naming and synchronization do not propagate it. An immediate return value cannot represent asynchronous completion.",
+          "type": "choice",
+          "options": [
+            "Replace the returned publisher with the write's immediate Java return value.",
+            "Return a composed publisher containing the write so it runs in the caller's subscription context.",
+            "Keep the independent subscription and copy the thread name into the database request.",
+            "Keep the independent subscription and mark the service method synchronized."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html",
+          "topic": "Java Spring",
+          "assessment": {
+            "objective": "jakarta-competency-reactive-transaction-subscription",
+            "kind": "design",
+            "concepts": [
+              "reactive-transaction-context"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-field-access-transient-getter",
+          "revision": 1,
+          "prompt": "A Hibernate entity places @Id on a field and uses field access throughout, with no @Access overrides. A calculated getter has @Transient, but its backing field is still mapped. Which annotation placement excludes that field?",
+          "difficulty": "medium",
+          "explanation": "With field access, mapping annotations apply to fields. @Transient on a getter does not exclude its backing field. insertable=false only affects inserts, lazy fetching controls loading, and getter naming does not change field mapping.",
+          "type": "choice",
+          "options": [
+            "Place jakarta.persistence.Transient on the backing field.",
+            "Add @Column(insertable=false) to the backing field and retain update mapping.",
+            "Add @Basic(fetch=LAZY) to the getter while retaining field access.",
+            "Rename the getter so that it no longer starts with get."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://docs.hibernate.org/orm/6.6/userguide/html_single/#access",
+          "topic": "Hibernate",
+          "assessment": {
+            "objective": "jakarta-competency-field-access-transient-getter",
+            "kind": "debug",
+            "concepts": [
+              "hibernate-field-access-transient"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-orphan-removal-disassociation",
+          "revision": 1,
+          "prompt": "Order.lines is a one-to-many association with orphanRemoval=true. Within a transaction, code removes a managed Line from the collection and clears its order reference. Order itself remains managed and is not deleted. What happens at flush?",
+          "difficulty": "medium",
+          "explanation": "orphanRemoval deletes an associated child when it is disassociated from the parent. It does not require deleting the parent, merely detach the child, or cascade deletion upward. This differs from CascadeType.REMOVE, which propagates removal of the parent.",
+          "type": "choice",
+          "options": [
+            "The removed Line is scheduled for deletion because it has become an orphan.",
+            "Only the foreign key becomes null; deletion requires removing Order itself.",
+            "The removed Line becomes detached and its database row stays unchanged.",
+            "The entire Order is removed because an orphan cascades deletion back to its parent."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://docs.hibernate.org/orm/6.6/userguide/html_single/#associations-one-to-many-bidirectional",
+          "topic": "Hibernate",
+          "assessment": {
+            "objective": "jakarta-competency-orphan-removal-disassociation",
+            "kind": "apply",
+            "concepts": [
+              "orphan-removal-disassociation"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-validate-schema-at-startup",
+          "revision": 1,
+          "prompt": "Database migrations are deployed separately from a Hibernate ORM 6.6 application. The release must fail startup if mapped columns are missing, and the application must not modify the schema. Which hibernate.hbm2ddl.auto value fits?",
+          "difficulty": "medium",
+          "explanation": "validate checks the mapping against the schema without changing it. update can modify the schema; create recreates it; create-drop also drops it at shutdown. Validation is a compatibility check, not a substitute for migration review or verification of every database rule.",
+          "type": "choice",
+          "options": [
+            "create",
+            "create-drop",
+            "validate",
+            "update"
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.hibernate.org/orm/6.6/userguide/html_single/#schema-generation",
+          "topic": "Hibernate",
+          "assessment": {
+            "objective": "jakarta-competency-validate-schema-at-startup",
+            "kind": "apply",
+            "concepts": [
+              "hibernate-schema-validation"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-hibernate-six-bind-logging",
+          "revision": 1,
+          "prompt": "In a controlled test environment, Hibernate ORM 6.6 SQL logs show question-mark placeholders. A query returns unexpected rows, and the test needs to inspect the actual bound values. Which additional logging category is relevant?",
+          "difficulty": "medium",
+          "explanation": "The Hibernate 6 JDBC bind logger records bound values. SQL logging records statement text, schema logs concern DDL, and cache statistics measure cache activity. Parameter logs may contain sensitive values, so use controlled data and appropriate access.",
+          "type": "choice",
+          "options": [
+            "Enable DEBUG for org.hibernate.SQL again; this replaces placeholders with values.",
+            "Enable schema-generation logs; they report each prepared statement's parameters.",
+            "Enable second-level cache statistics; their hit counters include JDBC parameter values.",
+            "Enable TRACE for org.hibernate.orm.jdbc.bind while limiting exposure of sensitive test data."
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://docs.hibernate.org/orm/6.6/logging/logging.html",
+          "topic": "Hibernate",
+          "assessment": {
+            "objective": "jakarta-competency-hibernate-six-bind-logging",
+            "kind": "apply",
+            "concepts": [
+              "hibernate-jdbc-bind-logging"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-hibernate-soft-delete-migration",
+          "revision": 1,
+          "prompt": "An entity in Hibernate ORM 6.6 uses @SoftDelete. A support tool also reads the table using handwritten JDBC SQL. After Hibernate removes an entity, the support tool still displays its row. What integration change is needed?",
+          "difficulty": "hard",
+          "explanation": "Soft deletion marks a row instead of physically deleting it, and Hibernate applies its mapping rules to supported entity operations. Arbitrary JDBC SQL must honor the indicator explicitly. Fetch mode, cache clearing, and repeated removal do not retrofit a predicate into external SQL.",
+          "type": "choice",
+          "options": [
+            "Clear Hibernate's first-level cache before each JDBC query.",
+            "Call remove twice so the second call physically deletes the soft-deleted row.",
+            "Make the JDBC query honor the soft-delete indicator and test both access paths.",
+            "Switch the entity's fetch mode to EAGER so JDBC receives Hibernate's filter."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.hibernate.org/orm/6.6/userguide/html_single/#soft-delete",
+          "topic": "Hibernate",
+          "assessment": {
+            "objective": "jakarta-competency-hibernate-soft-delete-migration",
+            "kind": "design",
+            "concepts": [
+              "hibernate-soft-delete-external-readers"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-filter-rejection-short-circuit",
+          "revision": 1,
+          "prompt": "An authentication filter sends a 401 error for an invalid token but then executes chain.doFilter(request, response). A test shows that the protected controller still performs a write. What is missing from the rejection path?",
+          "difficulty": "medium",
+          "explanation": "Writing an error response does not itself change the Java control flow. Stop before chain.doFilter to prevent downstream execution. Repeating a status, flushing, and cache headers affect the response but cannot undo a controller's business write.",
+          "type": "choice",
+          "options": [
+            "Set the response status to 401 again after chain.doFilter returns.",
+            "Flush the error response and then continue through the chain.",
+            "Add a no-cache response header before invoking the chain.",
+            "Return after sending the error so the filter does not invoke the remaining chain."
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1.html",
+          "topic": "Java - Servlets",
+          "assessment": {
+            "objective": "jakarta-competency-filter-rejection-short-circuit",
+            "kind": "debug",
+            "concepts": [
+              "filter-chain-short-circuit"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-request-body-wrapper-replay",
+          "revision": 1,
+          "prompt": "A servlet filter reads the entire JSON request body to verify a signature. The downstream controller must then parse exactly the same bytes, but currently sees an empty stream. Which design supports both readers for bounded request bodies?",
+          "difficulty": "hard",
+          "explanation": "The request body is a stream, not an automatically replayed buffer. A correctly implemented wrapper can expose the verified bytes again. A second original-stream lookup does not rewind it, mixing reader and stream access is invalid, and shared fields can mix users' bodies. A size limit bounds memory use.",
+          "type": "choice",
+          "options": [
+            "Call getReader() after consuming getInputStream() to get a separate copy.",
+            "Store the body in the filter's instance field and reuse it across requests.",
+            "Buffer the bytes with a size limit and pass a request wrapper that supplies a replayable body.",
+            "Call getInputStream() again on the original request and assume it restarts at byte zero."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1.html",
+          "topic": "Java - Servlets",
+          "assessment": {
+            "objective": "jakarta-competency-request-body-wrapper-replay",
+            "kind": "design",
+            "concepts": [
+              "request-body-replay-wrapper"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-listener-before-startup-servlet",
+          "revision": 1,
+          "prompt": "A WAR needs an application-wide registry ready before any load-on-startup servlet initializes. The registry does not require injected resources. Which standard lifecycle hook can create and store it in ServletContext first?",
+          "difficulty": "medium",
+          "explanation": "The context-initialization notification occurs before filters and servlets are initialized. Request and session callbacks occur only when their events happen, which is too late for startup initialization. contextDestroyed is a shutdown notification.",
+          "type": "choice",
+          "options": [
+            "ServletContextListener.contextInitialized",
+            "ServletRequestListener.requestInitialized",
+            "HttpSessionListener.sessionCreated",
+            "ServletContextListener.contextDestroyed"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1.html",
+          "topic": "Java - Servlets",
+          "assessment": {
+            "objective": "jakarta-competency-listener-before-startup-servlet",
+            "kind": "apply",
+            "concepts": [
+              "servlet-startup-lifecycle-order"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-multipart-total-limit",
+          "revision": 1,
+          "prompt": "A servlet allows multipart files up to 5 MiB each and a complete multipart request up to 8 MiB. A test uploads two 4.5 MiB files in one request and expects success because each file is under its limit. Why is rejection correct?",
+          "difficulty": "medium",
+          "explanation": "The per-file and total-request limits are independent. The file bodies alone exceed 8 MiB, before multipart overhead. Multipart can carry several files, and the configured maxima are limits rather than required allocation sizes.",
+          "type": "choice",
+          "options": [
+            "maxFileSize applies to the sum of every file, while maxRequestSize applies to each part.",
+            "Two files always require two separate HTTP requests under the multipart specification.",
+            "The request must use exactly 8 MiB because maxRequestSize is a minimum allocation.",
+            "The combined request exceeds maxRequestSize even though each file satisfies maxFileSize."
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1.html",
+          "topic": "Java - Servlets",
+          "assessment": {
+            "objective": "jakarta-competency-multipart-total-limit",
+            "kind": "debug",
+            "concepts": [
+              "multipart-total-request-limit"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-nonblocking-output-readiness",
+          "revision": 1,
+          "prompt": "A Servlet 6.1 application streams an export using a WriteListener. After several writes, ServletOutputStream.isReady() returns false while data remains. What should the listener do?",
+          "difficulty": "hard",
+          "explanation": "false indicates that the stream cannot accept more nonblocking output now. Preserve progress and return control so readiness notifications can resume the transfer. Writing anyway violates the contract; sleeping occupies the callback thread; false alone is not proof of disconnection.",
+          "type": "choice",
+          "options": [
+            "Continue writing because the presence of a WriteListener guarantees unlimited output capacity.",
+            "Sleep inside onWritePossible and poll until isReady becomes true.",
+            "Close the output stream immediately because false means the client has disconnected.",
+            "Stop writing and retain its position until a later onWritePossible callback permits more output."
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1.html",
+          "topic": "Java - Servlets",
+          "assessment": {
+            "objective": "jakarta-competency-nonblocking-output-readiness",
+            "kind": "debug",
+            "concepts": [
+              "servlet-nonblocking-write-readiness"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-jsp-error-page-exception",
+          "revision": 1,
+          "prompt": "A JSP is configured as another page's errorPage. It references the JSP implicit exception variable but fails translation because that variable is unavailable. Which directive belongs on the error page?",
+          "difficulty": "medium",
+          "explanation": "isErrorPage=true makes the exception implicit object available on the error page. Enabling sessions or EL affects other features. errorPage specifies a target for failures; it does not declare the current page to be an error page.",
+          "type": "choice",
+          "options": [
+            "<%@ page session=\"true\" %>",
+            "<%@ page isELIgnored=\"false\" %>",
+            "<%@ page errorPage=\"self.jsp\" %>",
+            "<%@ page isErrorPage=\"true\" %>"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/pages/3.1/",
+          "topic": "Java - JSP",
+          "assessment": {
+            "objective": "jakarta-competency-jsp-error-page-exception",
+            "kind": "debug",
+            "concepts": [
+              "jsp-error-page-implicit-exception"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-jsp-fragment-invocation",
+          "revision": 1,
+          "prompt": "A Jakarta JSP SimpleTag receives a body represented by JspFragment. Its doTag() method must render that body once through the current page writer. Which call does that?",
+          "difficulty": "medium",
+          "explanation": "JspFragment.invoke evaluates the body, and a null Writer uses the current JspContext writer. toString is not template evaluation, recursive doTag repeats the tag implementation, and flushing emits only content already written.",
+          "type": "choice",
+          "options": [
+            "getJspBody().toString(), then write the returned description.",
+            "doTag(), called recursively to execute the supplied body.",
+            "getJspContext().getOut().flush(), without invoking the fragment.",
+            "getJspBody().invoke(null), after checking that a body exists."
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/platform/10/apidocs/jakarta/servlet/jsp/tagext/JspFragment.html",
+          "topic": "Java - JSP",
+          "assessment": {
+            "objective": "jakarta-competency-jsp-fragment-invocation",
+            "kind": "apply",
+            "concepts": [
+              "jsp-fragment-invoke"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-jsp-webinf-controller-entry",
+          "revision": 1,
+          "prompt": "A controller performs authorization and prepares a request model before forwarding to an invoice JSP. Direct browser requests to the JSP must not bypass that controller. Where should the JSP be packaged?",
+          "difficulty": "medium",
+          "explanation": "WEB-INF resources cannot be requested directly by clients but can be reached by an internal RequestDispatcher. Obscure names and cache headers do not control access. Redirecting to a protected internal path asks the client to request a resource it cannot access. Authorization still belongs in the controller.",
+          "type": "choice",
+          "options": [
+            "Under WEB-INF, with the controller forwarding to its internal path.",
+            "Under the public document root, with an obscure filename used as the access restriction.",
+            "Under META-INF, with a public URL redirect used to render it.",
+            "Under the public document root, with only a no-store response header."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/servlet/6.1/jakarta-servlet-spec-6.1.html",
+          "topic": "Java - JSP",
+          "assessment": {
+            "objective": "jakarta-competency-jsp-webinf-controller-entry",
+            "kind": "design",
+            "concepts": [
+              "jsp-webinf-view-protection"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-jsp-context-relative-url",
+          "revision": 1,
+          "prompt": "A JSP uses href=\"/orders\". It works when deployed at the server root but links to the wrong application under /shop. Which Jakarta Tags expression builds a URL relative to the current web application's context?",
+          "difficulty": "medium",
+          "explanation": "c:url treats a leading slash as relative to the application context and supports response URL encoding. c:out only escapes text, requestScope.orders is application data, and a request parameter is not the authoritative deployment context path.",
+          "type": "choice",
+          "options": [
+            "<c:url value=\"/orders\"/>",
+            "${requestScope.orders}",
+            "<c:out value=\"/orders\"/>",
+            "${param.contextPath}/orders"
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/tags/3.0/jakarta-tags-spec-3.0",
+          "topic": "Java - JSP",
+          "assessment": {
+            "objective": "jakarta-competency-jsp-context-relative-url",
+            "kind": "debug",
+            "concepts": [
+              "jsp-context-url-generation"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-pages-four-error-metadata",
+          "revision": 1,
+          "prompt": "After migrating to Jakarta Pages 4.0, an error page must record the HTTP method and query string associated with the failed request. Which supported enhancement should the implementation use?",
+          "difficulty": "medium",
+          "explanation": "Pages 4.0 extends ErrorData for the new Servlet error attributes jakarta.servlet.error.method and jakarta.servlet.error.query_string. Exception text, response headers, and similarly named request parameters are not substitutes for that error metadata. Avoid recording sensitive query values unnecessarily.",
+          "type": "choice",
+          "options": [
+            "Read the failed method and query string from response headers set by the error dispatcher.",
+            "Read the failed method and query string from request parameters named method and query_string.",
+            "Read the method and query string from pageContext.getErrorData().",
+            "Read the failed method and query string from the exception's localized message."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/pages/4.0/",
+          "topic": "Java - JSP",
+          "assessment": {
+            "objective": "jakarta-competency-pages-four-error-metadata",
+            "kind": "apply",
+            "concepts": [
+              "pages-four-error-data"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-collector-duplicate-key-merge",
+          "revision": 1,
+          "prompt": "In Java 17, what does this code print?\n```java\njava.util.Map<String, Integer> totals = java.util.stream.Stream.of(\"A\", \"B\", \"A\")\n    .collect(java.util.stream.Collectors.toMap(s -> s, s -> 1, Integer::sum));\nSystem.out.print(totals.get(\"A\") + \":\" + totals.get(\"B\"));\n```",
+          "difficulty": "medium",
+          "explanation": "The third argument is the merge function used when keys repeat, so A accumulates two ones and B has one. Keeping only one value ignores the merge function; counting all elements for both keys ignores grouping. The no-merge overload can reject duplicate keys, but this overload supplies a resolution.",
+          "type": "choice",
+          "options": [
+            "`1:1`",
+            "`3:3`",
+            "An IllegalStateException is thrown for the duplicate A key.",
+            "`2:1`"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Collectors.html",
+          "topic": "Core Java - General",
+          "assessment": {
+            "objective": "jakarta-competency-collector-duplicate-key-merge",
+            "kind": "trace",
+            "concepts": [
+              "collector-duplicate-key-merge"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-duration-versus-calendar-day",
+          "revision": 1,
+          "prompt": "A daily reminder is scheduled for 09:00 in a region that observes daylight-saving changes. The next reminder must remain at 09:00 local time. Which operation expresses that calendar requirement on a ZonedDateTime?",
+          "difficulty": "medium",
+          "explanation": "A calendar day follows local date rules, so the elapsed time between reminders may be 23 or 25 hours across a clock change. A fixed 24-hour duration preserves elapsed time instead. UTC arithmetic and a bare LocalTime cannot express the full local scheduling contract.",
+          "type": "choice",
+          "options": [
+            "Keep only LocalTime and assume it identifies a unique instant without a date or zone.",
+            "Use plusDays(1) in the same time zone, with an explicit policy for any ambiguous local times.",
+            "Add Duration.ofHours(24) and assume every local day contains exactly 24 elapsed hours.",
+            "Convert to UTC, add one day, and retain the resulting UTC clock time as the local time."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/ZonedDateTime.html",
+          "topic": "Core Java - General",
+          "assessment": {
+            "objective": "jakarta-competency-duration-versus-calendar-day",
+            "kind": "design",
+            "concepts": [
+              "calendar-day-versus-duration"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-interrupted-worker-exit",
+          "revision": 1,
+          "prompt": "A worker blocks in BlockingQueue.take(). Its shutdown mechanism interrupts the worker. The method cannot propagate InterruptedException and must stop when interrupted. What should the catch block do?",
+          "difficulty": "medium",
+          "explanation": "InterruptedException reports the cancellation signal and clears interrupt status. Restoring the flag preserves the signal for callers, while exiting fulfills this worker's shutdown contract. Ignoring or clearing it keeps the worker running; replaying an old message changes business behavior and does not solve shutdown.",
+          "type": "choice",
+          "options": [
+            "Ignore the exception and immediately call take() again.",
+            "Clear the flag and retry until another message arrives.",
+            "Put a copy of the last processed message back on the queue and continue.",
+            "Restore the interrupt flag and leave the processing loop."
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/Thread.html#interrupt()",
+          "topic": "Core Java - General",
+          "assessment": {
+            "objective": "jakarta-competency-interrupted-worker-exit",
+            "kind": "debug",
+            "concepts": [
+              "interrupt-preserving-shutdown"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-thread-dump-monitor-cycle",
+          "revision": 1,
+          "prompt": "A Java service stops making progress. CPU usage is low, and two request threads may be waiting for monitors held by each other. Which first diagnostic most directly tests that hypothesis?",
+          "difficulty": "medium",
+          "explanation": "A thread dump shows thread stacks and lock relationships at the time of capture and can identify a monitor deadlock. Heap size does not show ownership, bytecode does not show live states, and changing a timeout is not evidence about the suspected cycle.",
+          "type": "choice",
+          "options": [
+            "Increase the HTTP timeout and infer that any later success disproves a lock cycle.",
+            "Capture a thread dump, such as jcmd <pid> Thread.print, and inspect monitor owners and wait chains.",
+            "Capture only the application's heap size and infer the lock owners from the byte count.",
+            "Run javap on one controller class and infer the current thread states from its bytecode."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/en/java/javase/17/docs/specs/man/jcmd.html",
+          "topic": "Core Java - General",
+          "assessment": {
+            "objective": "jakarta-competency-thread-dump-monitor-cycle",
+            "kind": "apply",
+            "concepts": [
+              "monitor-deadlock-diagnostics"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-sequenced-reversed-live-view",
+          "revision": 1,
+          "prompt": "In Java 21, an ArrayList contains A, B, C. Code obtains view = list.reversed() and then calls list.add(\"D\"). No concurrent threads are involved. What should iteration over view now observe?",
+          "difficulty": "medium",
+          "explanation": "The reversed view presents the original list in opposite encounter order and reflects subsequent changes. It is not a snapshot or a copy, does not preserve forward order, and does not discard existing elements when the backing list grows.",
+          "type": "choice",
+          "options": [
+            "Only D, because modifying the original invalidates its previous elements in the view.",
+            "D, C, B, A, because reversed() returns a view backed by the original list.",
+            "C, B, A, because reversed() takes an immutable snapshot at creation.",
+            "A, B, C, D, because a view must preserve the original encounter order."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/SequencedCollection.html",
+          "topic": "Core Java - General",
+          "assessment": {
+            "objective": "jakarta-competency-sequenced-reversed-live-view",
+            "kind": "apply",
+            "concepts": [
+              "sequenced-reversed-view"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-erased-generic-bridge-cast",
+          "revision": 1,
+          "prompt": "In Java 17, what happens when this program runs? It is compiled with unchecked warnings allowed.\n```java\nclass Main {\n  interface Sink<T> { void accept(T value); }\n  static class TextSink implements Sink<String> {\n    public void accept(String value) { System.out.print(value); }\n  }\n  public static void main(String[] args) {\n    Sink raw = new TextSink();\n    raw.accept(42);\n  }\n}\n```",
+          "difficulty": "hard",
+          "explanation": "The raw invocation compiles with an unchecked warning. The compiler-generated bridge casts the argument to String before invoking accept(String), and that cast fails for Integer. Erasure does not stringify an argument, replace it with null, or prohibit all raw declarations.",
+          "type": "choice",
+          "options": [
+            "It throws ClassCastException before the body of accept(String) executes.",
+            "It prints 42 because erasure converts every argument to a String.",
+            "It fails compilation because raw types are forbidden even when warnings are allowed.",
+            "It enters accept(String) with null because the argument type does not match."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/tutorial/java/generics/bridgeMethods.html",
+          "topic": "Java - OOPS",
+          "assessment": {
+            "objective": "jakarta-competency-erased-generic-bridge-cast",
+            "kind": "trace",
+            "concepts": [
+              "generic-bridge-runtime-cast"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-borrowed-resource-ownership",
+          "revision": 1,
+          "prompt": "A report formatter receives a Writer owned by its caller. The caller will write a footer through that Writer after formatting returns. Which lifecycle contract should the formatter follow?",
+          "difficulty": "medium",
+          "explanation": "Resource ownership determines who may end its lifetime. Closing the borrowed Writer breaks the caller's planned footer write. A wrapper may propagate close to its delegate, while static retention introduces shared lifetime and concurrency problems. Specify flushing behavior separately if required.",
+          "type": "choice",
+          "options": [
+            "Wrap the supplied Writer and close the wrapper, assuming closure cannot reach the delegate.",
+            "Store the supplied Writer in a static field so later calls can decide when to close it.",
+            "Write the report without closing the borrowed Writer; let its owner control final closure.",
+            "Always close the supplied Writer in try-with-resources before returning."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/io/Writer.html",
+          "topic": "Java - OOPS",
+          "assessment": {
+            "objective": "jakarta-competency-borrowed-resource-ownership",
+            "kind": "design",
+            "concepts": [
+              "borrowed-resource-lifecycle"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-classloader-type-identity",
+          "revision": 1,
+          "prompt": "A plugin and its host each load their own copy of com.acme.PaymentPort through independent defining class loaders. A plugin object cannot be cast to the host's PaymentPort, even though the interface names match. What resolves the type boundary?",
+          "difficulty": "hard",
+          "explanation": "Runtime type identity includes both the binary name and the defining class loader. Delegating the shared API to a common parent gives both sides the same type. Identical source does not unify separately defined classes; changing the context loader does not redefine existing types. Child-first copies retain the conflict.",
+          "type": "choice",
+          "options": [
+            "Set the current thread's context loader after both copies are defined, then repeat the same cast.",
+            "Copy the API into both archives and use child-first loading for that package in each loader.",
+            "Have both loaders delegate the shared API to a common parent loader.",
+            "Compile both copies from identical source while continuing to define the API independently in each loader."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-5.html#jvms-5.3",
+          "topic": "Java - OOPS",
+          "assessment": {
+            "objective": "jakarta-competency-classloader-type-identity",
+            "kind": "debug",
+            "concepts": [
+              "classloader-type-identity"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-comparator-total-order-test",
+          "revision": 1,
+          "prompt": "A Comparator<Employee> compares only salary. A TreeSet using it loses one of two employees who have the same salary but different IDs. The set must retain both and remain salary-ordered. Which change should a regression test require?",
+          "difficulty": "medium",
+          "explanation": "TreeSet treats compare(a, b)==0 as the same set position. An ID tie-breaker distinguishes the employees while preserving salary order. It does not use hash buckets; repeating insertion or reversing a zero comparison cannot distinguish them. Keep the ordering compatible with the intended identity contract.",
+          "type": "choice",
+          "options": [
+            "Add ID as a comparison tie-breaker and verify that both employees remain in the set.",
+            "Change only hashCode so equal salaries produce different hash buckets.",
+            "Call add twice for the missing employee while keeping the salary-only comparator.",
+            "Reverse the salary comparator so equal salaries are compared in the opposite direction."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/TreeSet.html",
+          "topic": "Java - OOPS",
+          "assessment": {
+            "objective": "jakarta-competency-comparator-total-order-test",
+            "kind": "debug",
+            "concepts": [
+              "sorted-set-comparator-identity"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-pattern-variable-flow-scope",
+          "revision": 1,
+          "prompt": "In Java 17, why does this method fail to compile?\n```java\nclass Main {\n  static int length(Object value) {\n    if (value instanceof String text || text.isEmpty()) {\n      return 1;\n    }\n    return 0;\n  }\n}\n```",
+          "difficulty": "medium",
+          "explanation": "The right side of || is evaluated when its left side is false; that is exactly when the String pattern has not established text. Flow scoping therefore rejects the reference. Java 17 supports instanceof patterns for String, and boolean is the correct operand type. Using && would establish the pattern before the second operand, but also changes the condition's meaning.",
+          "type": "choice",
+          "options": [
+            "isEmpty returns boolean, which cannot be used as the right operand of ||.",
+            "The right operand of || can run when the pattern did not match, so text is not in scope there.",
+            "Pattern variables are available only inside switch expressions in Java 17.",
+            "String is final, so instanceof cannot introduce a pattern variable for it."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/specs/jls/se17/html/jls-6.html#jls-6.3.1.2",
+          "topic": "Java - OOPS",
+          "assessment": {
+            "objective": "jakarta-competency-pattern-variable-flow-scope",
+            "kind": "debug",
+            "concepts": [
+              "pattern-variable-flow-scoping"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-command-undo-captured-state",
+          "revision": 1,
+          "prompt": "An editor executes a SetTitleCommand and stores it for undo. Another command later changes the document title. To undo the first command as part of a correctly ordered undo stack, what must its implementation have captured when it originally ran?",
+          "difficulty": "medium",
+          "explanation": "An undoable command needs enough information to reverse its own effect, here the old value and receiver. Reading current state loses the original value, a class name lacks invocation data, and repeating the new value is not an inverse. The scenario assumes proper stack ordering rather than selective undo across dependent edits.",
+          "type": "choice",
+          "options": [
+            "Only the new title, because assigning it again reverses a title change.",
+            "The previous title and the target document, so undo can restore that command's prior state.",
+            "Only the title currently displayed when undo is requested.",
+            "Only the command's class name, so a fresh default instance can reverse the edit."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/8/docs/api/javax/swing/undo/AbstractUndoableEdit.html",
+          "topic": "Java Design Patterns",
+          "assessment": {
+            "objective": "jakarta-competency-command-undo-captured-state",
+            "kind": "apply",
+            "concepts": [
+              "command-undo-state"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-abstract-factory-compatible-family",
+          "revision": 1,
+          "prompt": "A document exporter needs a Parser and Renderer from the same format family. JSON and XML implementations are valid individually, but mixing their intermediate representations is not. Which creation boundary best enforces compatible pairs?",
+          "difficulty": "medium",
+          "explanation": "An Abstract Factory groups related creation decisions so a selected family supplies compatible products. Independent selections permit mismatches. Decorators add behavior to an existing object, and observers distribute notifications rather than enforce a product family. Validate any external configuration selecting the family.",
+          "type": "choice",
+          "options": [
+            "An Observer that broadcasts each parser creation to every available renderer.",
+            "An Abstract Factory that provides the Parser and Renderer for one selected format family.",
+            "Two independent registries whose parser and renderer selections are unrelated.",
+            "A Decorator that wraps the parser without selecting the renderer."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/8/docs/api/javax/xml/parsers/DocumentBuilderFactory.html",
+          "topic": "Java Design Patterns",
+          "assessment": {
+            "objective": "jakarta-competency-abstract-factory-compatible-family",
+            "kind": "design",
+            "concepts": [
+              "abstract-factory-product-family"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-remote-proxy-roundtrip-cost",
+          "revision": 1,
+          "prompt": "A remote proxy exposes an order using ten property getters. A page calls all ten for each of 100 orders, and each getter makes a network request. Which interface change addresses the measured round-trip cost?",
+          "difficulty": "medium",
+          "explanation": "A coarse-grained operation reduces remote invocations while bounded batches control payload size. Parallel requests may reduce elapsed time but retain the round trips and increase concurrent load. Connection reuse reduces setup cost, not invocation count; caching only proxy objects does not cache their remote values.",
+          "type": "choice",
+          "options": [
+            "Fetch bounded batches of order summaries in a coarse-grained operation.",
+            "Fetch every getter concurrently through the same interface, keeping all 1,000 network requests per page.",
+            "Reuse a single transport connection while retaining every individual remote getter invocation.",
+            "Cache proxy objects by order ID while leaving their property values uncached and remotely fetched."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://www.oracle.com/java/technologies/core-j2ee-patterns.html",
+          "topic": "Java Design Patterns",
+          "assessment": {
+            "objective": "jakarta-competency-remote-proxy-roundtrip-cost",
+            "kind": "design",
+            "concepts": [
+              "remote-proxy-call-granularity"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-flyweight-context-separation",
+          "revision": 1,
+          "prompt": "A renderer shares cached glyph objects by font and character. A test renders the same glyph at two positions and finds both move when one is updated. Which state should be supplied externally rather than stored in the shared glyph?",
+          "difficulty": "medium",
+          "explanation": "A Flyweight shares intrinsic data, such as the font, character, and immutable outline. Position is extrinsic state belonging to a particular occurrence. Storing it in the shared object makes separate uses interfere with one another.",
+          "type": "choice",
+          "options": [
+            "The immutable outline shared by all occurrences of that glyph.",
+            "The position for each rendering occurrence.",
+            "The glyph's font identity used in the cache key.",
+            "The character code that determines the shared glyph shape."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/8/docs/api/java/awt/font/GlyphVector.html",
+          "topic": "Java Design Patterns",
+          "assessment": {
+            "objective": "jakarta-competency-flyweight-context-separation",
+            "kind": "apply",
+            "concepts": [
+              "flyweight-extrinsic-state"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-circuit-breaker-recovery-probe",
+          "revision": 1,
+          "prompt": "A cloud service's circuit breaker is open after repeated dependency failures. After a cooldown, it must determine whether the dependency has recovered without immediately restoring full traffic. Which transition fits?",
+          "difficulty": "medium",
+          "explanation": "Limited probes test recovery while bounding pressure on the dependency. Immediate full replay can recreate the outage; permanent opening lacks automatic recovery. Retrying every request defeats the purpose of an open circuit. Retry and idempotency rules must still be designed separately.",
+          "type": "choice",
+          "options": [
+            "Keep the circuit open permanently unless the whole service is redeployed.",
+            "Increase retry counts for every incoming request while keeping the circuit open.",
+            "Enter a half-open state that permits limited trial calls and uses their outcomes to reopen or close the circuit.",
+            "Close the circuit immediately and replay all failed calls concurrently."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://microservices.io/patterns/reliability/circuit-breaker.html",
+          "topic": "Java Design Patterns",
+          "assessment": {
+            "objective": "jakarta-competency-circuit-breaker-recovery-probe",
+            "kind": "design",
+            "concepts": [
+              "circuit-breaker-half-open"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-ejb-mandatory-caller-boundary",
+          "revision": 1,
+          "prompt": "A container-managed EJB method uses TransactionAttributeType.MANDATORY. A local business client invokes it with no transaction. The method updates inventory if entered. What should the container do?",
+          "difficulty": "medium",
+          "explanation": "MANDATORY requires an existing caller transaction. Without one, the container rejects the invocation. Starting a transaction is REQUIRED behavior, while nontransactional execution or deferred creation would not satisfy the declared contract.",
+          "type": "choice",
+          "options": [
+            "Defer transaction creation until the method performs its first write.",
+            "Reject the invocation with a transaction-required exception before running the business method.",
+            "Start a new transaction and execute the method as if it used REQUIRED.",
+            "Execute without a transaction and commit each SQL statement independently."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/enterprise-beans/4.0/jakarta-enterprise-beans-spec-core-4.0.html",
+          "topic": "Java - EJB",
+          "assessment": {
+            "objective": "jakarta-competency-ejb-mandatory-caller-boundary",
+            "kind": "apply",
+            "concepts": [
+              "ejb-mandatory-rejection"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-stateful-conversation-reference",
+          "revision": 1,
+          "prompt": "An application uses a stateful session bean for an in-progress quote. Each browser session must have its own conversation. Code caches one stateful bean reference in an application-wide registry. Which ownership change is appropriate?",
+          "difficulty": "medium",
+          "explanation": "A stateful reference identifies a particular conversational instance. @Stateful does not map calls on one reference to separate browser conversations. Asynchrony does not partition state, and static fields make sharing broader. The application must manage reference ownership and conversation completion.",
+          "type": "choice",
+          "options": [
+            "Share the one reference and add @Asynchronous to separate each caller's field values.",
+            "Replace instance fields with static fields so each browser gets a stable copy.",
+            "Retain a separate stateful reference per conversation and remove it on completion.",
+            "Share the one reference but rely on @Stateful to infer the current browser session for each call."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/enterprise-beans/4.0/jakarta-enterprise-beans-spec-core-4.0.html",
+          "topic": "Java - EJB",
+          "assessment": {
+            "objective": "jakarta-competency-stateful-conversation-reference",
+            "kind": "design",
+            "concepts": [
+              "stateful-reference-ownership"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-ejb-portable-jndi-name",
+          "revision": 1,
+          "prompt": "An EAR named shop contains an EJB module named orders. The bean name is BillingBean, and it exposes local business interface com.acme.Billing. Using those explicit names, which portable java:global lookup names that interface?",
+          "difficulty": "medium",
+          "explanation": "The portable global structure is application/module/bean followed by !interface. The explicit names remove archive-name ambiguity. Reordering the application and module, swapping bean and interface, or placing the module after the bean does not follow that structure. A local interface still requires a client environment that supports local access.",
+          "type": "choice",
+          "options": [
+            "java:global/orders/shop/BillingBean!com.acme.Billing",
+            "java:global/shop/orders/com.acme.Billing!BillingBean",
+            "java:global/shop/BillingBean/orders!com.acme.Billing",
+            "java:global/shop/orders/BillingBean!com.acme.Billing"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/enterprise-beans/4.0/jakarta-enterprise-beans-spec-core-4.0.html",
+          "topic": "Java - EJB",
+          "assessment": {
+            "objective": "jakarta-competency-ejb-portable-jndi-name",
+            "kind": "apply",
+            "concepts": [
+              "ejb-portable-jndi-structure"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-ejb-runas-outbound-role",
+          "revision": 1,
+          "prompt": "A caller with the user role invokes an EJB method allowed to users. The bean is configured with @RunAs(\"system\") and calls a downstream EJB restricted to system. Deployment security mappings are correct. What should a security integration test distinguish?",
+          "difficulty": "hard",
+          "explanation": "Run-as controls the identity used for outgoing calls from the bean. It does not replace the inbound authorization requirement, permanently modify the external caller's roles, or disable downstream checks. Correct deployment mappings are necessary for the declared role to have the intended identity.",
+          "type": "choice",
+          "options": [
+            "@RunAs removes the downstream bean's role checks because the upstream call was authorized.",
+            "The inbound caller's authorization from the system identity used for the downstream invocation.",
+            "The inbound user should be denied solely because the bean declares a different run-as role.",
+            "@RunAs permanently adds system to the caller's authenticated roles for later unrelated requests."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/enterprise-beans/4.0/jakarta-enterprise-beans-spec-core-4.0.html",
+          "topic": "Java - EJB",
+          "assessment": {
+            "objective": "jakarta-competency-ejb-runas-outbound-role",
+            "kind": "apply",
+            "concepts": [
+              "ejb-runas-security-boundary"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-ejb-singleton-cluster-schedule",
+          "revision": 1,
+          "prompt": "The same application is deployed independently to three nodes. Each has a singleton EJB with a nonpersistent automatic timer, and no vendor cluster coordination is configured. A daily settlement must run once across the cluster. Which design addresses duplicate execution?",
+          "difficulty": "hard",
+          "explanation": "A singleton bean's scope and concurrency lock do not create a cross-JVM singleton. Independently deployed nonpersistent timers may each fire. A coordinated scheduler or durable claim controls execution ownership, while retry safety handles failures around that coordination. The persistence flag alone does not elect a leader.",
+          "type": "choice",
+          "options": [
+            "Add @Lock(WRITE) and assume it locks the singleton instances on the other nodes.",
+            "Set persistent=false and assume only the oldest deployed node can fire its timer.",
+            "Use cluster coordination or a durable claim mechanism and make the settlement operation safe to retry.",
+            "Rely on @Singleton to create one bean instance across all three JVMs."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/enterprise-beans/4.0/jakarta-enterprise-beans-spec-core-4.0.html",
+          "topic": "Java - EJB",
+          "assessment": {
+            "objective": "jakarta-competency-ejb-singleton-cluster-schedule",
+            "kind": "design",
+            "concepts": [
+              "ejb-cluster-timer-ownership"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-java-nine-private-interface-helper",
+          "revision": 1,
+          "prompt": "In Java 9, why does this code fail to compile?\n```java\ninterface Labels {\n  private String prefix() { return \"item:\"; }\n  default String label() { return prefix() + \"A\"; }\n}\nclass Main implements Labels {\n  String custom() { return prefix() + \"B\"; }\n}\n```",
+          "difficulty": "medium",
+          "explanation": "Java 9 allows private instance helpers inside interfaces, including calls from default methods. They remain private to the interface and are not inherited by implementing classes. Changing custom's visibility does not expose prefix; a public/default interface operation must provide any intended external behavior.",
+          "type": "choice",
+          "options": [
+            "The private prefix() helper is callable within Labels but is not inherited by Main.",
+            "Java 9 permits private interface methods only when they are static.",
+            "A default method cannot invoke any private method in its declaring interface.",
+            "Main must declare custom() public before it can inherit the private helper."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/specs/jls/se9/html/jls-9.html#jls-9.4",
+          "topic": "Core Java - Java 9",
+          "assessment": {
+            "objective": "jakarta-competency-java-nine-private-interface-helper",
+            "kind": "debug",
+            "concepts": [
+              "java-nine-private-interface-helper"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-java-nine-flow-demand",
+          "revision": 1,
+          "prompt": "A Java 9 Flow.Subscriber requests two elements with subscription.request(2). It receives one onNext item, then requests three more. Assuming no cancellation or terminal signal, how many more onNext items may the publisher deliver against this demand?",
+          "difficulty": "medium",
+          "explanation": "Demand represents requested elements not yet delivered. Two minus one plus three leaves four. A new request adds to demand rather than replacing it, delivered items consume it, and the subscriber may request more before exhausting the earlier amount.",
+          "type": "choice",
+          "options": [
+            "Five more items, because received items do not reduce requested demand.",
+            "One more item, because further requests are ignored until the first request is exhausted.",
+            "Four more items: one remains from the first request, and the second adds three.",
+            "Three more items, because the second request replaces the outstanding demand."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/9/docs/api/java/util/concurrent/Flow.Subscription.html",
+          "topic": "Core Java - Java 9",
+          "assessment": {
+            "objective": "jakarta-competency-java-nine-flow-demand",
+            "kind": "apply",
+            "concepts": [
+              "java-nine-flow-demand-accounting"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-multi-release-jar-selection",
+          "revision": 1,
+          "prompt": "A JAR declares Multi-Release: true and contains a Java 8-compatible base class plus a replacement of that class under META-INF/versions/9/. No higher-version replacement exists. Which class is selected on Java 11 by a standard runtime loading this JAR?",
+          "difficulty": "medium",
+          "explanation": "A multi-release JAR selects the highest applicable versioned entry, falling back to the base entry when necessary. The matching rule is not exact-version-only, does not merge class files, and does not require an entry for every later JDK release. Java 8 uses the compatible base entry.",
+          "type": "choice",
+          "options": [
+            "The base class, because a version-9 replacement is used only on Java 9 exactly.",
+            "Both classes, merged by the runtime into one implementation.",
+            "Neither class, because the JAR requires a versions/11 directory on Java 11.",
+            "The version-9 class, which is the highest available version not exceeding the running Java version."
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/9/docs/specs/jar/jar.html",
+          "topic": "Core Java - Java 9",
+          "assessment": {
+            "objective": "jakarta-competency-multi-release-jar-selection",
+            "kind": "apply",
+            "concepts": [
+              "multi-release-jar-selection"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-javac-release-api-boundary",
+          "revision": 1,
+          "prompt": "A library is built with JDK 17 for Java 9 clients. javac -source 9 -target 9 allows a reference to an API introduced after Java 9, and the library fails on a Java 9 runtime. Which compiler option also restricts the visible standard APIs to the target release?",
+          "difficulty": "medium",
+          "explanation": "--release selects the language level, class-file target, and supported platform API surface for that release. source/target alone can expose the build JDK's newer APIs. Deprecation warnings, parameter-name metadata, and source encoding do not restrict API availability. Third-party dependency compatibility still needs separate checks.",
+          "type": "choice",
+          "options": [
+            "-Xlint:deprecation",
+            "-parameters",
+            "-encoding UTF-8",
+            "--release 9"
+          ],
+          "correct": [
+            3
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/en/java/javase/17/docs/specs/man/javac.html",
+          "topic": "Core Java - Java 9",
+          "assessment": {
+            "objective": "jakarta-competency-javac-release-api-boundary",
+            "kind": "debug",
+            "concepts": [
+              "javac-release-platform-api"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-java-nine-takewhile-prefix",
+          "revision": 1,
+          "prompt": "In Java 9, what does this sequential, ordered stream print?\n```java\nString result = java.util.stream.Stream.of(2, 4, 1, 6)\n    .takeWhile(n -> n % 2 == 0)\n    .map(String::valueOf)\n    .collect(java.util.stream.Collectors.joining(\",\"));\nSystem.out.print(result);\n```",
+          "difficulty": "medium",
+          "explanation": "For an ordered stream, takeWhile keeps the matching prefix and stops at the first failure, here 1. filter would also retain the later 6; dropWhile would yield 1,6. Keeping every element ignores the predicate. The explicit ordering avoids the different latitude given to unordered streams.",
+          "type": "choice",
+          "options": [
+            "`2,4,1,6`",
+            "`2,4`",
+            "`2,4,6`",
+            "`1,6`"
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://docs.oracle.com/javase/9/docs/api/java/util/stream/Stream.html",
+          "topic": "Core Java - Java 9",
+          "assessment": {
+            "objective": "jakarta-competency-java-nine-takewhile-prefix",
+            "kind": "trace",
+            "concepts": [
+              "java-nine-takewhile-prefix"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Latest Technology and Industry Trends"
+        },
+        {
+          "id": "jakarta-competency-bytes-message-read-mode",
+          "revision": 1,
+          "prompt": "A standalone Jakarta Messaging client creates a BytesMessage, writes an integer, and then tries to read it locally before sending. It receives MessageNotReadableException. Which operation switches the written body into read mode and positions it at the start?",
+          "difficulty": "medium",
+          "explanation": "reset changes the BytesMessage body to read-only mode and resets its position. clearBody erases the body and makes it writable; acknowledgment concerns delivery; properties are separate from the body. None of those alternatives rewinds the written bytes for reading.",
+          "type": "choice",
+          "options": [
+            "Call acknowledge() to switch the message body into read mode.",
+            "Call setIntProperty() using the same value to rewind the body.",
+            "Call reset() on the BytesMessage before reading.",
+            "Call clearBody() and then read the original integer."
+          ],
+          "correct": [
+            2
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/jakarta-messaging-spec-3.1.html",
+          "topic": "Java - JMS",
+          "assessment": {
+            "objective": "jakarta-competency-bytes-message-read-mode",
+            "kind": "debug",
+            "concepts": [
+              "jms-bytes-message-reset"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Basic, Development, Programming and Configuration Knowledge"
+        },
+        {
+          "id": "jakarta-competency-delay-exceeds-message-expiry",
+          "revision": 1,
+          "prompt": "A Jakarta Messaging producer sends a message with a 30-second delivery delay and a 20-second time-to-live. Assume time-to-live is measured from the send, as specified. What is the expected interaction?",
+          "difficulty": "hard",
+          "explanation": "Both the earliest delivery time and expiration are based on the send time. Expiry can therefore precede eligibility. Delay does not restart the TTL clock, disable expiration, or require the provider to alter either requested value.",
+          "type": "choice",
+          "options": [
+            "The message expires before it becomes eligible for delivery.",
+            "The message becomes eligible after 30 seconds and then receives another 20 seconds to live.",
+            "The provider ignores time-to-live whenever a delivery delay is set.",
+            "The provider shortens the delivery delay to 20 seconds so the message can be delivered."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/jakarta-messaging-spec-3.1.html",
+          "topic": "Java - JMS",
+          "assessment": {
+            "objective": "jakarta-competency-delay-exceeds-message-expiry",
+            "kind": "apply",
+            "concepts": [
+              "jms-delay-expiration-interaction"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Design, Architecture, Framework and Business-Process Knowledge"
+        },
+        {
+          "id": "jakarta-competency-temporary-reply-queue-lifetime",
+          "revision": 1,
+          "prompt": "A requester puts a TemporaryQueue in JMSReplyTo and then closes the connection that created it. The worker may send its reply much later. Replies must remain available across requester restarts. Which change matches that requirement?",
+          "difficulty": "hard",
+          "explanation": "A temporary destination is tied to its creating connection and is deleted when that connection closes. Persistent messages and priority do not extend that destination's lifecycle, and retaining a name does not retain the destination. A stable reply destination plus correlation and processing state supports recovery.",
+          "type": "choice",
+          "options": [
+            "Use an administered reply destination with durable processing state and correlation IDs.",
+            "Keep the TemporaryQueue and mark replies PERSISTENT to extend its lifetime beyond the connection.",
+            "Keep the TemporaryQueue and raise the replies' priority so its address survives restart.",
+            "Store only the temporary queue's name and recreate the old connection object after restart."
+          ],
+          "correct": [
+            0
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/jakarta-messaging-spec-3.1.html",
+          "topic": "Java - JMS",
+          "assessment": {
+            "objective": "jakarta-competency-temporary-reply-queue-lifetime",
+            "kind": "design",
+            "concepts": [
+              "temporary-destination-recovery"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Solutioning, Deployment and Implementation Knowledge"
+        },
+        {
+          "id": "jakarta-competency-queue-browser-not-snapshot",
+          "revision": 1,
+          "prompt": "An operations tool uses QueueBrowser while producers and consumers remain active. Its enumeration differs from the queue count displayed a moment earlier. Which interpretation follows the standard contract?",
+          "difficulty": "medium",
+          "explanation": "QueueBrowser observes messages without consuming them, but the specification does not require a static snapshot. Producers, consumers, expiry, and implementation behavior can affect observations. It does not imply a queue lock or an exact match to an earlier metric sample.",
+          "type": "choice",
+          "options": [
+            "Every enumeration must exactly match the count from the instant the browser was constructed.",
+            "Browsing does not remove messages and is not required to represent a fixed snapshot during concurrent changes.",
+            "Browsing removes each enumerated message, which explains every decrease in the count.",
+            "The browser locks the queue, so any difference proves the provider violated the specification."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/jakarta-messaging-spec-3.1.html",
+          "topic": "Java - JMS",
+          "assessment": {
+            "objective": "jakarta-competency-queue-browser-not-snapshot",
+            "kind": "apply",
+            "concepts": [
+              "jms-queue-browser-consistency"
+            ]
+          },
+          "origin": "ai",
+          "second_topic": "Tools, Assets, Functional and Domain Knowledge"
+        },
+        {
+          "id": "jakarta-competency-async-send-message-ownership",
+          "revision": 1,
+          "prompt": "A Jakarta Messaging producer sends a Message asynchronously using a CompletionListener. The sending method returns before the completion callback. The application wants to modify and reuse that same Message immediately. What lifecycle rule applies?",
+          "difficulty": "medium",
+          "explanation": "During an asynchronous send the provider may still be using the message; the application must wait for completion before accessing it again. The callback reports send completion, not consumer acknowledgment. Body access is not exempt, and clearBody is not a synchronization operation.",
+          "type": "choice",
+          "options": [
+            "Call clearBody() immediately because it waits for asynchronous send completion.",
+            "Wait for completion before accessing or reusing that Message, or use a separate message object for the next send.",
+            "Reuse it as soon as send returns because the callback only reports consumer acknowledgment.",
+            "Reuse only its body immediately because the provider retains ownership of headers alone."
+          ],
+          "correct": [
+            1
+          ],
+          "multiple": false,
+          "source_url": "https://jakarta.ee/specifications/messaging/3.1/jakarta-messaging-spec-3.1.html",
+          "topic": "Java - JMS",
+          "assessment": {
+            "objective": "jakarta-competency-async-send-message-ownership",
+            "kind": "apply",
+            "concepts": [
+              "jms-async-send-ownership"
             ]
           },
           "origin": "ai",

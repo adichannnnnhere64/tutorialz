@@ -136,7 +136,37 @@ def audit(courses: list[dict]) -> dict:
             "skills": dict(sorted(Counter(q.get("assessment", {}).get("kind", "missing") for q in questions).items())),
             "coverage": dict(sorted(coverage.items())),
         })
+    # This editorial gate applies to the revised original exam, not the separate
+    # Dummy Exam. Compare its prompts across the bank without trusting concept labels.
+    exam = [q for c in courses if c["id"] == "jakarta-competency-exam"
+            for t in c["tests"] for q in t["questions"]]
+    all_questions = [q for c in courses for t in c["tests"] for q in t["questions"]]
+    option_sets, substantive_options = {}, {}
+    for q in exam:
+        options = tuple(sorted(normalize(o) for o in q.get("options", [])))
+        if options in option_sets:
+            errors.append(f"{q['id']}: repeated choice set with {option_sets[options]}")
+        option_sets[options] = q["id"]
+        for option in options:
+            # Shared short API names and trace outputs are legitimate. Reusing
+            # full advice sentences is a review signal, not proof of duplication.
+            if len(option.split()) < 8:
+                continue
+            if option in substantive_options:
+                warnings.append(f"{q['id']} / {substantive_options[option]}: repeated substantive choice; review distractors")
+            substantive_options[option] = q["id"]
     compared = set()
+    normalized = {q["id"]: normalize(q["prompt"]) for q in all_questions}
+    for left in exam:
+        for right in all_questions:
+            pair = tuple(sorted((left["id"], right["id"])))
+            if left["id"] == right["id"] or pair in compared:
+                continue
+            compared.add(pair)
+            a, b = normalized[left["id"]], normalized[right["id"]]
+            matcher = SequenceMatcher(None, a, b, autojunk=False)
+            if a != b and matcher.quick_ratio() >= 0.85 and matcher.ratio() >= 0.85:
+                warnings.append(f"{pair[0]} / {pair[1]}: similar prompts; review the learning outcomes")
     for questions in by_concept.values():
         for index, left in enumerate(questions):
             for right in questions[index + 1:]:

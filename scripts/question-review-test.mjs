@@ -78,8 +78,9 @@ try {
   assert.equal(await rows.nth(3).locator('.submitted-answer pre').textContent(), codeAnswer);
   assert((await rows.nth(4).innerText()).includes('You skipped this question.'));
   assert((await rows.nth(5).innerText()).includes('No answer submitted.'));
-  assert.equal(await rows.nth(0).locator('.question-source .badge').textContent(), 'AI');
-  assert.equal(await rows.nth(6).locator('.question-source .badge').textContent(), 'Scraped');
+  assert.equal(await rows.nth(0).locator('.question-topic').textContent(), `Topic: ${ai.topic}`);
+  assert.equal(await rows.nth(0).locator('.question-source .badge:not(.question-topic)').textContent(), 'AI');
+  assert.equal(await rows.nth(6).locator('.question-source .badge:not(.question-topic)').textContent(), 'Scraped');
   assert((await rows.nth(6).locator('.question-source').innerText()).includes('Tahir Naseer'));
   assert.equal(await rows.nth(6).getByRole('link', { name: 'Source', exact: true }).getAttribute('href'), scraped.source_url);
   await page.screenshot({ path: '/tmp/tutorialz-question-review.png', fullPage: true });

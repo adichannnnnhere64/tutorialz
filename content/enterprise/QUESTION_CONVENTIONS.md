@@ -47,6 +47,8 @@ Basic recognition and applied diagnosis may share a concept when they require di
 6. Flag questions sharing a concept when prompt similarity reaches 0.85 (`SequenceMatcher`). Review these rather than automatically deleting them: a changed Java operator can change the answer.
 7. Generate a coverage report, and test the original curriculum independently of the current questions.
 
+The original Jakarta Competency Exam also rejects repeated choice sets regardless of order and flags reused substantive choices (eight or more words). Its prompts are compared against the entire bank for similarity regardless of concept labels. Short shared API names or code outputs are allowed. These additional editorial gates do not change the separate Dummy Exam. Regression fixtures cover renamed concepts and shuffled choices; a clean report is not a substitute for reviewing the actual decisions and distractors.
+
 The core validator also rejects duplicate objective IDs and choice text in studio exports. Assessment metadata is optional for legacy/custom content but required in this generated bank. Human review must still check semantic overlap across related concept names; metadata and text similarity cannot prove uniqueness of meaning.
 
 ## Revisions and imports

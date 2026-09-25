@@ -104,6 +104,40 @@ class QuestionBankTests(unittest.TestCase):
         second["explanation"] = "Rephrasing does not create a new learning outcome."
         self.assertTrue(any("duplicate objective" in e for e in self.check_pair(first, second)["errors"]))
 
+    def test_exam_editorial_checks_ignore_concept_labels_and_option_order(self):
+        first, second = self.fixture(), self.fixture()
+        first["prompt"] = "A service returns another tenant's cached invoice for the same invoice number. Which cache key fixes the collision?"
+        second["prompt"] = first["prompt"].replace("invoice number", "invoice identifier")
+        second["id"] = "different-id"
+        second["assessment"] = assessment("different-objective", "debug", "unrelated-concept")
+        second["options"].reverse()
+        second["correct"] = [second["options"].index("1")]
+        report = audit([{"id": "jakarta-competency-exam", "tests": [{"questions": [first, second]}]}])
+        self.assertTrue(any("repeated choice set" in e for e in report["errors"]))
+        self.assertTrue(any("similar prompts" in e for e in report["review"]))
+
+    def test_exam_flags_reused_substantive_choices_but_allows_short_api_names(self):
+        first, second = self.fixture(), self.fixture()
+        second["id"] = "different-id"
+        second["prompt"] = "How should a caller close an independently owned writer?"
+        second["assessment"] = assessment("different-objective", "apply", "unrelated-concept")
+        sentence = "Close the writer only after its owning caller finishes all pending writes."
+        first["options"] = [sentence, "reset()", "clear()", "flush()"]
+        second["options"] = [sentence, "reset()", "close()", "read()"]
+        report = audit([{"id": "jakarta-competency-exam", "tests": [{"questions": [first, second]}]}])
+        self.assertEqual(len(report["review"]), 1)
+        self.assertIn("repeated substantive choice", report["review"][0])
+
+    def test_exam_prompt_similarity_is_checked_against_other_courses(self):
+        first, second = self.fixture(), self.fixture()
+        first["prompt"] = "A service returns another tenant's cached invoice for the same invoice number. Which cache key fixes the collision?"
+        second["prompt"] = first["prompt"].replace("invoice number", "invoice identifier")
+        second["id"] = "different-id"
+        second["assessment"] = assessment("different-objective", "debug", "unrelated-concept")
+        report = audit([{"id": "jakarta-competency-exam", "tests": [{"questions": [first]}]},
+                        {"id": "another-course", "tests": [{"questions": [second]}]}])
+        self.assertTrue(any("similar prompts" in e for e in report["review"]))
+
     def test_code_normalization_preserves_meaning(self):
         self.assertNotEqual(normalize("Read `Count`"), normalize("Read `count`"))
         self.assertNotEqual(normalize("Test `a != b`"), normalize("Test `a == b`"))
@@ -168,9 +202,9 @@ class QuestionBankTests(unittest.TestCase):
                  "Solutioning, Deployment and Implementation Knowledge",
                  "Tools, Assets, Functional and Domain Knowledge",
                  "Latest Technology and Industry Trends"}
-        self.assertEqual(len(questions), 50)
+        self.assertEqual(len(questions), 100)
         self.assertEqual(Counter((q["topic"], q["second_topic"]) for q in questions),
-                         Counter({(topic, area): 1 for topic in topics for area in areas}))
+                         Counter({(topic, area): 2 for topic in topics for area in areas}))
         for q in questions:
             self.assertEqual(q["origin"], "ai")
             self.assertIn(q["difficulty"], {"medium", "hard"})
@@ -195,7 +229,9 @@ class QuestionBankTests(unittest.TestCase):
         exam = next(c for c in self.courses if c["id"] == "jakarta-competency-exam")
         questions = exam["tests"][0]["questions"]
         for suffix, release in [("suppressed-close-exception", "17"),
-                                ("java-nine-optional-stream", "9")]:
+                                ("java-nine-optional-stream", "9"),
+                                ("collector-duplicate-key-merge", "17"),
+                                ("java-nine-takewhile-prefix", "9")]:
             q = next(q for q in questions if q["id"] == f"jakarta-competency-{suffix}")
             source = q["prompt"].split("```java\n")[1].split("```")[0]
             if "class Main" not in source:
@@ -210,6 +246,34 @@ class QuestionBankTests(unittest.TestCase):
                                         capture_output=True, text=True, timeout=10)
                 self.assertEqual(actual.returncode, 0, actual.stderr)
                 self.assertEqual(q["options"][q["correct"][0]], f"`{actual.stdout}`")
+
+    def test_jakarta_java_compile_and_runtime_failures(self):
+        exam = next(c for c in self.courses if c["id"] == "jakarta-competency-exam")
+        questions = {q["id"]: q for q in exam["tests"][0]["questions"]}
+        cases = [("pattern-variable-flow-scope", "17", "text", None),
+                 ("java-nine-private-interface-helper", "9", "prefix", None),
+                 ("erased-generic-bridge-cast", "17", None, "ClassCastException")]
+        for suffix, release, compile_error, runtime_error in cases:
+            q = questions[f"jakarta-competency-{suffix}"]
+            source = q["prompt"].split("```java\n")[1].split("```")[0]
+            with self.subTest(question=q["id"]), tempfile.TemporaryDirectory() as temp:
+                path = Path(temp) / "Main.java"
+                path.write_text(source)
+                compiled = subprocess.run(["javac", "--release", release, str(path)],
+                                          capture_output=True, text=True, timeout=30)
+                answer = q["options"][q["correct"][0]]
+                if compile_error:
+                    self.assertNotEqual(compiled.returncode, 0)
+                    self.assertIn(compile_error, compiled.stderr)
+                    self.assertIn(compile_error, answer)
+                else:
+                    self.assertEqual(compiled.returncode, 0, compiled.stderr)
+                    actual = subprocess.run(["java", "-cp", temp, "Main"],
+                                            capture_output=True, text=True, timeout=10)
+                    self.assertNotEqual(actual.returncode, 0)
+                    self.assertEqual(actual.stdout, "")
+                    self.assertIn(runtime_error, actual.stderr)
+                    self.assertIn(runtime_error, answer)
 
     def test_catalog_rejects_modified_bytes(self):
         with tempfile.TemporaryDirectory() as temp:

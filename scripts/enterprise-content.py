@@ -197,7 +197,7 @@ def generate(out: Path = OUT) -> None:
         digest = write_json(path, course)
         entries.append({key: course[key] for key in ("id", "title", "description", "subject", "difficulty")} |
                        {"path": path.name, "sha256": digest})
-    write_json(out / "catalog.json", {"schema_version": 1, "content_revision": 3,
+    write_json(out / "catalog.json", {"schema_version": 1, "content_revision": 4,
                                     "collection_id": "tutorialz-jakarta-ee", "courses": entries})
     write_json(out / "coverage.json", report)
     print(f"Generated {report['questions']} questions; {len(report['review'])} similarity pairs to review")

@@ -13,15 +13,15 @@ try{
   await examPage.getByRole('heading',{name:'Jakarta Competency Exam',exact:true}).waitFor();
   await examPage.getByLabel('Search questions and topics').fill('Solutioning, Deployment and Implementation Knowledge');
   await examPage.getByRole('heading',{name:'Question results'}).waitFor();
-  assert.equal(await examPage.getByRole('button',{name:'Practice this question'}).count(),10);
+  assert.equal(await examPage.getByRole('button',{name:'Practice this question'}).count(),20);
   await examPage.getByLabel('Search questions and topics').fill('');
   await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-library.png',fullPage:true});
   await examPage.getByRole('button',{name:'Start practicing'}).click();
   await examPage.locator('.desktop-test-picker').getByLabel('Jakarta Competency Exam').check();
-  await examPage.getByLabel('Number of questions').fill('50');
+  await examPage.getByLabel('Number of questions').fill('100');
   await examPage.getByRole('button',{name:'Start session'}).click();
   await examPage.getByRole('button',{name:'Check answer'}).waitFor();
-  await examPage.waitForFunction(async()=>JSON.parse(await window.tutorialz.load('learner-state')).progress.active?.questions.length===50);
+  await examPage.waitForFunction(async()=>JSON.parse(await window.tutorialz.load('learner-state')).progress.active?.questions.length===100);
   const examState=JSON.parse(await examPage.evaluate(()=>window.tutorialz.load('learner-state')));
   const examQuestions=examState.progress.active.questions;
   assert.equal(new Set(examQuestions.map(q=>q.topic)).size,10);
@@ -30,10 +30,35 @@ try{
   await examPage.getByRole('radio').nth(examQuestions[0].correct[0]).check();
   await examPage.getByRole('button',{name:'Check answer'}).click();
   await examPage.getByText("That's correct",{exact:false}).waitFor();
+  await examPage.reload();
+  await examPage.getByRole('button',{name:'Start practicing'}).click();
+  await examPage.getByRole('button',{name:'Resume session'}).click();
+  await examPage.getByText("That's correct",{exact:false}).waitFor();
+  const resumedExam=JSON.parse(await examPage.evaluate(()=>window.tutorialz.load('learner-state')));
+  assert.deepEqual(resumedExam.progress.active.questions,examQuestions);
   await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-question.png',fullPage:true});
   await examPage.setViewportSize({width:390,height:844});
   assert.equal(await examPage.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  await examPage.screenshot({path:'/tmp/tutorialz-jakarta-exam-mobile.png',fullPage:true});
+  // An in-progress 50-item edition must survive the upgrade to 100 items.
+  const legacy=JSON.parse(await examPage.evaluate(()=>window.tutorialz.load('learner-state')));
+  const legacyExam=legacy.courses.find(c=>c.id==='jakarta-competency-exam');
+  const oldQuestions=legacyExam.tests[0].questions.slice(0,50).map(q=>({...q,revision:1,prompt:`Previous edition: ${q.prompt}`}));
+  assert.equal(oldQuestions.length,50);
+  legacyExam.tests[0].questions=oldQuestions;
+  legacy.catalog.content_revision=3;
+  legacy.progress.active.questions=oldQuestions;
+  legacy.progress.active.position=0;
+  legacy.progress.active.answers={};
+  await examPage.evaluate(value=>window.tutorialz.save({key:'learner-state',value:JSON.stringify(value)}),legacy);
+  await examPage.setViewportSize({width:1280,height:900});
+  await examPage.reload();
+  await examPage.getByRole('heading',{name:'Small steps. Stronger skills.'}).waitFor();
+  await examPage.waitForFunction(async()=>JSON.parse(await window.tutorialz.load('learner-state')).catalog.content_revision===4);
+  const upgraded=JSON.parse(await examPage.evaluate(()=>window.tutorialz.load('learner-state')));
+  assert.equal(upgraded.courses.find(c=>c.id==='jakarta-competency-exam').tests[0].questions.length,100);
+  assert.deepEqual(upgraded.progress.active.questions,oldQuestions);
+  assert.deepEqual(upgraded.progress.attempts,legacy.progress.attempts);
  }finally{await examContext.close();}
  const dummyContext=await browser.newContext();
  try{

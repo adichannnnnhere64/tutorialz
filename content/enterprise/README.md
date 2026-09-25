@@ -1,6 +1,6 @@
 # Java and Jakarta EE question bank
 
-The collection contains **600 questions**: 164 easy, 305 medium, and 131 advanced. It includes the 50-question **[Jakarta Competency Exam](JAKARTA_COMPETENCY_EXAM.md)** and the 200-question **[Jakarta Dummy Exam](JAKARTA_DUMMY_EXAM.md)**. The original 350-question collection replaced a 3,200-question bank that counted repeated lead-ins, shuffled distractors, and arbitrary topic pairs as separate assessments.
+The collection contains **650 questions**: 164 easy, 344 medium, and 142 advanced. It includes the 100-question **[Jakarta Competency Exam](JAKARTA_COMPETENCY_EXAM.md)** and the 200-question **[Jakarta Dummy Exam](JAKARTA_DUMMY_EXAM.md)**. The original 3100-question collection replaced a 3,200-question bank that counted repeated lead-ins, shuffled distractors, and arbitrary topic pairs as separate assessments.
 
 | Course | Before | Now | Assessment |
 | --- | ---: | ---: | --- |
@@ -9,7 +9,7 @@ The collection contains **600 questions**: 164 easy, 305 medium, and 131 advance
 | Enterprise advanced | 1,000 | 20 | Integrated scenarios and tradeoffs |
 | Beginner Java | 1,200 | 64 | 59 practical repairs and five reviewed imports |
 | Java OOP | 600 | 66 | Code tracing, debugging, application, and design |
-| Jakarta Competency Exam | — | 50 | Enterprise decisions across ten topics and five knowledge areas |
+| Jakarta Competency Exam | — | 100 | Enterprise decisions across ten topics and five knowledge areas |
 | Jakarta Dummy Exam | — | 200 | Spring, Hibernate, JMS, ActiveMQ Artemis, and Java 8/9 |
 
 The original 100 enterprise concepts and 120 Java/OOP concepts remain covered. Overlapping concepts may share a question: the floating-point default type and `f` suffix share a repair; substitutability and the Liskov contract share a design decision. New OOP coverage includes records, sealed classes, captured variables, mutable map keys, shallow copying, wildcard reads/writes, and constructor dispatch.
@@ -20,7 +20,7 @@ Java questions assume **Java 17 without preview features** unless an exam questi
 
 Every question carries `origin: "ai"` or `origin: "scraped"`. The learner displays **AI** or **Scraped**, source links, and imported attribution. These fields survive studio export, storage, and session snapshots. Older or manually authored questions without an origin remain unlabeled.
 
-The 395 AI questions use original wording checked against Java/Jakarta specifications and primary design references. A documentation reference does not mean a question was scraped.
+The 645 AI questions use original wording checked against Java/Jakarta specifications and primary design references. A documentation reference does not mean a question was scraped.
 
 Five questions are imported from [Tahir Naseer's Java Quiz App](https://github.com/imtahirnaseer/Java-Quiz-App/tree/c1499f5aed8804d21e93ba76f1fa011afdf07d15), source questions 22, 59, 60, 63, and 89. They add String ordering, primitive/reference types, bitwise AND, byte range, and List size. Prompts and choices are imported verbatim; explanations added by AI are identified in the attribution. See the [MIT license and copyright notice](imports/LICENSE-java-quiz.txt). Incorrect, ambiguous, obsolete, and redundant questions from that source were excluded.
 
@@ -41,8 +41,8 @@ Imports are checked in, so ordinary regeneration works offline. Reproduce the re
 
 ## Publication and progress
 
-Web and Android bundle the same six course files. `catalog.json` records their SHA-256 hashes. The default online source remains `https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json`, configurable with `TUTORIALZ_CATALOG_URL`. Publish this directory, including the `imports/` notices, at that repository's root to update online consumers.
+Web and Android bundle the same seven course files. `catalog.json` records their SHA-256 hashes. The default online source remains `https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json`, configurable with `TUTORIALZ_CATALOG_URL`. Publish this directory, including the `imports/` notices, at that repository's root to update online consumers.
 
-The current catalog is `content_revision: 2`, adding the Jakarta Competency Exam; revision 1 was the duplicate cleanup and legacy catalogs default to 0. A new build upgrades an older cached default bank and rejects an older online edition, preventing retired duplicates from returning before publication. Custom sources are not replaced with bundled content. Increase the catalog revision for future published editions. The studio preserves imported revisions and increments on export.
+The current catalog is `content_revision: 4`, revising and expanding the original Jakarta Competency Exam to 100 questions. Revision 3 added the separate 200-question Dummy Exam, revision 2 introduced the original exam, and revision 1 was the duplicate cleanup; legacy catalogs default to 0. A new build upgrades an older cached default bank and rejects an older online edition, preventing retired duplicates from returning before publication. Custom sources are not replaced with bundled content. Increase the catalog revision for future published editions. The studio preserves imported revisions and increments on export.
 
 Retained questions keep their IDs; changed learner-visible content increments their question revision. New OOP and advanced assessments use new descriptive IDs. Removed duplicate IDs are retired. Historical attempts remain in backups, and active sessions retain their original question snapshots until finished.
