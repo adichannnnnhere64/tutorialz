@@ -12,6 +12,10 @@
 .study-view .selected{background:#e4f0ff;border-color:#1e76c6;color:#075aa6}
 .study-markers{padding-bottom:8px;border-bottom:1px solid #dfe7ee}.study-markers button{border-radius:22px;background:#f4f8fd}
 .study-count{color:#637688;font-size:12px}.study-topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.study-topic-result{min-width:0}.study-topic-result>.study-topic-card{width:100%;height:auto;min-height:180px}
+.study-outline{border:1px solid #dfe7ee;border-radius:14px;background:#fff;padding:14px;margin-bottom:18px;font-size:13px}.study-outline summary{cursor:pointer;min-height:32px;font-weight:650}
+.study-outline-section{display:flex;flex-direction:column;align-items:stretch;margin:10px 0}.study-outline button,.study-search-matches button{text-align:left;min-height:44px;margin:3px 0;font-size:13px;color:#176abe;background:#f5f9fd;border:0;line-height:1.5}
+.study-outline .study-subtopic{margin-left:12px;font-weight:400}.study-search-matches{display:flex;flex-direction:column;padding:8px}.study-subsection{scroll-margin-top:18px}.study-subsection h4{font-size:18px;line-height:1.4;margin:26px 0 12px}
 .study-topic-card{display:flex;flex-direction:column;gap:8px;text-align:left;padding:20px;background:#fff;border:1px solid #e0e7ef;border-radius:16px}
 .study-topic-card strong{font-size:19px;color:#173750}.study-topic-card span:not(.study-kicker){font-weight:400;font-size:14px;line-height:1.5;color:#4e6070}
 .study-topic-card small{color:#176abe;font-weight:600;font-size:12px;margin-top:auto}.study-topic-card .study-kicker{margin:0;font-size:10px}

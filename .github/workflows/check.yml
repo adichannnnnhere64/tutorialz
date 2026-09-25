@@ -24,8 +24,10 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 21
       - run: python3 -m unittest discover -s tests -p '*_test.py'
+      - run: python3 scripts/study-framework-test.py
+      - run: python3 scripts/study-audit.py --output target/study-audit.json
       - run: cargo test -p tutorialz-core --locked
       - run: cargo run -p tutorialz-core --locked -- content/catalog.json
       - run: cargo run -p tutorialz-core --locked -- content/enterprise/catalog.json
@@ -58,6 +60,12 @@ jobs:
           python3 -m http.server 8876 --directory target/dx/tutorialz-learner/debug/web/public > /tmp/study-server.log 2>&1 &
           export CHROME_BIN="$(node --input-type=module -e 'import {chromium} from "playwright"; console.log(chromium.executablePath())')"
           node scripts/study-test.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tutorialz-study-review
+          path: |
+            target/study-audit.json
+            /tmp/tutorialz-study-*.png
       - uses: actions/upload-artifact@v4
         with:
           name: tutorialz-web

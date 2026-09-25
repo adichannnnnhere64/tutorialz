@@ -174,6 +174,36 @@ pub struct StudyProgress {
     pub bookmarks: BTreeSet<String>,
     pub last_topic: Option<String>,
     pub last_section: usize,
+    pub last_section_id: Option<String>,
+}
+impl StudyProgress {
+    const LEGACY_SECTIONS: [&'static str; 5] = [
+        "understand",
+        "apply",
+        "cheatsheet",
+        "check-yourself",
+        "sources",
+    ];
+
+    /// Old backups used the original five-section order, not the new display order.
+    pub fn section_id(&self) -> &str {
+        self.last_section_id.as_deref().unwrap_or_else(|| {
+            Self::LEGACY_SECTIONS
+                .get(self.last_section)
+                .copied()
+                .unwrap_or("understand")
+        })
+    }
+
+    pub fn visit(&mut self, topic: &str, section: &str) {
+        self.last_topic = Some(topic.into());
+        self.last_section_id = Some(section.into());
+        // Older apps can still import this backup and open a meaningful section.
+        self.last_section = Self::LEGACY_SECTIONS
+            .iter()
+            .position(|id| *id == section)
+            .unwrap_or(0);
+    }
 }
 impl Progress {
     pub fn new(collection: &str) -> Self {
@@ -211,6 +241,7 @@ impl Progress {
         if self.study.last_topic.is_none() {
             self.study.last_topic = other.study.last_topic;
             self.study.last_section = other.study.last_section;
+            self.study.last_section_id = other.study.last_section_id;
         }
         if self.active.is_none() {
             self.active = other.active;
@@ -548,6 +579,31 @@ pub fn enterprise_courses() -> Vec<Course> {
 mod tests {
     use super::*;
     #[test]
+    fn study_cursor_migrates_without_reinterpreting_legacy_indices() {
+        for (index, expected) in [
+            "understand",
+            "apply",
+            "cheatsheet",
+            "check-yourself",
+            "sources",
+        ]
+        .iter()
+        .enumerate()
+        {
+            let raw = serde_json::json!({"last_topic":"patterns", "last_section":index});
+            let mut old: StudyProgress = serde_json::from_value(raw).unwrap();
+            assert_eq!(old.section_id(), *expected);
+            old.visit("patterns", "advanced");
+            assert_eq!(old.section_id(), "advanced");
+            assert_eq!(old.last_section, 0);
+            old.visit("patterns", "cheatsheet");
+            assert_eq!(old.last_section, 2);
+        }
+        let invalid: StudyProgress =
+            serde_json::from_value(serde_json::json!({"last_section":999})).unwrap();
+        assert_eq!(invalid.section_id(), "understand");
+    }
+    #[test]
     fn legacy_progress_defaults_to_empty_study_progress() {
         let mut original = Progress::new("legacy");
         original.lessons.insert("lesson-1".into());
@@ -566,8 +622,7 @@ mod tests {
         let mut imported = Progress::new("java");
         imported.study.read.insert("jms".into());
         imported.study.bookmarks.insert("jms".into());
-        imported.study.last_topic = Some("jms".into());
-        imported.study.last_section = 4;
+        imported.study.visit("jms", "advanced");
         let json = serde_json::to_string(&imported).unwrap();
         let restored: Progress = serde_json::from_str(&json).unwrap();
         assert_eq!(restored, imported);
@@ -576,6 +631,8 @@ mod tests {
         assert!(local.study.read.contains("jms"));
         assert_eq!(local.study.last_topic.as_deref(), Some("hibernate"));
         assert_eq!(local.study.last_section, 2);
+        assert_eq!(local.study.last_section_id, None);
+        assert_eq!(local.study.section_id(), "cheatsheet");
         let once = local.clone();
         local.merge(restored.clone()).unwrap();
         assert_eq!(local, once);
@@ -584,6 +641,7 @@ mod tests {
         let mut fresh = Progress::new("java");
         fresh.merge(restored).unwrap();
         assert_eq!(fresh, imported);
+        assert_eq!(fresh.study.last_section_id.as_deref(), Some("advanced"));
     }
     fn questions() -> Vec<Question> {
         sample_courses()
