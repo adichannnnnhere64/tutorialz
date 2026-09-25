@@ -163,6 +163,17 @@ pub struct Progress {
     pub lessons: BTreeSet<String>,
     pub attempts: Vec<Attempt>,
     pub active: Option<Session>,
+    #[serde(default)]
+    pub study: StudyProgress,
+}
+/// Reading progress is separate from graded attempts and survives old backups.
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+#[serde(default)]
+pub struct StudyProgress {
+    pub read: BTreeSet<String>,
+    pub bookmarks: BTreeSet<String>,
+    pub last_topic: Option<String>,
+    pub last_section: usize,
 }
 impl Progress {
     pub fn new(collection: &str) -> Self {
@@ -172,6 +183,7 @@ impl Progress {
             lessons: BTreeSet::new(),
             attempts: vec![],
             active: None,
+            study: StudyProgress::default(),
         }
     }
     pub fn latest(&self, q: &Question) -> Option<&Attempt> {
@@ -194,6 +206,12 @@ impl Progress {
             }
         }
         self.lessons.extend(other.lessons);
+        self.study.read.extend(other.study.read);
+        self.study.bookmarks.extend(other.study.bookmarks);
+        if self.study.last_topic.is_none() {
+            self.study.last_topic = other.study.last_topic;
+            self.study.last_section = other.study.last_section;
+        }
         if self.active.is_none() {
             self.active = other.active;
         }
@@ -529,6 +547,44 @@ pub fn enterprise_courses() -> Vec<Course> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn legacy_progress_defaults_to_empty_study_progress() {
+        let mut original = Progress::new("legacy");
+        original.lessons.insert("lesson-1".into());
+        let mut json = serde_json::to_value(&original).unwrap();
+        json.as_object_mut().unwrap().remove("study");
+        let restored: Progress = serde_json::from_value(json).unwrap();
+        assert_eq!(restored, original);
+        restored.validate().unwrap();
+    }
+    #[test]
+    fn study_backup_roundtrip_and_merge_preserve_local_cursor() {
+        let mut local = Progress::new("java");
+        local.study.bookmarks.insert("hibernate".into());
+        local.study.last_topic = Some("hibernate".into());
+        local.study.last_section = 2;
+        let mut imported = Progress::new("java");
+        imported.study.read.insert("jms".into());
+        imported.study.bookmarks.insert("jms".into());
+        imported.study.last_topic = Some("jms".into());
+        imported.study.last_section = 4;
+        let json = serde_json::to_string(&imported).unwrap();
+        let restored: Progress = serde_json::from_str(&json).unwrap();
+        assert_eq!(restored, imported);
+        local.merge(restored.clone()).unwrap();
+        assert_eq!(local.study.bookmarks.len(), 2);
+        assert!(local.study.read.contains("jms"));
+        assert_eq!(local.study.last_topic.as_deref(), Some("hibernate"));
+        assert_eq!(local.study.last_section, 2);
+        let once = local.clone();
+        local.merge(restored.clone()).unwrap();
+        assert_eq!(local, once);
+        assert!(local.attempts.is_empty());
+        assert!(local.active.is_none());
+        let mut fresh = Progress::new("java");
+        fresh.merge(restored).unwrap();
+        assert_eq!(fresh, imported);
+    }
     fn questions() -> Vec<Question> {
         sample_courses()
             .into_iter()

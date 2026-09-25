@@ -4,6 +4,7 @@ use serde_json::{json, Value};
 use std::collections::{BTreeMap, BTreeSet};
 use tutorialz_core::*;
 use tutorialz_ui::*;
+mod study;
 const DEFAULT_CATALOG_URL: &str = "https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json";
 fn main() {
     dioxus::launch(App);
@@ -61,6 +62,7 @@ enum Page {
     Session,
     Results,
     Settings,
+    Study,
 }
 #[derive(Clone, Copy)]
 struct AppContext {
@@ -232,6 +234,7 @@ fn App() -> Element {
         Page::Session => "Session",
         Page::Results => "Activity",
         Page::Settings => "Settings",
+        Page::Study => "Study",
     };
     let screen_class = match &current {
         Page::Library => "screen-library",
@@ -240,6 +243,7 @@ fn App() -> Element {
         Page::Session => "screen-session",
         Page::Results => "screen-results",
         Page::Settings => "screen-settings",
+        Page::Study => "screen-study",
     };
     let shell_class = match (cfg!(target_os = "android"), &current) {
         (true, Page::Session) => "shell learner-shell native-android in-session",
@@ -249,6 +253,9 @@ fn App() -> Element {
     };
     rsx! {
         style { dangerous_inner_html: CSS }
+        if study::AVAILABLE {
+            style { dangerous_inner_html: study::CSS }
+        }
         div { class: shell_class,
             aside { class: "sidebar",
                 div { class: "brand",
@@ -256,6 +263,9 @@ fn App() -> Element {
                     "tutorialz"
                 }
                 Nav { label: "▦  My learning", target: Page::Library }
+                if study::AVAILABLE {
+                    Nav { label: "▤  Study syllabus", target: Page::Study }
+                }
                 Nav { label: "✓  Practice", target: Page::Practice }
                 Nav {
                     label: "◷  Session & results",
@@ -327,6 +337,7 @@ fn App() -> Element {
                         Page::Settings => rsx! {
                             Settings {}
                         },
+                        Page::Study => rsx! { study::Study {} },
                     }
                 }
             }
@@ -342,6 +353,14 @@ fn App() -> Element {
                     icon: "M12 3a9 9 0 1 0 9 9M12 3a9 9 0 0 1 9 9M8 12l2.5 2.5L16 9",
                     target: Page::Practice,
                     active: practice_active,
+                }
+                if study::AVAILABLE {
+                    MobileTab {
+                        label: "Study",
+                        icon: "M3 4h6l3 2 3-2h6v16h-6l-3 2-3-2H3zM12 6v16",
+                        target: Page::Study,
+                        active: matches!((cx.page)(), Page::Study),
+                    }
                 }
                 MobileTab {
                     label: "Activity",

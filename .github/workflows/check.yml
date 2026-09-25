@@ -50,6 +50,14 @@ jobs:
           node scripts/browser-test.mjs
           APP_URL=http://127.0.0.1:8766/tutorialz/ node scripts/app-test.mjs
           APP_URL=http://127.0.0.1:8766/tutorialz/ node scripts/question-review-test.mjs
+      # A debug harness tests the native reader without including it in dist/.
+      - name: Mobile study reader checks
+        shell: bash
+        run: |
+          dx build --web --package tutorialz-learner --features study-preview --base-path ''
+          python3 -m http.server 8876 --directory target/dx/tutorialz-learner/debug/web/public > /tmp/study-server.log 2>&1 &
+          export CHROME_BIN="$(node --input-type=module -e 'import {chromium} from "playwright"; console.log(chromium.executablePath())')"
+          node scripts/study-test.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: tutorialz-web

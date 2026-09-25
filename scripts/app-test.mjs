@@ -5,6 +5,7 @@ const base=process.env.APP_URL||'http://127.0.0.1:8766/';
 await page.route('https://raw.githubusercontent.com/adichannnnnhere64/jakarta-ee-question-bank/main/catalog.json',route=>route.fulfill({path:'content/enterprise/catalog.json',contentType:'application/json'}));
 try{
  await page.goto(base);await page.getByRole('heading',{name:'Small steps. Stronger skills.'}).waitFor();
+ assert.equal(await page.getByRole('button',{name:/Study syllabus/}).count(),0,'Published web app must not expose the Android study reader');
  const examContext=await browser.newContext();
  try{
   const examPage=await examContext.newPage();
@@ -153,6 +154,7 @@ try{
  await page.setViewportSize({width:390,height:844});await page.screenshot({path:'/tmp/tutorialz-mobile.png',fullPage:true});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
  await page.goto(base);await page.getByRole('button',{name:/Open Java Enterprise and Jakarta EE/}).first().waitFor();
  const mobileNav=page.getByRole('navigation',{name:'Learner navigation'});assert(await mobileNav.isVisible());
+ assert.equal(await mobileNav.getByRole('button',{name:'Study',exact:true}).count(),0,'Mobile browser remains the web app, not the Android study reader');
  await page.getByRole('button',{name:/Open Java Enterprise and Jakarta EE/}).first().click();await page.locator('.mobile-test-row').first().click();
  assert.equal(await page.locator('.mobile-test-picker input:checked').count(),1,'Course test should be selected in mobile practice');
  await page.getByRole('button',{name:'Start session'}).click();await page.getByRole('button',{name:'Check answer'}).waitFor();
